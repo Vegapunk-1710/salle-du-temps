@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/home_page.dart';
+import 'package:frontend/screens/settings_page.dart';
+import 'package:frontend/screens/program_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -15,22 +18,21 @@ class MainApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const LandingPage(title: 'Landing Page'),
+      debugShowCheckedModeBanner: false,
+      home: const LandingPage(),
     );
   }
 }
 
 class LandingPage extends StatefulWidget {
-  const LandingPage({super.key, required this.title});
-
-  final String title;
+  const LandingPage({super.key});
 
   @override
   State<LandingPage> createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
-  int _selectedIndex = 0;  
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -38,49 +40,30 @@ class _LandingPageState extends State<LandingPage> {
     });
   }
 
-  static const List<Widget> _pages = <Widget>[
-  Icon(
-    Icons.home,
-    size: 150,
-  ),
-  Icon(
-    Icons.sports_gymnastics,
-    size: 150,
-  ),
-  Icon(
-    Icons.settings,
-    size: 150,
-  ),
+  static final List<Widget> _pages = <Widget>[
+    HomePage(),
+    ProgramPage(),
+    const SettingsPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: _pages.elementAt(_selectedIndex),
-      ),
+      body: _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const<BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sports_gymnastics),
-            label: "Workouts"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Settings",
-          ),
-        ]
-      ),
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          enableFeedback: true,
+          selectedItemColor: Theme.of(context).colorScheme.onBackground,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.sports_gymnastics), label: "Program"),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: "Settings",
+            ),
+          ]),
     );
   }
 }
