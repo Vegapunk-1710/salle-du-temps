@@ -43,7 +43,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               child: Text("Exercises",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
           SizedBox(
-            height: MediaQuery.of(context).size.height/3, 
+            height: MediaQuery.of(context).size.height/3.2, 
             child: PageView.builder(
               itemCount: 10,
               controller: PageController(viewportFraction: 0.8),
@@ -57,7 +57,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       imageURL:
                           "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png",
                       title: "Exer.$_index",
-                      desc: "desc",
+                      desc: "",
                       misc: "misc",
                       func: () {}),
                 );

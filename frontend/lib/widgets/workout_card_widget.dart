@@ -75,7 +75,7 @@ class WorkoutCard extends StatelessWidget {
                     TextButton(
                       onPressed: func,
                       child: Text(
-                        "Start",
+                        "ENTER",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
