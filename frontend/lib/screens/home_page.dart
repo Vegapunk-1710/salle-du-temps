@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/workout_page.dart';
-import 'package:frontend/widgets/workout_card_widget.dart';
+import 'package:frontend/widgets/workout_card.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -81,13 +81,10 @@ class _HomePageState extends State<HomePage> {
                         "BlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaow",
                     misc: "Ah waer khalto!?",
                     func: () {
-                      if (kDebugMode) {
-                        print("Workout 1's Start Button Clicked !");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => WorkoutPage()),
-                        );
-                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WorkoutPage()),
+                      );
                     })
               ],
             ),
