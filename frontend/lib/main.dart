@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/screens/home_page.dart';
 import 'package:frontend/screens/settings_page.dart';
 import 'package:frontend/screens/program_page.dart';
@@ -12,6 +13,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
     return MaterialApp(
       title: 'Salle Du Temps',
       theme: ThemeData(
