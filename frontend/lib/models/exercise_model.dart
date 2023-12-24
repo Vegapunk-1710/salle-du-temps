@@ -34,7 +34,7 @@ class Exercise {
         difficulty: 'Easy',
         time: 30,
         type: 'Cardio',
-        progression: [('2023-01-01', 0), ('2023-02-01', 0)],
+        progression: [('2023-01-01', 0), ('2023-02-01', 10)],
         tutorial: 'Step 1: Start with a warm-up walk. Step 2: Gradually increase your pace to a comfortable run.'
       ),
       Exercise(
@@ -43,7 +43,7 @@ class Exercise {
         difficulty: 'Medium',
         time: 15,
         type: 'Strength',
-        progression: [('2023-01-01', 0), ('2023-02-01', 10)],
+        progression: [('2023-01-01', 0), ('2023-02-01', 15)],
         tutorial: 'Step 1: Stand with feet hip-width apart. Step 2: Bend knees and lower your body as if sitting in a chair. Step 3: Keep your back straight and return to standing.'
       ),
       Exercise(
@@ -52,7 +52,7 @@ class Exercise {
         difficulty: 'Hard',
         time: 5,
         type: 'Core',
-        progression: [('2023-01-01', 0), ('2023-02-01', 0)],
+        progression: [('2023-01-01', 0), ('2023-02-01', 20)],
         tutorial: 'Step 1: Get into a forearm plank position. Step 2: Ensure your body forms a straight line from head to heels. Step 3: Hold this position, keeping your core engaged.'
       ),
       Exercise(
@@ -61,7 +61,7 @@ class Exercise {
         difficulty: 'Easy',
         time: 20,
         type: 'Cardio',
-        progression: [('2023-01-01', 0), ('2023-02-01', 0)],
+        progression: [('2023-01-01', 0), ('2023-02-01', 25)],
         tutorial: 'Step 1: Hold the rope handles and step in the middle of the rope. Step 2: Swing the rope over your head and jump over it as it comes down. Step 3: Keep a steady pace and maintain rhythm.'
       )
     ];
