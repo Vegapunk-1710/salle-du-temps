@@ -59,19 +59,18 @@ class ExerciseCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "TIME : ${exercise.time}",
+                      "TIME : ~${exercise.time} mins",
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    TextButton(
+                    IconButton(
                       onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ExercisePage(exercise: exercise)));
                         },
-                      child: Text(
-                        "ENTER",
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      icon: Icon(
+                        Icons.arrow_outward
                       ),
                     ),
                   ],

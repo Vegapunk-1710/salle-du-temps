@@ -39,7 +39,7 @@ class _ExercisePageState extends State<ExercisePage> {
                       Text("DIFFICULTY : ${widget.exercise.difficulty}",
                           style: const TextStyle(
                               fontWeight: FontWeight.w300, fontSize: 14)),
-                      Text("TIME : ${widget.exercise.time}",
+                      Text("TIME : ~${widget.exercise.time} mins",
                           style: const TextStyle(
                               fontWeight: FontWeight.w300, fontSize: 14)),
                     ],
@@ -60,6 +60,19 @@ class _ExercisePageState extends State<ExercisePage> {
               child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(widget.exercise.tutorial,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w400, fontSize: 16))),
+            ),
+            const Padding(
+                padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Text("Recommended Sets/Reps",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
+            Card(
+              margin: const EdgeInsets.all(10),
+              child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(widget.exercise.setsreps,
                       style: const TextStyle(
                           fontWeight: FontWeight.w400, fontSize: 16))),
             ),
@@ -122,36 +135,39 @@ class _ExercisePageState extends State<ExercisePage> {
             ),
             Card(
               margin: const EdgeInsets.all(10),
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.exercise.progression.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      children: [
-                        FittedBox(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(widget.exercise.progression[index].$1),
-                              const Icon(Icons.arrow_right),
-                              Text(
-                                  "${widget.exercise.progression[index].$2} max lbs"),
-                              const Icon(Icons.arrow_right),
-                              Text(
-                                  "${widget.exercise.progression[index].$3} max sets"),
-                              const Icon(Icons.arrow_right),
-                              Text(
-                                  "${widget.exercise.progression[index].$4} max reps")
-                            ],
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.exercise.progression.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Column(
+                        children: [
+                          FittedBox(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(widget.exercise.progression[index].$1),
+                                const Icon(Icons.arrow_right),
+                                Text(
+                                    "${widget.exercise.progression[index].$2} max lbs"),
+                                const Icon(Icons.arrow_right),
+                                Text(
+                                    "${widget.exercise.progression[index].$3} max sets"),
+                                const Icon(Icons.arrow_right),
+                                Text(
+                                    "${widget.exercise.progression[index].$4} max reps")
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             SizedBox(height: 100,)
