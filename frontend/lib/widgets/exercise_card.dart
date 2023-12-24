@@ -31,7 +31,7 @@ class ExerciseCard extends StatelessWidget {
               children: <Widget>[
                 Text(
                   exercise.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
@@ -69,7 +69,7 @@ class ExerciseCard extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (context) => ExercisePage(exercise: exercise)));
                         },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_outward
                       ),
                     ),

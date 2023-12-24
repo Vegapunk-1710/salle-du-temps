@@ -135,7 +135,7 @@ class _ExercisePageState extends State<ExercisePage> {
             ),
             Card(
               margin: const EdgeInsets.all(10),
-              child: Padding(
+              child: widget.exercise.progression.isEmpty ? SizedBox(): Padding(
                 padding: const EdgeInsets.all(5),
                 child: ListView.builder(
                   shrinkWrap: true,
