@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/models/exercise_model.dart';
 
 class CreateExercise extends StatefulWidget {
-  CreateExercise({Key? key}) : super(key: key);
+  final Function(Exercise newExercise) callback;
+  CreateExercise(this.callback, {Key? key}) : super(key: key);
 
   @override
   State<CreateExercise> createState() => _CreateExerciseState();
@@ -10,105 +12,192 @@ class CreateExercise extends StatefulWidget {
 
 class _CreateExerciseState extends State<CreateExercise> {
   int step_index = 0;
-  
+  TextEditingController titleController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+  TextEditingController imageURLController = TextEditingController();
+  TextEditingController tutotialController = TextEditingController();
+  TextEditingController setsrepsController = TextEditingController();
+  String selectedDifficulty = "Beginner";
+  List<DropdownMenuItem<String>> difficulties = [
+    const DropdownMenuItem(child: Text("Beginner"), value: "Beginner"),
+    const DropdownMenuItem(child: Text("Intermediate"), value: "Intermediate"),
+    const DropdownMenuItem(child: Text("Advanced"), value: "Advanced"),
+  ];
+  String selectedType = "Aerobic";
+  List<DropdownMenuItem<String>> types = [
+    const DropdownMenuItem(child: Text("Aerobic"), value: "Aerobic"),
+    const DropdownMenuItem(child: Text("Strength"), value: "Strength"),
+    const DropdownMenuItem(child: Text("Stretching"), value: "Stretching"),
+    const DropdownMenuItem(child: Text("Balance"), value: "Balance"),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+          child: SingleChildScrollView(
         child: Column(
           children: [
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text("Create An Exercise",
-                        style:
-                            TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 1.3,
-              child: PageView.builder(
-                itemCount: 3,
-                controller:
-                PageController(viewportFraction: 0.8, keepPage: false),
-                onPageChanged: (index) => setState(() => step_index = index),
-                itemBuilder: (context, index) {
-                  return AnimatedPadding(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.fastOutSlowIn,
-                      padding: EdgeInsets.all(step_index == index ? 0.0 : 8.0),
-                      child: FirstStep()
-                  );
-                },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                margin: EdgeInsets.all(10),
+                child: Stepper(
+                    controlsBuilder:
+                        (BuildContext context, ControlsDetails details) {
+                      return Row(
+                        children: <Widget>[
+                          TextButton(
+                            onPressed: details.onStepContinue,
+                            child: step_index == 6
+                                ? const Text('Submit')
+                                : const Text('Next'),
+                          ),
+                          TextButton(
+                            onPressed: details.onStepCancel,
+                            child: step_index == 0
+                                ? const Text('')
+                                : const Text('Back'),
+                          ),
+                        ],
+                      );
+                    },
+                    currentStep: step_index,
+                    onStepCancel: () {
+                      if (step_index > 0) {
+                        setState(() {
+                          step_index -= 1;
+                        });
+                      }
+                    },
+                    onStepContinue: () {
+                      if (step_index < 6) {
+                        setState(() {
+                          step_index += 1;
+                        });
+                      }
+                      if (step_index == 6) {
+                        submitExercise();
+                      }
+                    },
+                    onStepTapped: (int index) {
+                      setState(() {
+                        step_index = index;
+                      });
+                    },
+                    steps: [
+                      Step(
+                          title: Text("Write a title for the exercise :"),
+                          content: TextField(
+                            controller: titleController,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9a-zA-Z]")),
+                            ],
+                          )),
+                      Step(
+                          title: Text("Pick a difficulty for the exercise :"),
+                          content: DropdownButton(
+                              value: selectedDifficulty,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedDifficulty = newValue!;
+                                });
+                              },
+                              items: difficulties)),
+                      Step(
+                          title: Text(
+                              "Enter the average duration in minutes for the exercise :"),
+                          content: TextField(
+                            controller: timeController,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9]")),
+                            ],
+                          )),
+                      Step(
+                          title: Text("What does the exercise target ? :"),
+                          content: DropdownButton(
+                              value: selectedType,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedType = newValue!;
+                                });
+                              },
+                              items: types)),
+                      Step(
+                          title: Text(
+                              "Upload an image that describes the exercise :"),
+                          content: TextField(
+                            controller: imageURLController,
+                          )),
+                      Step(
+                          title: Text(
+                              "Write a step-by-step tutorial for the exercise :"),
+                          content: TextField(
+                            controller: tutotialController,
+                            maxLines: null,
+                          )),
+                      Step(
+                          title: Text(
+                              "Give a suggested number of sets/reps or any helpful tips for the exercise :"),
+                          content: TextField(
+                            controller: setsrepsController,
+                            maxLines: null,
+                          )),
+                    ]),
               ),
             ),
+            SizedBox(
+              height: 100,
+            )
           ],
-        )
+        ),
+      )),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              heroTag: "createexerciseexitbtn",
+              child: const Icon(Icons.exit_to_app),
+            ),
+          ),
+        ],
       ),
     );
   }
-}
 
-class FirstStep extends StatelessWidget {
-  const FirstStep({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Center(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: FittedBox(
-                child: Text("1 - Enter a title for the exercise",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 22)),
-              ),
-            ),
-            Padding(
-             padding: const EdgeInsets.all(8.0),
-             child: SizedBox(
-               height: MediaQuery.of(context).size.height / 20,
-               width: MediaQuery.of(context).size.width / 2,
-               child: const TextField(
-                 textAlign: TextAlign.center, 
-                 keyboardType: TextInputType.name,
-                 decoration: InputDecoration(
-                   border: OutlineInputBorder(
-                       borderRadius: BorderRadius.all(Radius.circular(20))),
-                   hintText: "Title",
-                 ),
-               ),
-             ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: FittedBox(
-                child: Text("1 - Enter a title for the exercise",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 22)),
-              ),
-            ),
-            Padding(
-             padding: const EdgeInsets.all(8.0),
-             child: SizedBox(
-               height: MediaQuery.of(context).size.height / 20,
-               width: MediaQuery.of(context).size.width / 2,
-               child: const TextField(
-                 textAlign: TextAlign.center, 
-                 keyboardType: TextInputType.name,
-                 decoration: InputDecoration(
-                   border: OutlineInputBorder(
-                       borderRadius: BorderRadius.all(Radius.circular(20))),
-                   hintText: "Title",
-                 ),
-               ),
-             ),
-            ),
-          ],
-        ),
-      ),
-    );
+  void submitExercise() {
+    if (titleController.text.isNotEmpty &&
+        timeController.text.isNotEmpty &&
+        tutotialController.text.isNotEmpty &&
+        setsrepsController.text.isNotEmpty) {
+      String title = titleController.text;
+      int time = int.parse(timeController.text);
+      String tutorial = tutotialController.text;
+      String setsreps = setsrepsController.text;
+      String difficulty = selectedDifficulty;
+      String type = selectedType;
+      Exercise newExercise = Exercise(
+          id: "",
+          title: title,
+          difficulty: difficulty,
+          time: time,
+          type: type,
+          tutorial: tutorial,
+          setsreps: setsreps);
+      print(newExercise);
+      widget.callback(newExercise);
+    }
   }
 }

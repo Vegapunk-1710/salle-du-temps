@@ -19,7 +19,9 @@ class ExerciseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.network(
-            "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png",
+            exercise.imageURL.toString() == "null"
+                ? "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png"
+                : exercise.imageURL.toString(),
             height: MediaQuery.of(context).size.height / 7,
             width: double.infinity,
             fit: BoxFit.cover,
@@ -36,25 +38,25 @@ class ExerciseCard extends StatelessWidget {
                   ),
                 ),
                 Container(height: 6),
-                 Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Text(
-                        "DIFFCULTY : ${exercise.difficulty}",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                        ),
+                  children: [
+                    Text(
+                      "DIFFCULTY : ${exercise.difficulty}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[700],
                       ),
-                      Text(
-                         "TYPE : ${exercise.type}",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[700],
-                        ),
+                    ),
+                    Text(
+                      "TYPE : ${exercise.type}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[700],
                       ),
-                   ],
-                 ),
+                    ),
+                  ],
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -67,11 +69,10 @@ class ExerciseCard extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ExercisePage(exercise: exercise)));
-                        },
-                      icon: const Icon(
-                        Icons.arrow_outward
-                      ),
+                                builder: (context) =>
+                                    ExercisePage(exercise: exercise)));
+                      },
+                      icon: const Icon(Icons.arrow_outward),
                     ),
                   ],
                 ),

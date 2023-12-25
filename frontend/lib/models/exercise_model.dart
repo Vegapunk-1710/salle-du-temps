@@ -1,6 +1,6 @@
 class Exercise {
   String id;
-  // String? imageURL;
+  String? imageURL;
   String title;
   String difficulty;
   num time;
@@ -11,6 +11,7 @@ class Exercise {
 
   Exercise(
       {required this.id,
+      this.imageURL,
       required this.title,
       required this.difficulty,
       required this.time,
@@ -18,6 +19,13 @@ class Exercise {
       required this.tutorial,
       required this.setsreps,
       this.progression});
+
+  @override
+    String toString() {
+        return 
+        "id : $id\nimageURL : $imageURL \ntitle : $title\ndifficulty : $difficulty\ntime : $time\ntype : $type\ntutorial : $tutorial\nsetsreps : $setsreps\nprogression : $progression\n"
+        ;
+    }
 
   static List<Exercise> examples() {
     return [

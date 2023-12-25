@@ -14,6 +14,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
   List<Exercise> exercises = Exercise.examples();
 
+  callback(Exercise newExercise) {
+    setState(() {
+      exercises.add(newExercise);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,13 +49,56 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 child: Text("Description",
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
-            const Padding(
+             Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Exercises",
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Exercises",
+                        style:
+                            TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+                    Row(
+                      children: [
+                        IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+                        IconButton(onPressed: () {
+                          Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CreateExercise(callback)));
+                        }, icon: const Icon(Icons.create)),
+                        IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (exercises.isNotEmpty) {
+                              if (exer_index == exercises.length - 1 &&
+                                  exer_index > 0) {
+                                exer_index -= 1;
+                              }
+                              Exercise removed = exercises.removeLast();
+                              var snackBar = SnackBar(
+                                content: Text(
+                                    'Deleted Last Exercise : ${removed.title}'),
+                                action: SnackBarAction(
+                                  label: 'Undo',
+                                  onPressed: () {
+                                    setState(() {
+                                        exercises.add(removed);
+                                    });
+                                  },
+                                ),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.delete_forever))
+                      ],
+                    ),
+                
+                  ],
+                )),
             SizedBox(
-              height: 280,
+              height: 300,
               child: PageView.builder(
                 itemCount: exercises.length,
                 controller:
@@ -63,44 +112,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       child: ExerciseCard(exercise: exercises[exer_index]));
                 },
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (exercises.isNotEmpty) {
-                          if (exer_index == exercises.length - 1 &&
-                              exer_index > 0) {
-                            exer_index -= 1;
-                          }
-                          Exercise removed = exercises.removeLast();
-                          var snackBar = SnackBar(
-                            content: Text(
-                                'Deleted Last Exercise : ${removed.title}'),
-                            action: SnackBarAction(
-                              label: 'Undo',
-                              onPressed: () {
-                                setState(() {
-                                    exercises.add(removed);
-                                });
-                              },
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.delete_forever)),
-                IconButton(onPressed: () {
-                  Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateExercise()));
-                }, icon: const Icon(Icons.create)),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.add))
-              ],
             ),
             const SizedBox(height: 100,)
           ]))

@@ -23,8 +23,9 @@ class _ExercisePageState extends State<ExercisePage> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-            Image.network(
-                'https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png'),
+            Image.network(widget.exercise.imageURL.toString() == "null"
+                ? "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png"
+                : widget.exercise.imageURL.toString()),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -89,7 +90,8 @@ class _ExercisePageState extends State<ExercisePage> {
                       onPressed: () {
                         setState(() {
                           if (widget.exercise.progression!.isNotEmpty) {
-                            var removed = widget.exercise.progression!.removeLast();
+                            var removed =
+                                widget.exercise.progression!.removeLast();
                             var snackBar = SnackBar(
                               content: Text(
                                   'Deleted Last Progression : ${removed.$1}'),
@@ -97,13 +99,15 @@ class _ExercisePageState extends State<ExercisePage> {
                                 label: 'Undo',
                                 onPressed: () {
                                   setState(() {
-                                     widget.exercise.progression!.add(removed);
-                                     widget.exercise.progression!.sort((a,b) => a.$1.compareTo(b.$1));
+                                    widget.exercise.progression!.add(removed);
+                                    widget.exercise.progression!
+                                        .sort((a, b) => a.$1.compareTo(b.$1));
                                   });
                                 },
                               ),
                             );
-                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                           }
                         });
                       },
@@ -138,8 +142,10 @@ class _ExercisePageState extends State<ExercisePage> {
                                 date.toIso8601String().split('T').first;
                             int weight =
                                 int.parse(progressionWeightController.text);
-                            int sets = int.parse(progressionSetsController.text);
-                            int reps = int.parse(progressionRepsController.text);
+                            int sets =
+                                int.parse(progressionSetsController.text);
+                            int reps =
+                                int.parse(progressionRepsController.text);
                             widget.exercise.progression!
                                 .add((formattedDate, weight, sets, reps));
                           }
@@ -149,44 +155,50 @@ class _ExercisePageState extends State<ExercisePage> {
                 ],
               ),
             ),
-            Card(
+            widget.exercise.progression.toString() == "null" ? Container() : Card(
               margin: const EdgeInsets.all(10),
-              child: widget.exercise.progression!.isEmpty ? SizedBox(): Padding(
-                padding: const EdgeInsets.all(5),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.exercise.progression!.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Column(
-                        children: [
-                          FittedBox(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: widget.exercise.progression!.isEmpty
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: widget.exercise.progression!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
                               children: [
-                                Text(widget.exercise.progression![index].$1),
-                                const Icon(Icons.arrow_right),
-                                Text(
-                                    "${widget.exercise.progression![index].$2} max lbs"),
-                                const Icon(Icons.arrow_right),
-                                Text(
-                                    "${widget.exercise.progression![index].$3} max sets"),
-                                const Icon(Icons.arrow_right),
-                                Text(
-                                    "${widget.exercise.progression![index].$4} max reps")
+                                FittedBox(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(widget
+                                          .exercise.progression![index].$1),
+                                      const Icon(Icons.arrow_right),
+                                      Text(
+                                          "${widget.exercise.progression![index].$2} max lbs"),
+                                      const Icon(Icons.arrow_right),
+                                      Text(
+                                          "${widget.exercise.progression![index].$3} max sets"),
+                                      const Icon(Icons.arrow_right),
+                                      Text(
+                                          "${widget.exercise.progression![index].$4} max reps")
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
             ),
-            SizedBox(height: 100,)
+            SizedBox(
+              height: 100,
+            )
           ]))),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -219,7 +231,7 @@ class ProgressionTextField extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: IntrinsicWidth(
         child: TextField(
-          textAlign: TextAlign.center, 
+          textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
