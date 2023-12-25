@@ -81,66 +81,82 @@ class _ExercisePageState extends State<ExercisePage> {
                 child: Text("Personal Progression",
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (widget.exercise.progression.isNotEmpty) {
-                          widget.exercise.progression.removeLast();
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.delete_forever)),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(5, 12, 0, 5),
-                  child: Row(
-                    children: [
-                      ProgressionTextField(
-                        hint: 'lbs',
-                        controller: progressionWeightController,
-                      ),
-                      ProgressionTextField(
-                        hint: 'sets',
-                        controller: progressionSetsController,
-                      ),
-                      ProgressionTextField(
-                        hint: 'reps',
-                        controller: progressionRepsController,
-                      ),
-                    ],
+            FittedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (widget.exercise.progression!.isNotEmpty) {
+                            var removed = widget.exercise.progression!.removeLast();
+                            var snackBar = SnackBar(
+                              content: Text(
+                                  'Deleted Last Progression : ${removed.$1}'),
+                              action: SnackBarAction(
+                                label: 'Undo',
+                                onPressed: () {
+                                  setState(() {
+                                     widget.exercise.progression!.add(removed);
+                                     widget.exercise.progression!.sort((a,b) => a.$1.compareTo(b.$1));
+                                  });
+                                },
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.delete_forever)),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(5, 12, 0, 5),
+                    child: Row(
+                      children: [
+                        ProgressionTextField(
+                          hint: 'lbs',
+                          controller: progressionWeightController,
+                        ),
+                        ProgressionTextField(
+                          hint: 'sets',
+                          controller: progressionSetsController,
+                        ),
+                        ProgressionTextField(
+                          hint: 'reps',
+                          controller: progressionRepsController,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (progressionWeightController.text.isNotEmpty &&
-                            progressionSetsController.text.isNotEmpty &&
-                            progressionRepsController.text.isNotEmpty) {
-                          final date = DateTime.now();
-                          String formattedDate =
-                              date.toIso8601String().split('T').first;
-                          int weight =
-                              int.parse(progressionWeightController.text);
-                          int sets = int.parse(progressionSetsController.text);
-                          int reps = int.parse(progressionRepsController.text);
-                          widget.exercise.progression
-                              .add((formattedDate, weight, sets, reps));
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.add))
-              ],
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (progressionWeightController.text.isNotEmpty &&
+                              progressionSetsController.text.isNotEmpty &&
+                              progressionRepsController.text.isNotEmpty) {
+                            final date = DateTime.now();
+                            String formattedDate =
+                                date.toIso8601String().split('T').first;
+                            int weight =
+                                int.parse(progressionWeightController.text);
+                            int sets = int.parse(progressionSetsController.text);
+                            int reps = int.parse(progressionRepsController.text);
+                            widget.exercise.progression!
+                                .add((formattedDate, weight, sets, reps));
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.add))
+                ],
+              ),
             ),
             Card(
               margin: const EdgeInsets.all(10),
-              child: widget.exercise.progression.isEmpty ? SizedBox(): Padding(
+              child: widget.exercise.progression!.isEmpty ? SizedBox(): Padding(
                 padding: const EdgeInsets.all(5),
                 child: ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.exercise.progression.length,
+                  itemCount: widget.exercise.progression!.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(5.0),
@@ -150,16 +166,16 @@ class _ExercisePageState extends State<ExercisePage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(widget.exercise.progression[index].$1),
+                                Text(widget.exercise.progression![index].$1),
                                 const Icon(Icons.arrow_right),
                                 Text(
-                                    "${widget.exercise.progression[index].$2} max lbs"),
+                                    "${widget.exercise.progression![index].$2} max lbs"),
                                 const Icon(Icons.arrow_right),
                                 Text(
-                                    "${widget.exercise.progression[index].$3} max sets"),
+                                    "${widget.exercise.progression![index].$3} max sets"),
                                 const Icon(Icons.arrow_right),
                                 Text(
-                                    "${widget.exercise.progression[index].$4} max reps")
+                                    "${widget.exercise.progression![index].$4} max reps")
                               ],
                             ),
                           ),
@@ -201,10 +217,9 @@ class ProgressionTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height / 20,
-        width: MediaQuery.of(context).size.width / 6,
+      child: IntrinsicWidth(
         child: TextField(
+          textAlign: TextAlign.center, 
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),

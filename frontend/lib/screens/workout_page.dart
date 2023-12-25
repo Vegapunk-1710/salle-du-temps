@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
+import 'package:frontend/screens/exercise/create_exercise_page.dart';
 import 'package:frontend/widgets/exercise_card.dart';
 
 class WorkoutPage extends StatefulWidget {
@@ -48,22 +49,62 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
             SizedBox(
-              height: MediaQuery.of(context).size.height / 3.2,
+              height: 280,
               child: PageView.builder(
                 itemCount: exercises.length,
-                controller: PageController(viewportFraction: 0.8),
+                controller:
+                    PageController(viewportFraction: 0.9, keepPage: false),
                 onPageChanged: (index) => setState(() => exer_index = index),
                 itemBuilder: (context, index) {
                   return AnimatedPadding(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.fastOutSlowIn,
-                    padding: EdgeInsets.all(exer_index == index ? 0.0 : 8.0),
-                    child: ExerciseCard(exercise: exercises[exer_index])
-                  );
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.fastOutSlowIn,
+                      padding: EdgeInsets.all(exer_index == index ? 0.0 : 8.0),
+                      child: ExerciseCard(exercise: exercises[exer_index]));
                 },
               ),
             ),
-          ]))),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        if (exercises.isNotEmpty) {
+                          if (exer_index == exercises.length - 1 &&
+                              exer_index > 0) {
+                            exer_index -= 1;
+                          }
+                          Exercise removed = exercises.removeLast();
+                          var snackBar = SnackBar(
+                            content: Text(
+                                'Deleted Last Exercise : ${removed.title}'),
+                            action: SnackBarAction(
+                              label: 'Undo',
+                              onPressed: () {
+                                setState(() {
+                                    exercises.add(removed);
+                                });
+                              },
+                            ),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        }
+                      });
+                    },
+                    icon: const Icon(Icons.delete_forever)),
+                IconButton(onPressed: () {
+                  Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateExercise()));
+                }, icon: const Icon(Icons.create)),
+                IconButton(onPressed: () {}, icon: const Icon(Icons.add))
+              ],
+            ),
+            const SizedBox(height: 100,)
+          ]))
+          ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

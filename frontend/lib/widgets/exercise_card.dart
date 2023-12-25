@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
 
-import '../screens/exercise_page.dart';
+import '../screens/exercise/exercise_page.dart';
 
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;

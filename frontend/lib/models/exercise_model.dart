@@ -7,7 +7,7 @@ class Exercise {
   String type;
   String tutorial;
   String setsreps;
-  List<(String date, num weight, num maxSets, num maxReps)> progression;
+  List<(String date, num weight, num maxSets, num maxReps)>? progression;
 
   Exercise(
       {required this.id,
@@ -17,7 +17,7 @@ class Exercise {
       required this.type,
       required this.tutorial,
       required this.setsreps,
-      required this.progression});
+      this.progression});
 
   static List<Exercise> examples() {
     return [
