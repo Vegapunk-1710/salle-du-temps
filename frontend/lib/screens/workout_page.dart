@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
+import 'package:frontend/screens/exercise/add_exercise_page.dart';
 import 'package:frontend/screens/exercise/create_exercise_page.dart';
 import 'package:frontend/widgets/exercise_card.dart';
 
@@ -12,7 +13,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
-  List<Exercise> exercises = Exercise.examples();
+  List<Exercise> exercises = Exercise.examples().sublist(0,5);
 
   callback(Exercise newExercise) {
     setState(() {
@@ -59,7 +60,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
                     Row(
                       children: [
-                        IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+                        IconButton(onPressed: () {
+                          Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AddExercise(callback)));
+                        }, icon: const Icon(Icons.add)),
                         IconButton(onPressed: () {
                           Navigator.push(
                                     context,

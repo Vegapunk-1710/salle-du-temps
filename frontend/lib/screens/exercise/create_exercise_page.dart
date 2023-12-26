@@ -196,7 +196,6 @@ class _CreateExerciseState extends State<CreateExercise> {
           type: type,
           tutorial: tutorial,
           setsreps: setsreps);
-      print(newExercise);
       widget.callback(newExercise);
       Navigator.of(context).pop();
     }
