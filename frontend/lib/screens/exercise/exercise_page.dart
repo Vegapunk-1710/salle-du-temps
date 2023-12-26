@@ -82,77 +82,80 @@ class _ExercisePageState extends State<ExercisePage> {
                 child: Text("Personal Progression",
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
-            FittedBox(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (widget.exercise.progression!.isNotEmpty) {
-                            var removed =
-                                widget.exercise.progression!.removeLast();
-                            var snackBar = SnackBar(
-                              content: Text(
-                                  'Deleted Last Progression : ${removed.$1}'),
-                              action: SnackBarAction(
-                                label: 'Undo',
-                                onPressed: () {
-                                  setState(() {
-                                    widget.exercise.progression!.add(removed);
-                                    widget.exercise.progression!
-                                        .sort((a, b) => a.$1.compareTo(b.$1));
-                                  });
-                                },
-                              ),
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar);
-                          }
-                        });
-                      },
-                      icon: const Icon(Icons.delete_forever)),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 12, 0, 5),
-                    child: Row(
-                      children: [
-                        ProgressionTextField(
-                          hint: 'lbs',
-                          controller: progressionWeightController,
-                        ),
-                        ProgressionTextField(
-                          hint: 'sets',
-                          controller: progressionSetsController,
-                        ),
-                        ProgressionTextField(
-                          hint: 'reps',
-                          controller: progressionRepsController,
-                        ),
-                      ],
+            Center(
+              child: FittedBox(
+                child: Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            widget.exercise.progression ??= <(String date, num weight, num maxSets, num maxReps)>[];
+                            if (widget.exercise.progression!.isNotEmpty) {
+                              var removed =
+                                  widget.exercise.progression!.removeLast();
+                              var snackBar = SnackBar(
+                                content: Text(
+                                    'Deleted Last Progression : ${removed.$1}'),
+                                action: SnackBarAction(
+                                  label: 'Undo',
+                                  onPressed: () {
+                                    setState(() {
+                                      widget.exercise.progression!.add(removed);
+                                      widget.exercise.progression!
+                                          .sort((a, b) => a.$1.compareTo(b.$1));
+                                    });
+                                  },
+                                ),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.delete_forever)),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(5, 12, 0, 5),
+                      child: Row(
+                        children: [
+                          ProgressionTextField(
+                            hint: 'lbs',
+                            controller: progressionWeightController,
+                          ),
+                          ProgressionTextField(
+                            hint: 'sets',
+                            controller: progressionSetsController,
+                          ),
+                          ProgressionTextField(
+                            hint: 'reps',
+                            controller: progressionRepsController,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          if (progressionWeightController.text.isNotEmpty &&
-                              progressionSetsController.text.isNotEmpty &&
-                              progressionRepsController.text.isNotEmpty) {
-                            final date = DateTime.now();
-                            String formattedDate =
-                                date.toIso8601String().split('T').first;
-                            int weight =
-                                int.parse(progressionWeightController.text);
-                            int sets =
-                                int.parse(progressionSetsController.text);
-                            int reps =
-                                int.parse(progressionRepsController.text);
-                            widget.exercise.progression!
-                                .add((formattedDate, weight, sets, reps));
-                          }
-                        });
-                      },
-                      icon: const Icon(Icons.add))
-                ],
+                    IconButton(
+                        onPressed: () {
+                          setState(() {
+                            widget.exercise.progression ??= <(String date, num weight, num maxSets, num maxReps)>[];
+                            if (progressionWeightController.text.isNotEmpty &&
+                                progressionSetsController.text.isNotEmpty &&
+                                progressionRepsController.text.isNotEmpty) {
+                              final date = DateTime.now();
+                              String formattedDate =
+                                  date.toIso8601String().split('T').first;
+                              int weight =
+                                  int.parse(progressionWeightController.text);
+                              int sets =
+                                  int.parse(progressionSetsController.text);
+                              int reps =
+                                  int.parse(progressionRepsController.text);
+                              widget.exercise.progression!
+                                  .add((formattedDate, weight, sets, reps));
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.add))
+                  ],
+                ),
               ),
             ),
             widget.exercise.progression.toString() == "null" ? Container() : Card(

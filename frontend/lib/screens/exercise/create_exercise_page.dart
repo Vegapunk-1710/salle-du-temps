@@ -97,7 +97,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                             controller: titleController,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9a-zA-Z]")),
+                                  RegExp("[0-9a-zA-Z ]")),
                             ],
                           )),
                       Step(
@@ -198,6 +198,7 @@ class _CreateExerciseState extends State<CreateExercise> {
           setsreps: setsreps);
       print(newExercise);
       widget.callback(newExercise);
+      Navigator.of(context).pop();
     }
   }
 }
