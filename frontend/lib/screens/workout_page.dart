@@ -63,6 +63,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       children: [
                         IconButton(
                             onPressed: () {
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -72,6 +73,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             icon: const Icon(Icons.add)),
                         IconButton(
                             onPressed: () {
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -81,6 +83,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             icon: const Icon(Icons.create)),
                         IconButton(
                             onPressed: () {
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
                               List<Exercise> unordered = List.from(exercises);
                               Navigator.push(
                                   context,

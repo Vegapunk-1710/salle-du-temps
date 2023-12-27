@@ -19,100 +19,102 @@ class _AddExerciseState extends State<AddExercise> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text("Add An Exercise To Your Workout",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SearchAnchor(
-                builder: (BuildContext context, SearchController controller) {
-              return SearchBar(
-                controller: controller,
-                padding: const MaterialStatePropertyAll<EdgeInsets>(
-                    EdgeInsets.symmetric(horizontal: 16.0)),
-                onChanged: (query) {
-                  setState(() {
-                    if (query.isEmpty) {
-                      queriedExercises = newExercises;
-                    } else {
-                      queriedExercises = newExercises
-                          .where((i) =>
-                              i.title
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase()) ||
-                              i.type
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase()) ||
-                              i.difficulty
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase()) ||
-                              i.time.toString().contains(query))
-                          .toList();
-                    }
-                  });
-                },
-                leading: const Icon(Icons.search),
-                trailing: const <Widget>[],
-              );
-            }, suggestionsBuilder:
-                    (BuildContext context, SearchController controller) {
-              return List<ListTile>.generate(5, (int index) {
-                final String item = 'item $index';
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
+          child: SingleChildScrollView(
+            child: Column(
+                    children: [
+            const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text("Add An Exercise To Your Workout",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SearchAnchor(
+                  builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  padding: const MaterialStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 16.0)),
+                  onChanged: (query) {
                     setState(() {
-                      controller.closeView(item);
+                      if (query.isEmpty) {
+                        queriedExercises = newExercises;
+                      } else {
+                        queriedExercises = newExercises
+                            .where((i) =>
+                                i.title
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase()) ||
+                                i.type
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase()) ||
+                                i.difficulty
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase()) ||
+                                i.time.toString().contains(query))
+                            .toList();
+                      }
                     });
                   },
+                  leading: const Icon(Icons.search),
+                  trailing: const <Widget>[],
                 );
-              });
-            }),
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              itemCount: queriedExercises.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 2,
-                  child: ListTile(
-                    title: Text(queriedExercises[index].title),
-                    subtitle: FittedBox(
-                      child: Row(
-                        children: [
-                          Text("Type : ${queriedExercises[index].type}, "),
-                          Text(
-                              "Difficulty : ${queriedExercises[index].difficulty}, "),
-                          Text("Time : ~${queriedExercises[index].time} mins"),
-                        ],
-                      ),
-                    ),
-                    trailing: selected.contains(queriedExercises[index].title)
-                        ? const Icon(Icons.check)
-                        : const Icon(Icons.circle_outlined),
-                    selected: selected.contains(queriedExercises[index].title),
-                    enableFeedback: true,
+              }, suggestionsBuilder:
+                      (BuildContext context, SearchController controller) {
+                return List<ListTile>.generate(5, (int index) {
+                  final String item = 'item $index';
+                  return ListTile(
+                    title: Text(item),
                     onTap: () {
                       setState(() {
-                        if (selected.contains(queriedExercises[index].title)) {
-                          selected.remove(queriedExercises[index].title);
-                        } else {
-                          selected.add(queriedExercises[index].title);
-                        }
+                        controller.closeView(item);
                       });
                     },
-                  ),
-                );
+                  );
+                });
               }),
-          const SizedBox(
-            height: 100,
-          )
-        ],
-      )),
+            ),
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: queriedExercises.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 2,
+                    child: ListTile(
+                      title: Text(queriedExercises[index].title),
+                      subtitle: FittedBox(
+                        child: Row(
+                          children: [
+                            Text("Type : ${queriedExercises[index].type}, "),
+                            Text(
+                                "Difficulty : ${queriedExercises[index].difficulty}, "),
+                            Text("Time : ~${queriedExercises[index].time} mins"),
+                          ],
+                        ),
+                      ),
+                      trailing: selected.contains(queriedExercises[index].title)
+                          ? const Icon(Icons.check)
+                          : const Icon(Icons.circle_outlined),
+                      selected: selected.contains(queriedExercises[index].title),
+                      enableFeedback: true,
+                      onTap: () {
+                        setState(() {
+                          if (selected.contains(queriedExercises[index].title)) {
+                            selected.remove(queriedExercises[index].title);
+                          } else {
+                            selected.add(queriedExercises[index].title);
+                          }
+                        });
+                      },
+                    ),
+                  );
+                }),
+            const SizedBox(
+              height: 100,
+            )
+                    ],
+                  ),
+          )),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

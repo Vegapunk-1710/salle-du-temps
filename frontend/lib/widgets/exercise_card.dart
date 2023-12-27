@@ -23,7 +23,7 @@ class ExerciseCard extends StatelessWidget {
                 ? "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png"
                 : exercise.imageURL.toString(),
             height: MediaQuery.of(context).size.height / 7,
-            width: double.infinity,
+            width:  double.infinity ,
             fit: BoxFit.cover,
           ),
           Container(

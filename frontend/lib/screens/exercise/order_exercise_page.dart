@@ -22,48 +22,50 @@ class _OrderExerciseState extends State<OrderExercise> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-          child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text("Re-Order The Exercises In Your Workout",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-          ),
-          ReorderableListView.builder(
-              shrinkWrap: true,
-              itemCount: widget.exercises.length,
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  _reorderExercises(oldIndex, newIndex);
-                });
-              },
-              itemBuilder: (context, index) {
-                return Card(
-                  key: ValueKey(widget.exercises[index]),
-                  elevation: 2,
-                  child: ListTile(
-                    title: Text(widget.exercises[index].title),
-                    subtitle: FittedBox(
-                      child: Row(
-                        children: [
-                          Text("Type : ${widget.exercises[index].type}, "),
-                          Text(
-                              "Difficulty : ${widget.exercises[index].difficulty}, "),
-                          Text("Time : ~${widget.exercises[index].time} mins"),
-                        ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+            child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Text("Re-Order The Exercises In Your Workout",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+            ),
+            ReorderableListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.exercises.length,
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    _reorderExercises(oldIndex, newIndex);
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return Card(
+                    key: ValueKey(widget.exercises[index]),
+                    elevation: 2,
+                    child: ListTile(
+                      title: Text(widget.exercises[index].title),
+                      subtitle: FittedBox(
+                        child: Row(
+                          children: [
+                            Text("Type : ${widget.exercises[index].type}, "),
+                            Text(
+                                "Difficulty : ${widget.exercises[index].difficulty}, "),
+                            Text("Time : ~${widget.exercises[index].time} mins"),
+                          ],
+                        ),
                       ),
+                      trailing: Text((index + 1).toString()),
+                      enableFeedback: true,
                     ),
-                    trailing: Text((index + 1).toString()),
-                    enableFeedback: true,
-                  ),
-                );
-              }),
-          const SizedBox(
-            height: 100,
-          )
-        ],
-      )),
+                  );
+                }),
+            const SizedBox(
+              height: 100,
+            )
+          ],
+        )),
+      ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
