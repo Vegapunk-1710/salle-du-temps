@@ -188,9 +188,12 @@ class _CreateExerciseState extends State<CreateExercise> {
       String setsreps = setsrepsController.text;
       String difficulty = selectedDifficulty;
       String type = selectedType;
+      String? imageURL =
+          imageURLController.text.isEmpty ? null : imageURLController.text;
       Exercise newExercise = Exercise(
-          id: "",
+          id: UniqueKey().toString(),
           title: title,
+          imageURL: imageURL,
           difficulty: difficulty,
           time: time,
           type: type,

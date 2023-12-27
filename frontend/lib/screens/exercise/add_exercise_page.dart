@@ -61,17 +61,7 @@ class _AddExerciseState extends State<AddExercise> {
                 );
               }, suggestionsBuilder:
                       (BuildContext context, SearchController controller) {
-                return List<ListTile>.generate(5, (int index) {
-                  final String item = 'item $index';
-                  return ListTile(
-                    title: Text(item),
-                    onTap: () {
-                      setState(() {
-                        controller.closeView(item);
-                      });
-                    },
-                  );
-                });
+                return <ListTile>[];
               }),
             ),
             ListView.builder(
@@ -92,17 +82,17 @@ class _AddExerciseState extends State<AddExercise> {
                           ],
                         ),
                       ),
-                      trailing: selected.contains(queriedExercises[index].title)
+                      trailing: selected.contains(queriedExercises[index].id)
                           ? const Icon(Icons.check)
                           : const Icon(Icons.circle_outlined),
-                      selected: selected.contains(queriedExercises[index].title),
+                      selected: selected.contains(queriedExercises[index].id),
                       enableFeedback: true,
                       onTap: () {
                         setState(() {
-                          if (selected.contains(queriedExercises[index].title)) {
-                            selected.remove(queriedExercises[index].title);
+                          if (selected.contains(queriedExercises[index].id)) {
+                            selected.remove(queriedExercises[index].id);
                           } else {
-                            selected.add(queriedExercises[index].title);
+                            selected.add(queriedExercises[index].id);
                           }
                         });
                       },
@@ -133,7 +123,7 @@ class _AddExerciseState extends State<AddExercise> {
             child: FloatingActionButton(
               onPressed: () {
                 List<Exercise> selectedExercises = newExercises
-                    .where((exercise) => selected.contains(exercise.title))
+                    .where((exercise) => selected.contains(exercise.id))
                     .toList();
                 for (Exercise s in selectedExercises) {
                   widget.callback(s);
@@ -147,9 +137,5 @@ class _AddExerciseState extends State<AddExercise> {
         ],
       ),
     );
-  }
-
-  void submitExercise() {
-    Navigator.of(context).pop();
   }
 }
