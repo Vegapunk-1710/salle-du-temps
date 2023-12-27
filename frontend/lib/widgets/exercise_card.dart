@@ -4,8 +4,9 @@ import 'package:frontend/screens/exercise/exercise_page.dart';
 
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
-
-  const ExerciseCard({Key? key, required this.exercise}) : super(key: key);
+  final String? position;
+  const ExerciseCard({Key? key, this.position, required this.exercise})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,59 +30,25 @@ class ExerciseCard extends StatelessWidget {
                       width: double.infinity,
                       fit: BoxFit.cover)),
               Expanded(
-                flex: 1,
-                child:ListTile(
-                  title: Text(exercise.title),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Type : ${exercise.type}",
-                      ),
-                      Text(
-                        "Difficulty : ${exercise.difficulty}",
-                      ),
-                      Text(
-                        "Time : ~${exercise.time} mins",
-                      ),
-                    ],
-                  ),
-                  trailing: Text("1"),
-                )
-                // child: FittedBox(
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: Row(
-                //       children: [
-                //         Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             Text(
-                //               exercise.title,
-                //               style: const TextStyle(
-                //                   fontWeight: FontWeight.bold, fontSize: 20),
-                //             ),
-                //             Divider(),
-                //             Text(
-                //               "Type : ${exercise.type}",
-                //               style: const TextStyle(fontWeight: FontWeight.normal),
-                //             ),
-                //             Text(
-                //               "Difficulty : ${exercise.difficulty}",
-                //               style: const TextStyle(fontWeight: FontWeight.normal),
-                //             ),
-                //             Text(
-                //               "Time : ~${exercise.time} mins",
-                //               style: const TextStyle(fontWeight: FontWeight.normal),
-                //             ),
-                //           ],
-                //         ),
-                //         const Text("1"),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-              )
+                  flex: 1,
+                  child: ListTile(
+                    title: Text(exercise.title),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Type : ${exercise.type}",
+                        ),
+                        Text(
+                          "Difficulty : ${exercise.difficulty}",
+                        ),
+                        Text(
+                          "Time : ~${exercise.time} mins",
+                        ),
+                      ],
+                    ),
+                    trailing: position == null ? Text("") : Text(position!),
+                  ))
             ],
           )),
     );

@@ -151,6 +151,7 @@ class _ExercisePageState extends State<ExercisePage> {
           ),
         ),
         widget.exercise.progression.toString() == "null" ? Container() : Card(
+          elevation: 10,
           margin: const EdgeInsets.all(10),
           child: widget.exercise.progression!.isEmpty
               ? SizedBox()
