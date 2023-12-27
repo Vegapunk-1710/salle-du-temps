@@ -24,7 +24,7 @@ class _AddExerciseState extends State<AddExercise> {
                     children: [
             const Padding(
               padding: EdgeInsets.all(10.0),
-              child: Text("Add An Exercise To Your Workout",
+              child: Text("Add An Exercise",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             ),
             Padding(

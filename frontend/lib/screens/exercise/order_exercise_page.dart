@@ -28,7 +28,7 @@ class _OrderExerciseState extends State<OrderExercise> {
           children: [
             const Padding(
               padding: EdgeInsets.all(10.0),
-              child: Text("Re-Order The Exercises In Your Workout",
+              child: Text("Reorder Your Exercises",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             ),
             ReorderableListView.builder(

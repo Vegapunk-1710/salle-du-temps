@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
 
-import '../screens/exercise/exercise_page.dart';
-
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
 
@@ -11,77 +9,47 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            exercise.imageURL.toString() == "null"
-                ? "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png"
-                : exercise.imageURL.toString(),
-            height: MediaQuery.of(context).size.height / 7,
-            width:  double.infinity ,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  exercise.title,
-                  style: const TextStyle(
-                    fontSize: 18,
+        elevation: 10,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+                flex: 1,
+                child: Image.network(
+                    "https://t4.ftcdn.net/jpg/03/17/72/47/360_F_317724775_qHtWjnT8YbRdFNIuq5PWsSYypRhOmalS.jpg",
+                    width: double.infinity,
+                    fit: BoxFit.cover)),
+            Expanded(
+              flex: 1,
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        exercise.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      Text(
+                        "Difficulty : ${exercise.difficulty}",
+                        style: const TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        "Type : ${exercise.type}",
+                        style: const TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        "Time : ~${exercise.time} mins",
+                        style: const TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ],
                   ),
                 ),
-                Container(height: 6),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "DIFFCULTY : ${exercise.difficulty}",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    Text(
-                      "TYPE : ${exercise.type}",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "TIME : ~${exercise.time} mins",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ExercisePage(exercise: exercise)));
-                      },
-                      icon: const Icon(Icons.arrow_outward),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Container(height: 5),
-        ],
-      ),
-    );
+              ),
+            )
+          ],
+        ));
   }
 }
