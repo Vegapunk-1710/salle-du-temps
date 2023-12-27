@@ -20,6 +20,9 @@ class MainApp extends StatelessWidget {
       title: 'Salle Du Temps',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        //black bg
+        //red buttons
+        //white text
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,

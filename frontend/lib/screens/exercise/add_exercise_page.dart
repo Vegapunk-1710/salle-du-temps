@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/exercise_model.dart';
-import 'package:frontend/widgets/exercise_card.dart';
 
 class AddExercise extends StatefulWidget {
   final Function(Exercise newExercise) callback;
@@ -14,7 +13,7 @@ class AddExercise extends StatefulWidget {
 class _AddExerciseState extends State<AddExercise> {
   List<Exercise> newExercises = Exercise.examples().sublist(5);
   List<Exercise> queriedExercises = Exercise.examples().sublist(5);
-  List<int> indices = <int>[];
+  List<String> selected = <String>[];
 
   @override
   Widget build(BuildContext context) {
@@ -35,27 +34,29 @@ class _AddExerciseState extends State<AddExercise> {
                 controller: controller,
                 padding: const MaterialStatePropertyAll<EdgeInsets>(
                     EdgeInsets.symmetric(horizontal: 16.0)),
-                onTap: () {
-                  // controller.openView();
-                },
                 onChanged: (query) {
                   setState(() {
                     if (query.isEmpty) {
                       queriedExercises = newExercises;
-                    }
-                    else{
+                    } else {
                       queriedExercises = newExercises
-                      .where((i) =>
-                          i.title.toLowerCase().contains(query.toLowerCase()) ||
-                          i.type.toLowerCase().contains(query.toLowerCase()) ||
-                          i.difficulty.toLowerCase().contains(query.toLowerCase()) ||
-                          i.time.toString().contains(query))
-                      .toList();
+                          .where((i) =>
+                              i.title
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase()) ||
+                              i.type
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase()) ||
+                              i.difficulty
+                                  .toLowerCase()
+                                  .contains(query.toLowerCase()) ||
+                              i.time.toString().contains(query))
+                          .toList();
                     }
                   });
                 },
                 leading: const Icon(Icons.search),
-                trailing: <Widget>[],
+                trailing: const <Widget>[],
               );
             }, suggestionsBuilder:
                     (BuildContext context, SearchController controller) {
@@ -78,7 +79,6 @@ class _AddExerciseState extends State<AddExercise> {
               itemBuilder: (context, index) {
                 return Card(
                   elevation: 2,
-                  // color: indices.contains(index) ? Theme.of(context).hoverColor : Theme.of(context).cardColor,
                   child: ListTile(
                     title: Text(queriedExercises[index].title),
                     subtitle: FittedBox(
@@ -91,18 +91,17 @@ class _AddExerciseState extends State<AddExercise> {
                         ],
                       ),
                     ),
-                    trailing: indices.contains(index)
+                    trailing: selected.contains(queriedExercises[index].title)
                         ? const Icon(Icons.check)
                         : const Icon(Icons.circle_outlined),
-                    selected: indices.contains(index),
+                    selected: selected.contains(queriedExercises[index].title),
                     enableFeedback: true,
-                    // tileColor: Colors.red,
                     onTap: () {
                       setState(() {
-                        if (indices.contains(index)) {
-                          indices.remove(index);
+                        if (selected.contains(queriedExercises[index].title)) {
+                          selected.remove(queriedExercises[index].title);
                         } else {
-                          indices.add(index);
+                          selected.add(queriedExercises[index].title);
                         }
                       });
                     },
@@ -115,7 +114,7 @@ class _AddExerciseState extends State<AddExercise> {
         ],
       )),
       floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -125,6 +124,22 @@ class _AddExerciseState extends State<AddExercise> {
               },
               heroTag: "addexerciseexitbtn",
               child: const Icon(Icons.exit_to_app),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+            child: FloatingActionButton(
+              onPressed: () {
+                List<Exercise> selectedExercises = newExercises
+                    .where((exercise) => selected.contains(exercise.title))
+                    .toList();
+                for (Exercise s in selectedExercises) {
+                  widget.callback(s);
+                }
+                Navigator.of(context).pop();
+              },
+              heroTag: "addexercisebtn",
+              child: const Icon(Icons.check),
             ),
           ),
         ],

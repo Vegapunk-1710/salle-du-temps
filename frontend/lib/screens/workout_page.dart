@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
 import 'package:frontend/screens/exercise/add_exercise_page.dart';
 import 'package:frontend/screens/exercise/create_exercise_page.dart';
+import 'package:frontend/screens/exercise/order_exercise_page.dart';
 import 'package:frontend/widgets/exercise_card.dart';
 
 class WorkoutPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
-  List<Exercise> exercises = Exercise.examples().sublist(0,5);
+  List<Exercise> exercises = Exercise.examples().sublist(0, 5);
 
   callback(Exercise newExercise) {
     setState(() {
@@ -50,57 +51,78 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 child: Text("Description",
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
-             Padding(
-                padding: EdgeInsets.all(8.0),
+            Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Exercises",
-                        style:
-                            TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+                    const Text("Exercises",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 22)),
                     Row(
                       children: [
-                        IconButton(onPressed: () {
-                          Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddExercise(callback)));
-                        }, icon: const Icon(Icons.add)),
-                        IconButton(onPressed: () {
-                          Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => CreateExercise(callback)));
-                        }, icon: const Icon(Icons.create)),
                         IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (exercises.isNotEmpty) {
-                              if (exer_index == exercises.length - 1 &&
-                                  exer_index > 0) {
-                                exer_index -= 1;
-                              }
-                              Exercise removed = exercises.removeLast();
-                              var snackBar = SnackBar(
-                                content: Text(
-                                    'Deleted Last Exercise : ${removed.title}'),
-                                action: SnackBarAction(
-                                  label: 'Undo',
-                                  onPressed: () {
-                                    setState(() {
-                                        exercises.add(removed);
-                                    });
-                                  },
-                                ),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                            }
-                          });
-                        },
-                        icon: const Icon(Icons.delete_forever))
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddExercise(callback)));
+                            },
+                            icon: const Icon(Icons.add)),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CreateExercise(callback)));
+                            },
+                            icon: const Icon(Icons.create)),
+                        IconButton(
+                            onPressed: () {
+                              List<Exercise> unordered = List.from(exercises);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => OrderExercise(
+                                            callback,unordered
+                                          )));
+                              exercises.clear();
+                            },
+                            icon: const Icon(Icons.stacked_bar_chart_sharp)),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                int rmv_index = exer_index;
+                                if (exercises.isNotEmpty) {
+                                  if (exer_index == exercises.length - 1 &&
+                                      exer_index > 0) {
+                                    rmv_index = exer_index;
+                                    exer_index -= 1;
+                                  }
+                                  Exercise removed =
+                                      exercises.removeAt(rmv_index);
+                                  var snackBar = SnackBar(
+                                    content: Text(
+                                        'Deleted Last Exercise : ${removed.title}'),
+                                    action: SnackBarAction(
+                                      label: 'Undo',
+                                      onPressed: () {
+                                        setState(() {
+                                          exercises.add(removed);
+                                        });
+                                      },
+                                    ),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                }
+                              });
+                            },
+                            icon: const Icon(Icons.delete_forever))
                       ],
                     ),
-                
                   ],
                 )),
             SizedBox(
@@ -119,9 +141,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 },
               ),
             ),
-            const SizedBox(height: 100,)
-          ]))
-          ),
+            const SizedBox(
+              height: 100,
+            )
+          ]))),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -140,7 +163,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               print("Workout Started !!");
             },
             heroTag: "workoutstartbtn",
-            child: const Text("GO"),
+            child: Text("Go !"),
           )
         ],
       ),
