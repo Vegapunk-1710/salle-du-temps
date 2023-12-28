@@ -25,7 +25,7 @@ class Exercise {
     return "id : $id\nimageURL : $imageURL \ntitle : $title\ndifficulty : $difficulty\ntime : $time\ntype : $type\ntutorial : $tutorial\nsetsreps : $setsreps\nprogression : $progression\n";
   }
 
-  static List<Exercise> examples() {
+  static List<Exercise> db() {
     return [
       Exercise(
           id: 'ex1',

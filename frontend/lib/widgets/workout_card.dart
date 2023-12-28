@@ -1,92 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/workout_model.dart';
+import 'package:frontend/screens/workout_page.dart';
 
 class WorkoutCard extends StatelessWidget {
-  final String imageURL;
-  final String title;
-  final String desc;
-  final String misc;
-  final void Function()? func;
-  const WorkoutCard(
-      {Key? key,
-      required this.imageURL,
-      required this.title,
-      required this.desc,
-      required this.misc,
-      required this.func})
-      : super(key: key);
+  final Workout workout;
+  const WorkoutCard({Key? key, required this.workout}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isDescLengthy = false;
-    int maxDescLength = 128;
-    if (desc.length > maxDescLength) {
-      isDescLengthy = true;
-    }
-
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.network(
-            imageURL,
-            height: MediaQuery.of(context).size.height / 7,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                Container(height: 10),
-                isDescLengthy
-                    ? Text(
-                        desc.substring(0, maxDescLength) + "...",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey[700],
-                        ),
-                      )
-                    : Text(
-                        desc,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      misc,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    TextButton(
-                      onPressed: func,
-                      child: Text(
-                        "ENTER",
-                        style: Theme.of(context).textTheme.bodyMedium,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => WorkoutPage(workout: workout)));
+      },
+      child: Card(
+          elevation: 10,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                  flex: 1,
+                  child: Image.network(
+                      workout.imageURL ??=
+                          "https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2022/05/StrengthLogs-4-Day-Bodybuilding-Split.jpg?fit=1000%2C593&ssl=1",
+                      width: double.infinity,
+                      fit: BoxFit.cover)),
+              Expanded(
+                  flex: 1,
+                  child: ListTile(
+                    title: Text(workout.title),
+                    subtitle: FittedBox(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            workout.description,
+                          ),
+                          SizedBox(height: 10,),
+                          Text(
+                            "Difficulty : ${workout.difficulty}",
+                          ),
+                          Text(
+                            "Time : ~${workout.time} mins",
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Container(height: 5),
-        ],
-      ),
+                    trailing: position == null ? Text("") : Text(position!),
+                  ))
+            ],
+          )),
     );
   }
 }

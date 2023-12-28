@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
+import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/exercise/add_exercise_page.dart';
 import 'package:frontend/screens/exercise/create_exercise_page.dart';
 import 'package:frontend/screens/exercise/order_exercise_page.dart';
 import 'package:frontend/widgets/exercise_card.dart';
 
 class WorkoutPage extends StatefulWidget {
-  WorkoutPage({Key? key}) : super(key: key);
+  final Workout workout;
+  WorkoutPage({Key? key, required this.workout}) : super(key: key);
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -14,7 +16,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
-  List<Exercise> exercises = Exercise.examples().sublist(0, 5);
+  List<Exercise> exercises = Exercise.db().sublist(0, 5);
 
   callback(Exercise newExercise) {
     setState(() {
@@ -31,12 +33,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Image.network(
               'https://prod-ne-cdn-media.puregym.com/media/819394/gym-workout-plan-for-gaining-muscle_header.jpg?quality=80'),
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("WORKOUT TITLE",
+                Text(widget.workout.title,
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
                 Text("WORKOUT DIFF/TIME/MISC",
@@ -133,7 +135,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     padding: EdgeInsets.all(exer_index == index ? 0.0 : 8.0),
                     child: ExerciseCard(
                       exercise: exercises[exer_index],
-                      position: "${exer_index+1}/${exercises.length}",
+                      position: "${exer_index + 1}/${exercises.length}",
                     ));
               },
             ),

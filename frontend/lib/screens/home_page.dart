@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/workout_page.dart';
+import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/widgets/workout_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime now = DateTime.now();
+  final List<Workout> workouts = Workout.db();
 
   @override
   Widget build(BuildContext context) {
@@ -32,95 +33,15 @@ class _HomePageState extends State<HomePage> {
     String day = now.day.toString();
     String month = months[now.month - 1].toUpperCase();
 
-    return SingleChildScrollView(
-      child: SafeArea(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Hello,",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 26)),
-                      Text("Baher",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 26)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(day,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 26)),
-                      Text(month,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w900, fontSize: 26)),
-                    ],
-                  ),
-                ],
-              )),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Today's Workout",
-                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 26)),
-                SizedBox(height: 10,),
-                WorkoutCard(
-                    imageURL:
-                        'https://prod-ne-cdn-media.puregym.com/media/819394/gym-workout-plan-for-gaining-muscle_header.jpg?quality=80',
-                    title: "Workout 1",
-                    desc:
-                        "BlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaowBlingBlaowBlaow",
-                    misc: "Ah waer khalto!?",
-                    func: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => WorkoutPage()),
-                      );
-                    })
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Stats",
-                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 26)),
-                SizedBox(height: 10,),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Week's total workouts : 0",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey[800],
-                          )),
-                      Text("Month's total workouts : 0",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey[800],
-                          )),
-                      Text("Year's total workouts : 0",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.grey[800],
-                          )),
-                    ]),
-              ],
-            ),
+    return SafeArea(
+        child: Center(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height / 2.9,
+            child: WorkoutCard(
+              workout: workouts[0],
+            )
           )
-        ],
-      )),
-    );
+        )
+      );
   }
 }

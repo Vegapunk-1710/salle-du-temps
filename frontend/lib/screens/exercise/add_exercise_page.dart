@@ -11,8 +11,8 @@ class AddExercise extends StatefulWidget {
 }
 
 class _AddExerciseState extends State<AddExercise> {
-  List<Exercise> newExercises = Exercise.examples().sublist(5);
-  List<Exercise> queriedExercises = Exercise.examples().sublist(5);
+  List<Exercise> newExercises = Exercise.db().sublist(5);
+  List<Exercise> queriedExercises = Exercise.db().sublist(5);
   List<String> selected = <String>[];
 
   @override
@@ -20,8 +20,8 @@ class _AddExerciseState extends State<AddExercise> {
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-                    children: [
+        child: Column(
+          children: [
             const Padding(
               padding: EdgeInsets.all(10.0),
               child: Text("Add An Exercise",
@@ -78,7 +78,8 @@ class _AddExerciseState extends State<AddExercise> {
                             Text("Type : ${queriedExercises[index].type}, "),
                             Text(
                                 "Difficulty : ${queriedExercises[index].difficulty}, "),
-                            Text("Time : ~${queriedExercises[index].time} mins"),
+                            Text(
+                                "Time : ~${queriedExercises[index].time} mins"),
                           ],
                         ),
                       ),
@@ -102,9 +103,9 @@ class _AddExerciseState extends State<AddExercise> {
             const SizedBox(
               height: 100,
             )
-                    ],
-                  ),
-          )),
+          ],
+        ),
+      )),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
