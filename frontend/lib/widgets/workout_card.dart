@@ -48,7 +48,7 @@ class WorkoutCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    trailing: position == null ? Text("") : Text(position!),
+                    // trailing: position == null ? Text("") : Text(position!),
                   ))
             ],
           )),
