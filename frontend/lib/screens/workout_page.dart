@@ -16,7 +16,16 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
-  List<Exercise> exercises = Exercise.db().sublist(0, 5);
+  late List<Exercise> exercises;
+
+  @override
+  void initState() {
+    super.initState();
+    exercises = Exercise.db()
+        .where((i) => widget.workout.exercises
+            .any((j) => i.id == j))
+        .toList();
+  }
 
   callback(Exercise newExercise) {
     setState(() {

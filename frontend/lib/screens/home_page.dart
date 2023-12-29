@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
           child: SizedBox(
             height: MediaQuery.of(context).size.height / 2.9,
             child: WorkoutCard(
-              workout: workouts[0],
+              workout: workouts[1],
             )
           )
         )
