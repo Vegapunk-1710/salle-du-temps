@@ -45,10 +45,10 @@ class _AddExerciseState extends State<AddExercise> {
                                 i.title
                                     .toLowerCase()
                                     .contains(query.toLowerCase()) ||
-                                i.type
+                                i.type.name
                                     .toLowerCase()
                                     .contains(query.toLowerCase()) ||
-                                i.difficulty
+                                i.difficulty.name
                                     .toLowerCase()
                                     .contains(query.toLowerCase()) ||
                                 i.time.toString().contains(query))
@@ -75,9 +75,9 @@ class _AddExerciseState extends State<AddExercise> {
                       subtitle: FittedBox(
                         child: Row(
                           children: [
-                            Text("Type : ${queriedExercises[index].type}, "),
+                            Text("Type : ${queriedExercises[index].type.name}, "),
                             Text(
-                                "Difficulty : ${queriedExercises[index].difficulty}, "),
+                                "Difficulty : ${queriedExercises[index].difficulty.name}, "),
                             Text(
                                 "Time : ~${queriedExercises[index].time} mins"),
                           ],

@@ -34,7 +34,7 @@ class _ExercisePageState extends State<ExercisePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("DIFFICULTY : ${widget.exercise.difficulty}",
+                  Text("DIFFICULTY : ${widget.exercise.difficulty.name}",
                       style: const TextStyle(
                           fontWeight: FontWeight.w300, fontSize: 14)),
                   Text("TIME : ~${widget.exercise.time} mins",
@@ -42,7 +42,7 @@ class _ExercisePageState extends State<ExercisePage> {
                           fontWeight: FontWeight.w300, fontSize: 14)),
                 ],
               ),
-              Text("TYPE : ${widget.exercise.type}",
+              Text("TYPE : ${widget.exercise.type.name}",
                   style: const TextStyle(
                       fontWeight: FontWeight.w300, fontSize: 14)),
             ],
@@ -81,7 +81,7 @@ class _ExercisePageState extends State<ExercisePage> {
                 IconButton(
                     onPressed: () {
                       setState(() {
-                        widget.exercise.progression ??= <(String date, num weight, num maxSets, num maxReps)>[];
+                        widget.exercise.progression ??= <(String date, int weight, int maxSets, int maxReps)>[];
                         if (widget.exercise.progression!.isNotEmpty) {
                           var removed =
                               widget.exercise.progression!.removeLast();
@@ -127,7 +127,7 @@ class _ExercisePageState extends State<ExercisePage> {
                 IconButton(
                     onPressed: () {
                       setState(() {
-                        widget.exercise.progression ??= <(String date, num weight, num maxSets, num maxReps)>[];
+                        widget.exercise.progression ??= <(String date, int weight, int maxSets, int maxReps)>[];
                         if (progressionWeightController.text.isNotEmpty &&
                             progressionSetsController.text.isNotEmpty &&
                             progressionRepsController.text.isNotEmpty) {

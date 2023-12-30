@@ -37,10 +37,10 @@ class ExerciseCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Type : ${exercise.type}",
+                          "Type : ${exercise.type.name}",
                         ),
                         Text(
-                          "Difficulty : ${exercise.difficulty}",
+                          "Difficulty : ${exercise.difficulty.name}",
                         ),
                         Text(
                           "Time : ~${exercise.time} mins",

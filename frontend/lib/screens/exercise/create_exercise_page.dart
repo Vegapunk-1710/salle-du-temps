@@ -19,16 +19,18 @@ class _CreateExerciseState extends State<CreateExercise> {
   TextEditingController setsrepsController = TextEditingController();
   String selectedDifficulty = "Beginner";
   List<DropdownMenuItem<String>> difficulties = [
-    const DropdownMenuItem(child: Text("Beginner"), value: "Beginner"),
-    const DropdownMenuItem(child: Text("Intermediate"), value: "Intermediate"),
-    const DropdownMenuItem(child: Text("Advanced"), value: "Advanced"),
+    DropdownMenuItem(value: Difficulty.Beginner.name, child: const Text("Beginner")),
+    DropdownMenuItem(
+        value: Difficulty.Intermediate.name,
+        child: const Text("Intermediate")),
+    DropdownMenuItem(value: Difficulty.Advanced.name, child: const Text("Advanced")),
   ];
   String selectedType = "Aerobic";
   List<DropdownMenuItem<String>> types = [
-    const DropdownMenuItem(child: Text("Aerobic"), value: "Aerobic"),
-    const DropdownMenuItem(child: Text("Strength"), value: "Strength"),
-    const DropdownMenuItem(child: Text("Stretching"), value: "Stretching"),
-    const DropdownMenuItem(child: Text("Balance"), value: "Balance"),
+    DropdownMenuItem(value: Type.Aerobic.name, child: const Text("Aerobic")),
+    DropdownMenuItem(value: Type.Strength.name, child: const Text("Strength")),
+    DropdownMenuItem(value: Type.Stretching.name, child: const Text("Stretching")),
+    DropdownMenuItem(value: Type.Balance.name, child: const Text("Balance")),
   ];
 
   @override
@@ -46,7 +48,7 @@ class _CreateExerciseState extends State<CreateExercise> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
-                margin: EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
                 child: Stepper(
                     controlsBuilder:
                         (BuildContext context, ControlsDetails details) {
@@ -92,7 +94,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                     },
                     steps: [
                       Step(
-                          title: Text("Write a title for the exercise :"),
+                          title: const Text("Write a title for the exercise :"),
                           content: TextField(
                             controller: titleController,
                             inputFormatters: <TextInputFormatter>[
@@ -101,7 +103,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                             ],
                           )),
                       Step(
-                          title: Text("Pick a difficulty for the exercise :"),
+                          title: const Text("Pick a difficulty for the exercise :"),
                           content: DropdownButton(
                               value: selectedDifficulty,
                               onChanged: (String? newValue) {
@@ -111,7 +113,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                               },
                               items: difficulties)),
                       Step(
-                          title: Text(
+                          title: const Text(
                               "Enter the average duration in minutes for the exercise :"),
                           content: TextField(
                             controller: timeController,
@@ -121,7 +123,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                             ],
                           )),
                       Step(
-                          title: Text("What does the exercise target ? :"),
+                          title: const Text("What does the exercise target ? :"),
                           content: DropdownButton(
                               value: selectedType,
                               onChanged: (String? newValue) {
@@ -131,20 +133,20 @@ class _CreateExerciseState extends State<CreateExercise> {
                               },
                               items: types)),
                       Step(
-                          title: Text(
+                          title: const Text(
                               "Upload an image that describes the exercise :"),
                           content: TextField(
                             controller: imageURLController,
                           )),
                       Step(
-                          title: Text(
+                          title: const Text(
                               "Write a step-by-step tutorial for the exercise :"),
                           content: TextField(
                             controller: tutotialController,
                             maxLines: null,
                           )),
                       Step(
-                          title: Text(
+                          title: const Text(
                               "Give a suggested number of sets/reps or any helpful tips for the exercise :"),
                           content: TextField(
                             controller: setsrepsController,
@@ -153,7 +155,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                     ]),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 100,
             )
           ],
@@ -186,8 +188,8 @@ class _CreateExerciseState extends State<CreateExercise> {
       int time = int.parse(timeController.text);
       String tutorial = tutotialController.text;
       String setsreps = setsrepsController.text;
-      String difficulty = selectedDifficulty;
-      String type = selectedType;
+      var difficulty = Exercise.translateStringToDifficulty(selectedDifficulty);
+      var type = Exercise.translateStringToType(selectedType);
       String? imageURL =
           imageURLController.text.isEmpty ? null : imageURLController.text;
       Exercise newExercise = Exercise(

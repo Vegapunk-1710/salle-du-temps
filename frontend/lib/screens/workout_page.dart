@@ -17,14 +17,32 @@ class WorkoutPage extends StatefulWidget {
 class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
   late List<Exercise> exercises;
+  final List<String> daysOfWeek = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
+
+  Map<String, bool> selectedDays = {
+    'Monday': false,
+    'Tuesday': false,
+    'Wednesday': false,
+    'Thursday': false,
+    'Friday': false,
+    'Saturday': false,
+    'Sunday': false,
+  };
 
   @override
   void initState() {
-    super.initState();
     exercises = Exercise.db()
-        .where((i) => widget.workout.exercises
-            .any((j) => i.id == j))
+        .where((i) => widget.workout.exercises.any((j) => i.id == j))
         .toList();
+    super.initState();
   }
 
   callback(Exercise newExercise) {
@@ -41,24 +59,47 @@ class _WorkoutPageState extends State<WorkoutPage> {
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Image.network(
-              'https://prod-ne-cdn-media.puregym.com/media/819394/gym-workout-plan-for-gaining-muscle_header.jpg?quality=80'),
+            widget.workout.imageURL ??=
+                "https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2022/05/StrengthLogs-4-Day-Bodybuilding-Split.jpg?fit=1000%2C593&ssl=1",
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(child: Icon(Icons.image));
+            },
+          ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.workout.title,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-                Text("WORKOUT DIFF/TIME/MISC",
-                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18))
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 22)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("DIFFICULTY : ${widget.workout.difficulty.name}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 14)),
+                    Text("TIME : ~${widget.workout.time} mins",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 14)),
+                  ],
+                ),
+                Text("DAYS : ${widget.workout.days.toString()}",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w300, fontSize: 14)),
               ],
             ),
           ),
+          const Divider(),
           const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text("Description",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
+          Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(widget.workout.description,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w400, fontSize: 16))),
           Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -114,13 +155,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   TextButton(
                                       onPressed: () =>
                                           Navigator.pop(context, 'Cancel'),
-                                      child: Text("No")),
+                                      child: const Text("No")),
                                   TextButton(
                                       onPressed: () {
                                         deleteExercise(context);
                                         Navigator.pop(context, 'OK');
                                       },
-                                      child: Text("Yes")),
+                                      child: const Text("Yes")),
                                 ],
                               ),
                             );
@@ -147,6 +188,36 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       position: "${exer_index + 1}/${exercises.length}",
                     ));
               },
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text("Workout Schedule",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FittedBox(
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: daysOfWeek.map((String day) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Checkbox(
+                        value: selectedDays[day],
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            selectedDays[day] = newValue!;
+                          });
+                        },
+                      ),
+                      Text(day),
+                    ],
+                  );
+                }).toList(),
+              ),
             ),
           ),
           const SizedBox(

@@ -47,9 +47,9 @@ class _OrderExerciseState extends State<OrderExercise> {
                       subtitle: FittedBox(
                         child: Row(
                           children: [
-                            Text("Type : ${widget.exercises[index].type}, "),
+                            Text("Type : ${widget.exercises[index].type.name}, "),
                             Text(
-                                "Difficulty : ${widget.exercises[index].difficulty}, "),
+                                "Difficulty : ${widget.exercises[index].difficulty.name}, "),
                             Text("Time : ~${widget.exercises[index].time} mins"),
                           ],
                         ),

@@ -2,12 +2,12 @@ class Exercise {
   String id;
   String? imageURL;
   String title;
-  String difficulty;
-  num time;
-  String type;
+  Difficulty difficulty;
+  int time;
+  Type type;
   String tutorial;
   String setsreps;
-  List<(String date, num weight, num maxSets, num maxReps)>? progression;
+  List<(String date, int weight, int maxSets, int maxReps)>? progression;
 
   Exercise(
       {required this.id,
@@ -25,14 +25,32 @@ class Exercise {
     return "id : $id\nimageURL : $imageURL \ntitle : $title\ndifficulty : $difficulty\ntime : $time\ntype : $type\ntutorial : $tutorial\nsetsreps : $setsreps\nprogression : $progression\n";
   }
 
+  static Difficulty translateStringToDifficulty(String name) {
+    for (Difficulty d in Difficulty.values) {
+      if (name == d.name) {
+        return d;
+      }
+    }
+    return Difficulty.Beginner;
+  }
+
+  static Type translateStringToType(String name) {
+    for (Type t in Type.values) {
+      if (name == t.name) {
+        return t;
+      }
+    }
+    return Type.Aerobic;
+  }
+
   static List<Exercise> db() {
     return [
       Exercise(
           id: 'ex1',
           title: 'Push Ups',
-          difficulty: 'Medium',
+          difficulty: Difficulty.Intermediate,
           time: 10,
-          type: 'Strength',
+          type: Type.Strength,
           setsreps: 'Set 1: Max Reps. Set 2: 10 Reps. Set 3: 8 Reps.',
           progression: [('2023-01-01', 0, 3, 10), ('2023-02-01', 0, 3, 10)],
           tutorial:
@@ -40,9 +58,9 @@ class Exercise {
       Exercise(
           id: 'ex2',
           title: 'Running',
-          difficulty: 'Easy',
+          difficulty: Difficulty.Beginner,
           time: 30,
-          type: 'Cardio',
+          type: Type.Strength,
           setsreps: 'Set 1: Max Reps. Set 2: 10 Reps. Set 3: 8 Reps.',
           progression: [('2023-01-01', 0, 3, 10), ('2023-02-01', 0, 3, 10)],
           tutorial:
@@ -50,9 +68,9 @@ class Exercise {
       Exercise(
           id: 'ex3',
           title: 'Squats',
-          difficulty: 'Medium',
+          difficulty: Difficulty.Intermediate,
           time: 15,
-          type: 'Strength',
+          type: Type.Stretching,
           setsreps: 'Set 1: Max Reps. Set 2: 10 Reps. Set 3: 8 Reps.',
           progression: [('2023-01-01', 0, 3, 10), ('2023-02-01', 0, 3, 10)],
           tutorial:
@@ -60,9 +78,9 @@ class Exercise {
       Exercise(
           id: 'ex4',
           title: 'Plank',
-          difficulty: 'Hard',
+          difficulty: Difficulty.Advanced,
           time: 5,
-          type: 'Core',
+          type: Type.Strength,
           setsreps: 'Set 1: Max Reps. Set 2: 10 Reps. Set 3: 8 Reps.',
           progression: [('2023-01-01', 0, 3, 10), ('2023-02-01', 0, 3, 10)],
           tutorial:
@@ -70,9 +88,9 @@ class Exercise {
       Exercise(
           id: 'ex5',
           title: 'Jump Rope',
-          difficulty: 'Easy',
+          difficulty: Difficulty.Beginner,
           time: 20,
-          type: 'Cardio',
+          type: Type.Strength,
           setsreps: 'Set 1: Max Reps. Set 2: 10 Reps. Set 3: 8 Reps.',
           progression: [('2023-01-01', 0, 3, 10), ('2023-02-01', 0, 3, 10)],
           tutorial:
@@ -80,9 +98,9 @@ class Exercise {
       Exercise(
           id: 'ex6',
           title: 'Bicycle Crunches',
-          difficulty: 'Medium',
+          difficulty: Difficulty.Intermediate,
           time: 15,
-          type: 'Core',
+          type: Type.Strength,
           setsreps: 'Set 1: 15 Reps. Set 2: 12 Reps. Set 3: 10 Reps.',
           progression: [('2023-01-01', 0, 3, 15), ('2023-02-01', 0, 3, 12)],
           tutorial:
@@ -90,9 +108,9 @@ class Exercise {
       Exercise(
           id: 'ex7',
           title: 'Lunges',
-          difficulty: 'Easy',
+          difficulty: Difficulty.Beginner,
           time: 10,
-          type: 'Strength',
+          type: Type.Strength,
           setsreps:
               'Set 1: 10 Reps each leg. Set 2: 8 Reps each leg. Set 3: 6 Reps each leg.',
           progression: [('2023-01-01', 0, 3, 10), ('2023-02-01', 0, 3, 8)],
@@ -101,9 +119,9 @@ class Exercise {
       Exercise(
           id: 'ex8',
           title: 'Pull-Ups',
-          difficulty: 'Hard',
+          difficulty: Difficulty.Advanced,
           time: 20,
-          type: 'Strength',
+          type: Type.Strength,
           setsreps: 'Set 1: 5 Reps. Set 2: 4 Reps. Set 3: 3 Reps.',
           progression: [('2023-01-01', 0, 3, 5), ('2023-02-01', 0, 3, 4)],
           tutorial:
@@ -111,9 +129,9 @@ class Exercise {
       Exercise(
           id: 'ex9',
           title: 'Box Jumps',
-          difficulty: 'Medium',
+          difficulty: Difficulty.Intermediate,
           time: 15,
-          type: 'Plyometrics',
+          type: Type.Stretching,
           setsreps: 'Set 1: 12 Reps. Set 2: 10 Reps. Set 3: 8 Reps.',
           progression: [('2023-01-01', 0, 3, 12), ('2023-02-01', 0, 3, 10)],
           tutorial:
@@ -121,9 +139,9 @@ class Exercise {
       Exercise(
           id: 'ex10',
           title: 'Mountain Climbers',
-          difficulty: 'Easy',
+          difficulty: Difficulty.Beginner,
           time: 10,
-          type: 'Cardio',
+          type: Type.Strength,
           setsreps: 'Set 1: 30 Seconds. Set 2: 25 Seconds. Set 3: 20 Seconds.',
           progression: [('2023-01-01', 0, 3, 30), ('2023-02-01', 0, 3, 25)],
           tutorial:
@@ -131,3 +149,7 @@ class Exercise {
     ];
   }
 }
+
+enum Difficulty { Beginner, Intermediate, Advanced }
+
+enum Type { Aerobic, Strength, Stretching, Balance }
