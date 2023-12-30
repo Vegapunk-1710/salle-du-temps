@@ -84,9 +84,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             fontWeight: FontWeight.w300, fontSize: 14)),
                   ],
                 ),
-                Text("DAYS : ${widget.workout.days.toString()}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w300, fontSize: 14)),
+                widget.workout.days == null ||widget.workout.days?.length == 0
+                    ? const Text("DAYS : Not Active",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 14))
+                    : widget.workout.days!.length == 7
+                        ? const Text("DAYS : All Week",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w300, fontSize: 14))
+                        : Text(
+                            "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w300, fontSize: 14)),
               ],
             ),
           ),
@@ -210,6 +219,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         onChanged: (bool? newValue) {
                           setState(() {
                             selectedDays[day] = newValue!;
+                            widget.workout.days ??= <Days>[];
+                            if (selectedDays[day] == true) {
+                              widget.workout.days!
+                                  .add(Workout.translateStringToDay(day));
+                            } else {
+                              widget.workout.days!
+                                  .remove(Workout.translateStringToDay(day));
+                            }
                           });
                         },
                       ),
@@ -221,7 +238,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             ),
           ),
           const SizedBox(
-            height: 100,
+            height: 120,
           )
         ]),
       ),

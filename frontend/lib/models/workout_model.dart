@@ -24,6 +24,15 @@ class Workout {
     return "id : $id\nimageURL : $imageURL \ntitle : $title\ndifficulty : $difficulty\ntime : $time\ndescription : $description\nfrequency : $days\exercises : $exercises\n";
   }
 
+  static Days translateStringToDay(String name){
+    for (Days d in Days.values) {
+      if (name == d.name) {
+        return d;
+      }
+    }
+    return Days.Monday;
+  } 
+
   static List<Workout> db() {
     return [
       Workout(

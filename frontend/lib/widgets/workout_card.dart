@@ -40,16 +40,19 @@ class WorkoutCard extends StatelessWidget {
                         Text(
                           "${workout.description.substring(0, 33)}...",
                         ),
+                        SizedBox(height: 5,),
                         Text(
                           "Difficulty : ${workout.difficulty.name.toString()}",
                         ),
                         Text(
                           "Time : ~${workout.time} mins",
                         ),
-                        workout.days == null ? Container():
-                        Text(
-                          "Days : ${workout.days.toString().substring(1, workout.days.toString().length - 1)}",
-                        ),
+                        workout.days == null || workout.days?.length == 0
+                            ? const Text("Days : Not Active")
+                            : workout.days!.length == 7
+                                ? const Text("Days : All Week")
+                                : Text(
+                                    "Days : ${workout.days.toString().substring(1, workout.days.toString().length - 1).replaceAll("Days.", "")}"),
                       ],
                     ),
                     // trailing: position == null ? Text("") : Text(position!),
