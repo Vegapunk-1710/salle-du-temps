@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/screens/home_page.dart';
-import 'package:frontend/screens/settings_page.dart';
-import 'package:frontend/screens/program_page.dart';
+import 'package:frontend/screens/main/home_page.dart';
+import 'package:frontend/screens/main/settings_page.dart';
+import 'package:frontend/screens/main/programs_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,8 +14,8 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]);
+      DeviceOrientation.portraitUp,
+    ]);
     return MaterialApp(
       title: 'Salle Du Temps',
       theme: ThemeData(
@@ -49,7 +49,7 @@ class _LandingPageState extends State<LandingPage> {
 
   static final List<Widget> _pages = <Widget>[
     HomePage(),
-    ProgramPage(),
+    ProgramsPage(),
     const SettingsPage(),
   ];
 
@@ -65,7 +65,7 @@ class _LandingPageState extends State<LandingPage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.sports_gymnastics), label: "Program"),
+                icon: Icon(Icons.sports_gymnastics), label: "Programs"),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: "Settings",

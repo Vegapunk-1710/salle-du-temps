@@ -106,7 +106,7 @@ class _ExercisePageState extends State<ExercisePage> {
                     },
                     icon: const Icon(Icons.delete_forever)),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(5, 12, 0, 5),
+                  padding: const EdgeInsets.fromLTRB(5, 12, 0, 0),
                   child: Row(
                     children: [
                       ProgressionTextField(
@@ -150,50 +150,44 @@ class _ExercisePageState extends State<ExercisePage> {
             ),
           ),
         ),
-        widget.exercise.progression.toString() == "null" ? Container() : Card(
-          elevation: 10,
-          margin: const EdgeInsets.all(10),
-          child: widget.exercise.progression!.isEmpty
-              ? SizedBox()
-              : Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: widget.exercise.progression!.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Column(
+        widget.exercise.progression.toString() == "null" ? SizedBox.shrink() : widget.exercise.progression!.isEmpty
+            ? const SizedBox.shrink()
+            : ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.exercise.progression!.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    children: [
+                      FittedBox(
+                        child: Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceEvenly,
                           children: [
-                            FittedBox(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(widget
-                                      .exercise.progression![index].$1),
-                                  const Icon(Icons.arrow_right),
-                                  Text(
-                                      "${widget.exercise.progression![index].$2} max lbs"),
-                                  const Icon(Icons.arrow_right),
-                                  Text(
-                                      "${widget.exercise.progression![index].$3} max sets"),
-                                  const Icon(Icons.arrow_right),
-                                  Text(
-                                      "${widget.exercise.progression![index].$4} max reps")
-                                ],
-                              ),
-                            ),
+                            Text(widget
+                                .exercise.progression![index].$1),
+                            const Icon(Icons.arrow_right),
+                            Text(
+                                "${widget.exercise.progression![index].$2} max lbs"),
+                            const Icon(Icons.arrow_right),
+                            Text(
+                                "${widget.exercise.progression![index].$3} max sets"),
+                            const Icon(Icons.arrow_right),
+                            Text(
+                                "${widget.exercise.progression![index].$4} max reps")
                           ],
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
-                ),
-        ),
-        SizedBox(
-          height: 100,
+                );
+              },
+            ),
+        const SizedBox(
+          height: 150,
         )
       ])),
       floatingActionButton: Row(

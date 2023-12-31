@@ -27,21 +27,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
     'Sunday'
   ];
 
-  Map<String, bool> selectedDays = {
-    'Monday': false,
-    'Tuesday': false,
-    'Wednesday': false,
-    'Thursday': false,
-    'Friday': false,
-    'Saturday': false,
-    'Sunday': false,
-  };
+  late Map<String, bool> selectedDays;
 
   @override
   void initState() {
     exercises = Exercise.db()
         .where((i) => widget.workout.exercises.any((j) => i.id == j))
         .toList();
+    selectedDays = {
+    'Monday': widget.workout.days != null ? widget.workout.days!.contains(Days.Monday) : false,
+    'Tuesday': widget.workout.days != null ? widget.workout.days!.contains(Days.Tuesday) : false,
+    'Wednesday': widget.workout.days != null ? widget.workout.days!.contains(Days.Wednesday) : false,
+    'Thursday': widget.workout.days != null ? widget.workout.days!.contains(Days.Thursday) : false,
+    'Friday': widget.workout.days != null ? widget.workout.days!.contains(Days.Friday) : false,
+    'Saturday': widget.workout.days != null ? widget.workout.days!.contains(Days.Saturday) : false,
+    'Sunday': widget.workout.days != null ? widget.workout.days!.contains(Days.Sunday) : false,
+  };
     super.initState();
   }
 
@@ -84,7 +85,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             fontWeight: FontWeight.w300, fontSize: 14)),
                   ],
                 ),
-                widget.workout.days == null ||widget.workout.days?.length == 0
+                widget.workout.days == null ||widget.workout.days!.isEmpty
                     ? const Text("DAYS : Not Active",
                         style: TextStyle(
                             fontWeight: FontWeight.w300, fontSize: 14))
@@ -121,59 +122,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     children: [
                       IconButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddExercise(callback)));
+                            handleAdd(context);
                           },
                           icon: const Icon(Icons.add)),
                       IconButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CreateExercise(callback)));
+                            handleCreate(context);
                           },
                           icon: const Icon(Icons.create)),
                       IconButton(
                           onPressed: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            List<Exercise> unordered = List.from(exercises);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        OrderExercise(callback, unordered)));
-                            exercises.clear();
+                            handleOrder(context);
                           },
                           icon: const Icon(Icons.stacked_bar_chart_sharp)),
                       IconButton(
                           onPressed: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) => AlertDialog(
-                                title: const Text("Delete this exercise ?"),
-                                content: Text(
-                                    "Are you sure you want to delete ${exercises[exer_index].title} from your workout ?"),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, 'Cancel'),
-                                      child: const Text("No")),
-                                  TextButton(
-                                      onPressed: () {
-                                        deleteExercise(context);
-                                        Navigator.pop(context, 'OK');
-                                      },
-                                      child: const Text("Yes")),
-                                ],
-                              ),
-                            );
+                            handleDelete(context);
                           },
                           icon: const Icon(Icons.delete_forever))
                     ],
@@ -217,17 +181,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                       Checkbox(
                         value: selectedDays[day],
                         onChanged: (bool? newValue) {
-                          setState(() {
-                            selectedDays[day] = newValue!;
-                            widget.workout.days ??= <Days>[];
-                            if (selectedDays[day] == true) {
-                              widget.workout.days!
-                                  .add(Workout.translateStringToDay(day));
-                            } else {
-                              widget.workout.days!
-                                  .remove(Workout.translateStringToDay(day));
-                            }
-                          });
+                          handleDays(day, newValue);
                         },
                       ),
                       Text(day),
@@ -267,6 +221,59 @@ class _WorkoutPageState extends State<WorkoutPage> {
     );
   }
 
+  void handleAdd(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                AddExercise(callback)));
+  }
+
+  void handleCreate(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                CreateExercise(callback)));
+  }
+
+  void handleOrder(BuildContext context) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    List<Exercise> unordered = List.from(exercises);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                OrderExercise(callback, unordered)));
+    exercises.clear();
+  }
+
+  void handleDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("Delete this exercise ?"),
+        content: Text(
+            "Are you sure you want to delete ${exercises[exer_index].title} from your workout ?"),
+        actions: [
+          TextButton(
+              onPressed: () =>
+                  Navigator.pop(context, 'Cancel'),
+              child: const Text("No")),
+          TextButton(
+              onPressed: () {
+                deleteExercise(context);
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text("Yes")),
+        ],
+      ),
+    );
+  }
+
   void deleteExercise(BuildContext context) {
     setState(() {
       int rmv_index = exer_index;
@@ -289,6 +296,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
+    });
+  }
+
+  void handleDays(String day, bool? newValue) {
+    setState(() {
+      selectedDays[day] = newValue!;
+      widget.workout.days ??= <Days>[];
+      if (selectedDays[day] == true) {
+        widget.workout.days!
+            .add(Workout.translateStringToDay(day));
+      } else {
+        widget.workout.days!
+            .remove(Workout.translateStringToDay(day));
+      }
+      final positions = daysOfWeek.asMap().map((ind, day) => MapEntry(day, ind));
+      widget.workout.days!.sort((first, second) {
+        final firstPos = positions[first.name] ?? 8;
+        final secondPos = positions[second.name] ?? 8;
+        return firstPos.compareTo(secondPos);
+      });
     });
   }
 }

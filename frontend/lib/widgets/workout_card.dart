@@ -47,7 +47,7 @@ class WorkoutCard extends StatelessWidget {
                         Text(
                           "Time : ~${workout.time} mins",
                         ),
-                        workout.days == null || workout.days?.length == 0
+                        workout.days == null || workout.days!.isEmpty
                             ? const Text("Days : Not Active")
                             : workout.days!.length == 7
                                 ? const Text("Days : All Week")
