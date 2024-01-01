@@ -9,16 +9,17 @@ class Exercise {
   String setsreps;
   List<(String date, int weight, int maxSets, int maxReps)>? progression;
 
-  Exercise(
-      {required this.id,
-      this.imageURL,
-      required this.title,
-      required this.difficulty,
-      required this.time,
-      required this.type,
-      required this.tutorial,
-      required this.setsreps,
-      this.progression});
+  Exercise({
+    required this.id,
+    this.imageURL,
+    required this.title,
+    required this.difficulty,
+    required this.time,
+    required this.type,
+    required this.tutorial,
+    required this.setsreps,
+    this.progression
+  });
 
   @override
   String toString() {

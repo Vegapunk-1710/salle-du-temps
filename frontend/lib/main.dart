@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/screens/main/home_page.dart';
 import 'package:frontend/screens/main/settings_page.dart';
-import 'package:frontend/screens/main/programs_page.dart';
+import 'package:frontend/screens/main/workouts_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -49,7 +49,7 @@ class _LandingPageState extends State<LandingPage> {
 
   static final List<Widget> _pages = <Widget>[
     HomePage(),
-    ProgramsPage(),
+    WorkoutsPage(),
     const SettingsPage(),
   ];
 
@@ -65,7 +65,7 @@ class _LandingPageState extends State<LandingPage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.sports_gymnastics), label: "Programs"),
+                icon: Icon(Icons.sports_gymnastics), label: "Workouts"),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: "Settings",
