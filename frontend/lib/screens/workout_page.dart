@@ -5,6 +5,7 @@ import 'package:frontend/screens/exercise/add_exercise_page.dart';
 import 'package:frontend/screens/exercise/create_exercise_page.dart';
 import 'package:frontend/screens/exercise/order_exercise_page.dart';
 import 'package:frontend/widgets/exercise_card.dart';
+import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutPage extends StatefulWidget {
   final Workout workout;
@@ -59,13 +60,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Image.network(
-            widget.workout.imageURL ??=
-                "https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2022/05/StrengthLogs-4-Day-Bodybuilding-Split.jpg?fit=1000%2C593&ssl=1",
-            errorBuilder: (context, error, stackTrace) {
-              return const Center(child: Icon(Icons.image));
-            },
-          ),
+          CustomImageNetwork(imageURL: widget.workout.imageURL, showIcon: false),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

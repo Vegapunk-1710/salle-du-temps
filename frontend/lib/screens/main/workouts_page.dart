@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/workout_page.dart';
+import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutsPage extends StatefulWidget {
   WorkoutsPage({Key? key}) : super(key: key);
@@ -32,18 +33,21 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
             if (index == workouts.length) {
               return GestureDetector(
                 onTap: () {},
-                child: Card(
-                  elevation: 10,
-                  child: Center(
-                      child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("Create New Program",
-                          style: Theme.of(context).textTheme.bodyLarge),
-                      const Icon(Icons.create),
-                    ],
-                  )),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  child: Card(
+                    elevation: 10,
+                    child: Center(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("Create New Program",
+                            style: Theme.of(context).textTheme.bodyLarge),
+                        const Icon(Icons.create),
+                      ],
+                    )),
+                  ),
                 ),
               );
             } else {
@@ -56,26 +60,21 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                               WorkoutPage(workout: workouts[index])));
                 },
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(5,0,5,0),
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
                   child: Column(
                     children: [
                       Expanded(
                         flex: 8,
-                        child: Container(
-                            decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          image: const DecorationImage(
-                            image: NetworkImage("https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2022/05/StrengthLogs-4-Day-Bodybuilding-Split.jpg?fit=1000%2C593&ssl=1"),
-                            fit:BoxFit.cover
-                          )),
-                          child: Card(
-                            color: Colors.transparent,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                            child:Container()
-                          ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: CustomImageNetwork(imageURL: workouts[index].imageURL, showIcon: true,),
                         ),
                       ),
-                      Expanded(flex:1,child: FittedBox(child: Text("${workouts[index].title} • ${workouts[index].createdBy}")))
+                      Expanded(
+                          flex: 1,
+                          child: FittedBox(
+                              child: Text(
+                                  "${workouts[index].title} • ${workouts[index].createdBy}")))
                     ],
                   ),
                 ),
@@ -87,3 +86,5 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     );
   }
 }
+
+

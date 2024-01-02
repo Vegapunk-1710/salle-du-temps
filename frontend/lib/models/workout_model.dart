@@ -42,6 +42,7 @@ class Workout {
       Workout(
         id: 'w1',
         imageURL: null,
+        // imageURL: "https://www.bodybuilding.com/images/2020/february/generic-training-inset-1-700xh.jpg",
         createdBy: "Rony",
         createdAt: DateTime.now(),
         title: 'Full Body Strength',
@@ -53,7 +54,7 @@ class Workout {
       ),
       Workout(
         id: 'w3',
-        imageURL: null,
+        imageURL: "https://cdn.yogajournal.com/wp-content/uploads/2023/02/GettyImages-1066259522-scaled.jpg",
         createdBy: "Rony",
         createdAt: DateTime.now(),
         title: 'Yoga and Flexibility',

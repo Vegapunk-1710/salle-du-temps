@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/exercise_model.dart';
+import 'package:frontend/widgets/image_widget.dart';
 
 class ExercisePage extends StatefulWidget {
   final Exercise exercise;
@@ -22,7 +23,7 @@ class _ExercisePageState extends State<ExercisePage> {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-        Image.network(widget.exercise.imageURL??= "https://info.totalwellnesshealth.com/hubfs/HealthBenefitsFitness.png"),
+         CustomImageNetwork(imageURL: widget.exercise.imageURL, showIcon: false),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
