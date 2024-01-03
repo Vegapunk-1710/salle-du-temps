@@ -82,10 +82,9 @@ class _ExercisePageState extends State<ExercisePage> {
                 IconButton(
                     onPressed: () {
                       setState(() {
-                        widget.exercise.progression ??= <(String date, int weight, int maxSets, int maxReps)>[];
-                        if (widget.exercise.progression!.isNotEmpty) {
+                        if (widget.exercise.progression.isNotEmpty) {
                           var removed =
-                              widget.exercise.progression!.removeLast();
+                              widget.exercise.progression.removeLast();
                           var snackBar = SnackBar(
                             content: Text(
                                 'Deleted Last Progression : ${removed.$1}'),
@@ -93,8 +92,8 @@ class _ExercisePageState extends State<ExercisePage> {
                               label: 'Undo',
                               onPressed: () {
                                 setState(() {
-                                  widget.exercise.progression!.add(removed);
-                                  widget.exercise.progression!
+                                  widget.exercise.progression.add(removed);
+                                  widget.exercise.progression
                                       .sort((a, b) => a.$1.compareTo(b.$1));
                                 });
                               },
@@ -128,21 +127,18 @@ class _ExercisePageState extends State<ExercisePage> {
                 IconButton(
                     onPressed: () {
                       setState(() {
-                        widget.exercise.progression ??= <(String date, int weight, int maxSets, int maxReps)>[];
                         if (progressionWeightController.text.isNotEmpty &&
                             progressionSetsController.text.isNotEmpty &&
                             progressionRepsController.text.isNotEmpty) {
                           final date = DateTime.now();
-                          String formattedDate =
-                              date.toIso8601String().split('T').first;
                           int weight =
                               int.parse(progressionWeightController.text);
                           int sets =
                               int.parse(progressionSetsController.text);
                           int reps =
                               int.parse(progressionRepsController.text);
-                          widget.exercise.progression!
-                              .add((formattedDate, weight, sets, reps));
+                          widget.exercise.progression
+                              .add((date, weight, sets, reps));
                         }
                       });
                     },
@@ -151,41 +147,44 @@ class _ExercisePageState extends State<ExercisePage> {
             ),
           ),
         ),
-        widget.exercise.progression.toString() == "null" ? SizedBox.shrink() : widget.exercise.progression!.isEmpty
+        widget.exercise.progression.toString() == "null" ? SizedBox.shrink() : widget.exercise.progression.isEmpty
             ? const SizedBox.shrink()
-            : ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: widget.exercise.progression!.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    children: [
-                      FittedBox(
-                        child: Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(widget
-                                .exercise.progression![index].$1),
-                            const Icon(Icons.arrow_right),
-                            Text(
-                                "${widget.exercise.progression![index].$2} max lbs"),
-                            const Icon(Icons.arrow_right),
-                            Text(
-                                "${widget.exercise.progression![index].$3} max sets"),
-                            const Icon(Icons.arrow_right),
-                            Text(
-                                "${widget.exercise.progression![index].$4} max reps")
-                          ],
+            : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.exercise.progression.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Column(
+                      children: [
+                        FittedBox(
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(widget
+                                  .exercise.progression[index].$1.toIso8601String().split('T').first),
+                              const Icon(Icons.arrow_right),
+                              Text(
+                                  "${widget.exercise.progression[index].$2} max lbs"),
+                              const Icon(Icons.arrow_right),
+                              Text(
+                                  "${widget.exercise.progression[index].$3} max sets"),
+                              const Icon(Icons.arrow_right),
+                              Text(
+                                  "${widget.exercise.progression[index].$4} max reps")
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
         const SizedBox(
           height: 150,

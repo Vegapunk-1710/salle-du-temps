@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
 import 'package:frontend/screens/exercise/exercise_page.dart';
+import 'package:frontend/widgets/image_widget.dart';
 
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
@@ -24,16 +25,8 @@ class ExerciseCard extends StatelessWidget {
             children: [
               Expanded(
                   flex: 1,
-                  child: Image.network(
-                      exercise.imageURL ??=
-                          "https://t4.ftcdn.net/jpg/03/17/72/47/360_F_317724775_qHtWjnT8YbRdFNIuq5PWsSYypRhOmalS.jpg",
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Icon(Icons.image),
-                        );
-                      },
-                      width: double.infinity,
-                      fit: BoxFit.cover)),
+                  child: CustomImageNetwork(imageURL: exercise.imageURL,showIcon: true,)
+                      ),
               Expanded(
                   flex: 1,
                   child: ListTile(

@@ -35,8 +35,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     dayName = daysOfWeek[now.weekday - 1];
     todayWorkout = workouts.where((w) {
-      if (w.days != null) {
-        return w.days!.contains(Workout.translateStringToDay(dayName));
+      if (w.days.isNotEmpty) {
+        return w.days.contains(Workout.translateStringToDay(dayName));
       } else {
         return false;
       }
@@ -47,6 +47,22 @@ class _HomePageState extends State<HomePage> {
         child: Center(
             child: ListView(
       children: [
+        Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: FittedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Let's Grind, Baher",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(width: 100,),
+                  Text(DateTime.now().toIso8601String().substring(0,10),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+            )),
         Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text("$dayName's Workout",

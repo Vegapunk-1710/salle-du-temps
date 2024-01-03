@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/models/exercise_model.dart';
+import 'package:frontend/models/workout_model.dart';
 
-class CreateExercise extends StatefulWidget {
-  final Function(Exercise newExercise) callback;
-  CreateExercise(this.callback, {Key? key}) : super(key: key);
+class CreateWorkoutPage extends StatefulWidget {
+  final Function(Workout createdWorkout) create_callback;
+  CreateWorkoutPage(this.create_callback, {Key? key}) : super(key: key);
 
   @override
-  State<CreateExercise> createState() => _CreateExerciseState();
+  State<CreateWorkoutPage> createState() => _CreateWorkoutPageState();
 }
 
-class _CreateExerciseState extends State<CreateExercise> {
+class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
   int step_index = 0;
   TextEditingController titleController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController imageURLController = TextEditingController();
-  TextEditingController tutotialController = TextEditingController();
-  TextEditingController setsrepsController = TextEditingController();
+  TextEditingController descController = TextEditingController();
   String selectedDifficulty = "Beginner";
   List<DropdownMenuItem<String>> difficulties = [
-    DropdownMenuItem(value: Difficulty.Beginner.name, child: const Text("Beginner")),
     DropdownMenuItem(
-        value: Difficulty.Intermediate.name,
-        child: const Text("Intermediate")),
-    DropdownMenuItem(value: Difficulty.Advanced.name, child: const Text("Advanced")),
-  ];
-  String selectedType = "Aerobic";
-  List<DropdownMenuItem<String>> types = [
-    DropdownMenuItem(value: Type.Aerobic.name, child: const Text("Aerobic")),
-    DropdownMenuItem(value: Type.Strength.name, child: const Text("Strength")),
-    DropdownMenuItem(value: Type.Stretching.name, child: const Text("Stretching")),
-    DropdownMenuItem(value: Type.Balance.name, child: const Text("Balance")),
+        value: Difficulty.Beginner.name, child: const Text("Beginner")),
+    DropdownMenuItem(
+        value: Difficulty.Intermediate.name, child: const Text("Intermediate")),
+    DropdownMenuItem(
+        value: Difficulty.Advanced.name, child: const Text("Advanced")),
   ];
 
   @override
@@ -42,7 +35,7 @@ class _CreateExerciseState extends State<CreateExercise> {
           children: [
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("Create An Exercise",
+              child: Text("Create A Workout",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             ),
             Padding(
@@ -56,7 +49,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                         children: <Widget>[
                           TextButton(
                             onPressed: details.onStepContinue,
-                            child: step_index == 6
+                            child: step_index == 4
                                 ? const Text('Submit')
                                 : const Text('Next'),
                           ),
@@ -78,12 +71,12 @@ class _CreateExerciseState extends State<CreateExercise> {
                       }
                     },
                     onStepContinue: () {
-                      if (step_index < 6) {
+                      if (step_index < 4) {
                         setState(() {
                           step_index += 1;
                         });
                       }
-                      if (step_index == 6) {
+                      if (step_index == 4) {
                         submitExercise();
                       }
                     },
@@ -94,7 +87,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                     },
                     steps: [
                       Step(
-                          title: const Text("Write a title for the exercise :"),
+                          title: const Text("Write a title for the workout :"),
                           content: TextField(
                             controller: titleController,
                             inputFormatters: <TextInputFormatter>[
@@ -103,7 +96,8 @@ class _CreateExerciseState extends State<CreateExercise> {
                             ],
                           )),
                       Step(
-                          title: const Text("Pick a difficulty for the exercise :"),
+                          title:
+                              const Text("Pick a difficulty for the workout :"),
                           content: DropdownButton(
                               value: selectedDifficulty,
                               onChanged: (String? newValue) {
@@ -114,7 +108,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                               items: difficulties)),
                       Step(
                           title: const Text(
-                              "Enter the average duration in minutes for the exercise :"),
+                              "Enter the average duration in minutes for the workout :"),
                           content: TextField(
                             controller: timeController,
                             inputFormatters: <TextInputFormatter>[
@@ -123,33 +117,16 @@ class _CreateExerciseState extends State<CreateExercise> {
                             ],
                           )),
                       Step(
-                          title: const Text("What does the exercise target ? :"),
-                          content: DropdownButton(
-                              value: selectedType,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedType = newValue!;
-                                });
-                              },
-                              items: types)),
-                      Step(
                           title: const Text(
-                              "Upload an image that describes the exercise :"),
+                              "Upload an image that describes the workout :"),
                           content: TextField(
                             controller: imageURLController,
                           )),
                       Step(
                           title: const Text(
-                              "Write a step-by-step tutorial for the exercise :"),
+                              "Write a description for the workout :"),
                           content: TextField(
-                            controller: tutotialController,
-                            maxLines: null,
-                          )),
-                      Step(
-                          title: const Text(
-                              "Give a suggested number of sets/reps or any helpful tips for the exercise :"),
-                          content: TextField(
-                            controller: setsrepsController,
+                            controller: descController,
                             maxLines: null,
                           )),
                     ]),
@@ -170,7 +147,7 @@ class _CreateExerciseState extends State<CreateExercise> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              heroTag: "createexerciseexitbtn",
+              heroTag: "createworkoutexitbtn",
               child: const Icon(Icons.exit_to_app),
             ),
           ),
@@ -182,28 +159,26 @@ class _CreateExerciseState extends State<CreateExercise> {
   void submitExercise() {
     if (titleController.text.isNotEmpty &&
         timeController.text.isNotEmpty &&
-        tutotialController.text.isNotEmpty &&
-        setsrepsController.text.isNotEmpty) {
+        descController.text.isNotEmpty) {
       String title = titleController.text;
       int time = int.parse(timeController.text);
-      String tutorial = tutotialController.text;
-      String setsreps = setsrepsController.text;
-      var difficulty = Exercise.translateStringToDifficulty(selectedDifficulty);
-      var type = Exercise.translateStringToType(selectedType);
+      String desc = descController.text;
+      var difficulty = Workout.translateStringToDifficulty(selectedDifficulty);
       String? imageURL = imageURLController.text;
-      Exercise newExercise = Exercise(
+      Workout createdWorkout = Workout(
           id: UniqueKey().toString(),
-          title: title,
           imageURL: imageURL,
+          createdBy: "Baher",
           createdAt: DateTime.now(),
+          title: title,
           difficulty: difficulty,
           time: time,
-          type: type,
-          tutorial: tutorial,
-          setsreps: setsreps,
-          progression: []
+          description: desc,
+          exercises: [],
+          days: [],
+          progression: [],
           );
-      widget.callback(newExercise);
+      widget.create_callback(createdWorkout);
       Navigator.of(context).pop();
     }
   }

@@ -4,6 +4,7 @@ import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/exercise/add_exercise_page.dart';
 import 'package:frontend/screens/exercise/create_exercise_page.dart';
 import 'package:frontend/screens/exercise/order_exercise_page.dart';
+import 'package:frontend/screens/workout/start_workout_page.dart';
 import 'package:frontend/widgets/exercise_card.dart';
 import 'package:frontend/widgets/image_widget.dart';
 
@@ -36,13 +37,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
         .where((i) => widget.workout.exercises.any((j) => i.id == j))
         .toList();
     selectedDays = {
-    'Monday': widget.workout.days != null ? widget.workout.days!.contains(Days.Monday) : false,
-    'Tuesday': widget.workout.days != null ? widget.workout.days!.contains(Days.Tuesday) : false,
-    'Wednesday': widget.workout.days != null ? widget.workout.days!.contains(Days.Wednesday) : false,
-    'Thursday': widget.workout.days != null ? widget.workout.days!.contains(Days.Thursday) : false,
-    'Friday': widget.workout.days != null ? widget.workout.days!.contains(Days.Friday) : false,
-    'Saturday': widget.workout.days != null ? widget.workout.days!.contains(Days.Saturday) : false,
-    'Sunday': widget.workout.days != null ? widget.workout.days!.contains(Days.Sunday) : false,
+    'Monday': widget.workout.days.contains(Days.Monday),
+    'Tuesday': widget.workout.days.contains(Days.Tuesday),
+    'Wednesday':  widget.workout.days.contains(Days.Wednesday),
+    'Thursday':  widget.workout.days.contains(Days.Thursday),
+    'Friday': widget.workout.days.contains(Days.Friday),
+    'Saturday': widget.workout.days.contains(Days.Saturday),
+    'Sunday': widget.workout.days.contains(Days.Sunday),
   };
     super.initState();
   }
@@ -66,9 +67,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.workout.title,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 22)),
+                Row( 
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(widget.workout.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 22)),
+                    IconButton(onPressed: (){}, icon: Icon(Icons.delete_forever))
+                  ],
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -80,11 +87,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             fontWeight: FontWeight.w300, fontSize: 14)),
                   ],
                 ),
-                widget.workout.days == null ||widget.workout.days!.isEmpty
+                widget.workout.days.isEmpty
                     ? const Text("DAYS : Not Active",
                         style: TextStyle(
                             fontWeight: FontWeight.w300, fontSize: 14))
-                    : widget.workout.days!.length == 7
+                    : widget.workout.days.length == 7
                         ? const Text("DAYS : All Week",
                             style: TextStyle(
                                 fontWeight: FontWeight.w300, fontSize: 14))
@@ -206,7 +213,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
           ),
           FloatingActionButton(
             onPressed: () {
-              print("Workout Started !!");
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          StartWorkoutPage(Exercise.db()
+        .where((i) => widget.workout.exercises.any((j) => i.id == j))
+        .toList())));
             },
             heroTag: "workoutstartbtn",
             child: const Text("Go !"),
@@ -297,16 +311,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void handleDays(String day, bool? newValue) {
     setState(() {
       selectedDays[day] = newValue!;
-      widget.workout.days ??= <Days>[];
       if (selectedDays[day] == true) {
-        widget.workout.days!
+        widget.workout.days
             .add(Workout.translateStringToDay(day));
       } else {
-        widget.workout.days!
+        widget.workout.days
             .remove(Workout.translateStringToDay(day));
       }
       final positions = daysOfWeek.asMap().map((ind, day) => MapEntry(day, ind));
-      widget.workout.days!.sort((first, second) {
+      widget.workout.days.sort((first, second) {
         final firstPos = positions[first.name] ?? 8;
         final secondPos = positions[second.name] ?? 8;
         return firstPos.compareTo(secondPos);

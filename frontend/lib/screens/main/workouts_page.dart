@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/workout_model.dart';
-import 'package:frontend/screens/workout_page.dart';
+import 'package:frontend/screens/workout/add_workout_page.dart';
+import 'package:frontend/screens/workout/create_workout_page.dart';
+import 'package:frontend/screens/workout/workout_page.dart';
 import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutsPage extends StatefulWidget {
@@ -12,11 +14,28 @@ class WorkoutsPage extends StatefulWidget {
 
 class _WorkoutsPageState extends State<WorkoutsPage> {
   late List<Workout> workouts;
+  late List<Workout> queried;
+
+  create_callback(Workout createdWorkout) {
+    setState(() {
+      workouts.add(createdWorkout);
+      queried.add(createdWorkout);
+    });
+  }
+
+  add_callback(Workout addedWorkout) {
+    setState(() {
+      if(workouts.where((i) => i.id == addedWorkout.id).toList().isEmpty){
+        workouts.add(addedWorkout);
+        queried.add(addedWorkout);
+      }
+    });
+  }
 
   @override
   void initState() {
     workouts = Workout.db();
-    // myPrograms = programs.where((p) => p.createdBy == creator).toList();
+    queried = Workout.db();
     super.initState();
   }
 
@@ -26,7 +45,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
       child: Column(
         children: [
           const Expanded(
-              flex: 6,
+              flex: 7,
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text("Workouts",
@@ -40,9 +59,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 10,
-                    child: SearchAnchor(
-                        builder: (BuildContext context, SearchController controller) {
+                    flex: 15,
+                    child: SearchAnchor(builder:
+                        (BuildContext context, SearchController controller) {
                       return SearchBar(
                         controller: controller,
                         padding: const MaterialStatePropertyAll<EdgeInsets>(
@@ -54,14 +73,31 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                         trailing: const <Widget>[],
                       );
                     }, suggestionsBuilder:
-                            (BuildContext context, SearchController controller) {
+                        (BuildContext context, SearchController controller) {
                       return <ListTile>[];
                     }),
                   ),
-                  Expanded(flex:2,child: IconButton(onPressed: (){}, icon:Icon(Icons.add))),
-                  Expanded(flex:2,child: IconButton(onPressed: (){}, icon:Icon(Icons.create))),
-                  Expanded(flex:2,child: IconButton(onPressed: (){}, icon:Icon(Icons.stacked_bar_chart_sharp))),
-                  Expanded(flex:2,child: IconButton(onPressed: (){}, icon:Icon(Icons.delete_forever_rounded))),
+                  Expanded(
+                      flex: 2,
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddWorkoutPage(add_callback)));
+                          },
+                          icon: Icon(Icons.add))),
+                  Expanded(
+                      flex: 2,
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CreateWorkoutPage(create_callback)));
+                          },
+                          icon: Icon(Icons.create))),
                 ],
               ),
             ),
@@ -71,7 +107,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
-                  itemCount: workouts.length,
+                  itemCount: queried.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2),
                   itemBuilder: (BuildContext context, int index) {
@@ -81,7 +117,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    WorkoutPage(workout: workouts[index])));
+                                    WorkoutPage(workout: queried[index])));
                       },
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
@@ -92,7 +128,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: CustomImageNetwork(
-                                  imageURL: workouts[index].imageURL,
+                                  imageURL: queried[index].imageURL,
                                   showIcon: true,
                                 ),
                               ),
@@ -101,7 +137,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                                 flex: 1,
                                 child: FittedBox(
                                     child: Text(
-                                        "${workouts[index].title} • ${workouts[index].createdBy}")))
+                                        "${queried[index].title} • ${queried[index].createdBy}")))
                           ],
                         ),
                       ),
@@ -115,6 +151,33 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
   }
 
   void searchWorkouts(String query) {
-    setState(() {});
+    setState(() {
+      if (query == "") {
+        queried = workouts;
+      } else {
+        queried = workouts
+            .where((w) =>
+                w.createdBy.toLowerCase().contains(query.toLowerCase()) ||
+                w.createdAt
+                    .toString()
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                w.days.toString().toLowerCase().contains(query.toLowerCase()) ||
+                w.title
+                    .toString()
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                w.description
+                    .toString()
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                w.description
+                    .toString()
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                w.time.toString().toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 }

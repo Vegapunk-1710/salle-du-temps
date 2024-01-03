@@ -1,6 +1,6 @@
 class Workout {
   String id;
-  String? imageURL;
+  String imageURL;
   String createdBy;
   DateTime createdAt;
   String title;
@@ -8,11 +8,12 @@ class Workout {
   int time;
   String description;
   List<String> exercises;
-  List<Days>? days;
+  List<Days> days;
+  List<(DateTime date, String time)> progression;
 
   Workout({
     required this.id,
-    this.imageURL,
+    required this.imageURL,
     required this.createdBy,
     required this.createdAt,
     required this.title,
@@ -20,7 +21,8 @@ class Workout {
     required this.time,
     required this.description,
     required this.exercises,
-    this.days,
+    required this.days,
+    required this.progression
   });
 
   @override
@@ -37,11 +39,20 @@ class Workout {
     return Days.Monday;
   }
 
+  static Difficulty translateStringToDifficulty(String name) {
+    for (Difficulty d in Difficulty.values) {
+      if (name == d.name) {
+        return d;
+      }
+    }
+    return Difficulty.Beginner;
+  }
+
   static List<Workout> db() {
     return [
       Workout(
         id: 'w1',
-        imageURL: null,
+        imageURL: "",
         // imageURL: "https://www.bodybuilding.com/images/2020/february/generic-training-inset-1-700xh.jpg",
         createdBy: "Rony",
         createdAt: DateTime.now(),
@@ -51,6 +62,8 @@ class Workout {
         description:
             'A comprehensive full-body workout aimed at increasing overall strength.',
         exercises: ['ex1', 'ex3', 'ex5'],
+        days: [],
+        progression: [],
       ),
       Workout(
         id: 'w3',
@@ -63,6 +76,8 @@ class Workout {
         description:
             'A relaxing yoga routine to improve flexibility and reduce stress.',
         exercises: ['ex7', 'ex8', 'ex9'],
+        days: [],
+        progression: [],
       )
     ];
   }

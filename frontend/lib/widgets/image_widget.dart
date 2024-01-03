@@ -8,13 +8,17 @@ class CustomImageNetwork extends StatelessWidget {
     required this.showIcon,
   });
 
-  String? imageURL;
+  final String imageURL;
   final bool showIcon;
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      imageURL ??= "https://cdn.pixabay.com/photo/2016/12/04/22/15/fitness-1882721_960_720.jpg",
+    return imageURL.isEmpty? showIcon
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: const Card(elevation: 1 ,child: Icon(Icons.image)))
+            : SizedBox(height: MediaQuery.of(context).size.height / 20): Image.network(
+      imageURL,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
         return showIcon
