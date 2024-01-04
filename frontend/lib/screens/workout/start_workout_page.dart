@@ -6,7 +6,10 @@ import 'package:frontend/screens/exercise/exercise_page.dart';
 
 class StartWorkoutPage extends StatefulWidget {
   final List<Exercise> exercises;
-  StartWorkoutPage(this.exercises, {Key? key}) : super(key: key);
+  final Function(List<Exercise> modifiedExercises, String time)
+      finish_workout_callback;
+  StartWorkoutPage(this.exercises, this.finish_workout_callback, {Key? key})
+      : super(key: key);
 
   @override
   State<StartWorkoutPage> createState() => _StartWorkoutPageState();
@@ -14,34 +17,48 @@ class StartWorkoutPage extends StatefulWidget {
 
 class _StartWorkoutPageState extends State<StartWorkoutPage> {
   final stopwatch = Stopwatch();
+  bool isStarted = false;
+  bool isOnBreak = false;
+  bool isStopped = false;
+  String leftButtonText = "START";
+  Color leftButtonColor = Colors.green;
   ScrollController _controller = ScrollController();
+  double offset = 0.0 ;
   TextEditingController progressionWeightController = TextEditingController();
   TextEditingController progressionSetsController = TextEditingController();
   TextEditingController progressionRepsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    stopwatch.start();
-    Timer timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        
-      });
+    Timer timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(this.mounted){
+        setState(() {});
+      }
     });
+
     return PopScope(
       canPop: false,
       child: Scaffold(
         body: SafeArea(
           child: Column(children: [
+            const Expanded(
+              flex: 1,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Let's Workout",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+              ),
+            ),
             Expanded(
-                flex: 8,
+                flex: 13,
                 child: PageView.builder(
                   itemCount: widget.exercises.length,
                   itemBuilder: (context, index) {
                     return Card(
                       child: Scrollbar(
-                        controller: _controller,
-                        child: ListView(
-                          controller: _controller,
+                        child: SingleChildScrollView(
+                          child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -195,7 +212,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                             ),
                             widget.exercises[index].progression.toString() ==
                                     "null"
-                                ? SizedBox.shrink()
+                                ? const SizedBox.shrink()
                                 : widget.exercises[index].progression.isEmpty
                                     ? const SizedBox.shrink()
                                     : Padding(
@@ -234,20 +251,59 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                           ),
                                         )),
                           ],
+                          )
                         ),
                       ),
                     );
                   },
                 )),
             Expanded(
-              flex: 1,
-              child: Row(
-                children: [
-                  TextButton(onPressed: () {}, child: Text("Start")),
-                  Text(
-                      "${stopwatch.elapsed.inHours}:${stopwatch.elapsed.inMinutes}:${stopwatch.elapsed.inSeconds}"),
-                  TextButton(onPressed: () {}, child: Text("Stop")),
-                ],
+              flex: 2,
+              child: FittedBox(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            if (!isStarted) {
+                              isStarted = true;
+                              stopwatch.start();
+                              leftButtonText = "BREAK";
+                              leftButtonColor = Colors.yellow;
+                              return;
+                            }
+                            if (isStarted && !isOnBreak) {
+                              isOnBreak = true;
+                              stopwatch.stop();
+                              leftButtonText = "RESUME";
+                              leftButtonColor = Colors.blue;
+                              return;
+                            }
+                            if (isStarted && isOnBreak) {
+                              isOnBreak = false;
+                              stopwatch.start();
+                              leftButtonText = "BREAK";
+                              leftButtonColor = Colors.yellow;
+                              return;
+                            }
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: leftButtonColor,
+                        ),
+                        child: Text(leftButtonText)),
+                    Text(stopwatch.elapsed.toString().split(".").first,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    TextButton(
+                        onPressed: () {
+                          widget.finish_workout_callback(widget.exercises,
+                              stopwatch.elapsed.toString().split(".").first);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text("END")),
+                  ],
+                ),
               ),
             )
           ]),

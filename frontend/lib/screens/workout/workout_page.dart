@@ -37,14 +37,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
         .where((i) => widget.workout.exercises.any((j) => i.id == j))
         .toList();
     selectedDays = {
-    'Monday': widget.workout.days.contains(Days.Monday),
-    'Tuesday': widget.workout.days.contains(Days.Tuesday),
-    'Wednesday':  widget.workout.days.contains(Days.Wednesday),
-    'Thursday':  widget.workout.days.contains(Days.Thursday),
-    'Friday': widget.workout.days.contains(Days.Friday),
-    'Saturday': widget.workout.days.contains(Days.Saturday),
-    'Sunday': widget.workout.days.contains(Days.Sunday),
-  };
+      'Monday': widget.workout.days.contains(Days.Monday),
+      'Tuesday': widget.workout.days.contains(Days.Tuesday),
+      'Wednesday': widget.workout.days.contains(Days.Wednesday),
+      'Thursday': widget.workout.days.contains(Days.Thursday),
+      'Friday': widget.workout.days.contains(Days.Friday),
+      'Saturday': widget.workout.days.contains(Days.Saturday),
+      'Sunday': widget.workout.days.contains(Days.Sunday),
+    };
     super.initState();
   }
 
@@ -56,24 +56,32 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
+  finish_workout_callback(List<Exercise> modifiedExercises, String time) {
+    setState(() {
+      exercises = modifiedExercises;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CustomImageNetwork(imageURL: widget.workout.imageURL, showIcon: false),
+          CustomImageNetwork(
+              imageURL: widget.workout.imageURL, showIcon: false),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row( 
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(widget.workout.title,
                         style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 22)),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.delete_forever))
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.delete_forever))
                   ],
                 ),
                 Row(
@@ -194,7 +202,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             ),
           ),
           const SizedBox(
-            height: 120,
+            height: 90,
           )
         ]),
       ),
@@ -217,13 +225,13 @@ class _WorkoutPageState extends State<WorkoutPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          StartWorkoutPage(Exercise.db()
-        .where((i) => widget.workout.exercises.any((j) => i.id == j))
-        .toList())));
+                      builder: (context) => StartWorkoutPage(Exercise.db()
+                          .where((i) =>
+                              widget.workout.exercises.any((j) => i.id == j))
+                          .toList(),finish_workout_callback)));
             },
             heroTag: "workoutstartbtn",
-            child: const Text("Go !"),
+            child: const Text("START"),
           )
         ],
       ),
@@ -232,20 +240,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void handleAdd(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                AddExercise(callback)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => AddExercise(callback)));
   }
 
   void handleCreate(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                CreateExercise(callback)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => CreateExercise(callback)));
   }
 
   void handleOrder(BuildContext context) {
@@ -254,8 +256,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                OrderExercise(callback, unordered)));
+            builder: (context) => OrderExercise(callback, unordered)));
     exercises.clear();
   }
 
@@ -269,8 +270,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             "Are you sure you want to delete ${exercises[exer_index].title} from your workout ?"),
         actions: [
           TextButton(
-              onPressed: () =>
-                  Navigator.pop(context, 'Cancel'),
+              onPressed: () => Navigator.pop(context, 'Cancel'),
               child: const Text("No")),
           TextButton(
               onPressed: () {
@@ -312,13 +312,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
     setState(() {
       selectedDays[day] = newValue!;
       if (selectedDays[day] == true) {
-        widget.workout.days
-            .add(Workout.translateStringToDay(day));
+        widget.workout.days.add(Workout.translateStringToDay(day));
       } else {
-        widget.workout.days
-            .remove(Workout.translateStringToDay(day));
+        widget.workout.days.remove(Workout.translateStringToDay(day));
       }
-      final positions = daysOfWeek.asMap().map((ind, day) => MapEntry(day, ind));
+      final positions =
+          daysOfWeek.asMap().map((ind, day) => MapEntry(day, ind));
       widget.workout.days.sort((first, second) {
         final firstPos = positions[first.name] ?? 8;
         final secondPos = positions[second.name] ?? 8;
