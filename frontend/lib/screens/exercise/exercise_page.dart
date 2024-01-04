@@ -200,7 +200,7 @@ class _ExercisePageState extends State<ExercisePage> {
                 Navigator.of(context).pop();
               },
               heroTag: "exerciseexitbtn",
-              child: const Icon(Icons.exit_to_app),
+              child: const  Icon(Icons.arrow_back),
             ),
           ),
         ],

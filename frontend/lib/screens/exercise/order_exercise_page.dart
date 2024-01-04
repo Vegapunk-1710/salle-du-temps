@@ -78,7 +78,7 @@ class _OrderExerciseState extends State<OrderExercise> {
                 Navigator.of(context).pop();
               },
               heroTag: "orderexerciseexitbtn",
-              child: const Icon(Icons.exit_to_app),
+              child: const  Icon(Icons.arrow_back),
             ),
           ),
           Padding(

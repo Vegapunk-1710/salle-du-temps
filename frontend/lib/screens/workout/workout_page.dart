@@ -216,7 +216,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 Navigator.of(context).pop();
               },
               heroTag: "workoutexitbtn",
-              child: const Icon(Icons.exit_to_app),
+              child: const Icon(Icons.arrow_back),
             ),
           ),
           FloatingActionButton(

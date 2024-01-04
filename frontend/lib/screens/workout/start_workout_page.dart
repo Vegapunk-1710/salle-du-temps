@@ -22,16 +22,16 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
   bool isStopped = false;
   String leftButtonText = "START";
   Color leftButtonColor = Colors.green;
-  ScrollController _controller = ScrollController();
-  double offset = 0.0 ;
+  int page_index = 0;
   TextEditingController progressionWeightController = TextEditingController();
   TextEditingController progressionSetsController = TextEditingController();
   TextEditingController progressionRepsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    Timer timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if(this.mounted){
+    // ignore: unused_local_variable
+    var timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (this.mounted) {
         setState(() {});
       }
     });
@@ -53,12 +53,15 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
             Expanded(
                 flex: 13,
                 child: PageView.builder(
+                  onPageChanged: (index) => setState(() {
+                    page_index = index;
+                  }),
                   itemCount: widget.exercises.length,
                   itemBuilder: (context, index) {
                     return Card(
                       child: Scrollbar(
                         child: SingleChildScrollView(
-                          child: Column(
+                            child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -69,12 +72,12 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(widget.exercises[index].title,
+                                      Text(widget.exercises[page_index].title,
                                           style: const TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 22)),
                                       Text(
-                                          "~ ${widget.exercises[index].time} mins",
+                                          "~ ${widget.exercises[page_index].time} mins",
                                           style: const TextStyle(
                                               fontWeight: FontWeight.w300,
                                               fontSize: 14)),
@@ -90,7 +93,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                   Padding(
                                       padding: const EdgeInsets.all(20),
                                       child: Text(
-                                          widget.exercises[index].tutorial,
+                                          widget.exercises[page_index].tutorial,
                                           style: const TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 16))),
@@ -103,7 +106,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                   Padding(
                                       padding: const EdgeInsets.all(20),
                                       child: Text(
-                                          widget.exercises[index].setsreps,
+                                          widget.exercises[page_index].setsreps,
                                           style: const TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 16))),
@@ -123,10 +126,11 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                     IconButton(
                                         onPressed: () {
                                           setState(() {
-                                            if (widget.exercises[index]
+                                            if (widget.exercises[page_index]
                                                 .progression.isNotEmpty) {
                                               var removed = widget
-                                                  .exercises[index].progression
+                                                  .exercises[page_index]
+                                                  .progression
                                                   .removeLast();
                                               var snackBar = SnackBar(
                                                 content: Text(
@@ -135,10 +139,12 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                                   label: 'Undo',
                                                   onPressed: () {
                                                     setState(() {
-                                                      widget.exercises[index]
+                                                      widget
+                                                          .exercises[page_index]
                                                           .progression
                                                           .add(removed);
-                                                      widget.exercises[index]
+                                                      widget
+                                                          .exercises[page_index]
                                                           .progression
                                                           .sort((a, b) => a.$1
                                                               .compareTo(b.$1));
@@ -194,8 +200,8 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                               int reps = int.parse(
                                                   progressionRepsController
                                                       .text);
-                                              widget
-                                                  .exercises[index].progression
+                                              widget.exercises[page_index]
+                                                  .progression
                                                   .add((
                                                 date,
                                                 weight,
@@ -210,10 +216,12 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                 ),
                               ),
                             ),
-                            widget.exercises[index].progression.toString() ==
+                            widget.exercises[page_index].progression
+                                        .toString() ==
                                     "null"
                                 ? const SizedBox.shrink()
-                                : widget.exercises[index].progression.isEmpty
+                                : widget.exercises[page_index].progression
+                                        .isEmpty
                                     ? const SizedBox.shrink()
                                     : Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -227,23 +235,26 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                                       MainAxisAlignment
                                                           .spaceEvenly,
                                                   children: [
-                                                    Text(widget.exercises[index]
-                                                        .progression.last.$1
+                                                    Text(widget
+                                                        .exercises[page_index]
+                                                        .progression
+                                                        .last
+                                                        .$1
                                                         .toIso8601String()
                                                         .split('T')
                                                         .first),
                                                     const Icon(
                                                         Icons.arrow_right),
                                                     Text(
-                                                        "${widget.exercises[index].progression.last.$2} max lbs"),
+                                                        "${widget.exercises[page_index].progression.last.$2} max lbs"),
                                                     const Icon(
                                                         Icons.arrow_right),
                                                     Text(
-                                                        "${widget.exercises[index].progression.last.$3} max sets"),
+                                                        "${widget.exercises[page_index].progression.last.$3} max sets"),
                                                     const Icon(
                                                         Icons.arrow_right),
                                                     Text(
-                                                        "${widget.exercises[index].progression.last.$4} max reps")
+                                                        "${widget.exercises[page_index].progression.last.$4} max reps")
                                                   ],
                                                 ),
                                               ),
@@ -251,8 +262,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                           ),
                                         )),
                           ],
-                          )
-                        ),
+                        )),
                       ),
                     );
                   },
@@ -263,6 +273,17 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    IconButton(
+                        onPressed: () {
+                          if (page_index == 0) {
+                            Navigator.of(context).pop();
+                          } else {
+                            setState(() {
+                              page_index -= 1;
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.arrow_back)),
                     TextButton(
                         onPressed: () {
                           setState(() {
@@ -270,7 +291,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                               isStarted = true;
                               stopwatch.start();
                               leftButtonText = "BREAK";
-                              leftButtonColor = Colors.yellow;
+                              leftButtonColor = Colors.orange;
                               return;
                             }
                             if (isStarted && !isOnBreak) {
@@ -284,7 +305,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                               isOnBreak = false;
                               stopwatch.start();
                               leftButtonText = "BREAK";
-                              leftButtonColor = Colors.yellow;
+                              leftButtonColor = Colors.orange;
                               return;
                             }
                           });
@@ -302,6 +323,19 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                           Navigator.of(context).pop();
                         },
                         child: const Text("END")),
+                    IconButton(
+                        onPressed: () {
+                          if (page_index == widget.exercises.length - 1) {
+                            widget.finish_workout_callback(widget.exercises,
+                              stopwatch.elapsed.toString().split(".").first);
+                          Navigator.of(context).pop();
+                          } else {
+                            setState(() {
+                              page_index += 1;
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.arrow_forward)),
                   ],
                 ),
               ),

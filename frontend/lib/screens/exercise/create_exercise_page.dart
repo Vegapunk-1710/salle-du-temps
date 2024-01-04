@@ -171,7 +171,7 @@ class _CreateExerciseState extends State<CreateExercise> {
                 Navigator.of(context).pop();
               },
               heroTag: "createexerciseexitbtn",
-              child: const Icon(Icons.exit_to_app),
+              child: const  Icon(Icons.arrow_back),
             ),
           ),
         ],

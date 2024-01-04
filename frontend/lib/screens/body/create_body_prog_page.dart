@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:frontend/models/workout_model.dart';
 
-class CreateWorkoutPage extends StatefulWidget {
-  final Function(Workout createdWorkout) create_callback;
-  CreateWorkoutPage(this.create_callback, {Key? key}) : super(key: key);
+class CreateBodyProgPage extends StatefulWidget {
+  CreateBodyProgPage({Key? key}) : super(key: key);
 
   @override
-  State<CreateWorkoutPage> createState() => _CreateWorkoutPageState();
+  State<CreateBodyProgPage> createState() => _CreateBodyProgPageState();
 }
 
-class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
+class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
   int step_index = 0;
   TextEditingController titleController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController imageURLController = TextEditingController();
   TextEditingController descController = TextEditingController();
-  String selectedDifficulty = "Beginner";
-  List<DropdownMenuItem<String>> difficulties = [
-    DropdownMenuItem(
-        value: Difficulty.Beginner.name, child: const Text("Beginner")),
-    DropdownMenuItem(
-        value: Difficulty.Intermediate.name, child: const Text("Intermediate")),
-    DropdownMenuItem(
-        value: Difficulty.Advanced.name, child: const Text("Advanced")),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +38,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                         children: <Widget>[
                           TextButton(
                             onPressed: details.onStepContinue,
-                            child: step_index == 4
+                            child: step_index == 1
                                 ? const Text('Submit')
                                 : const Text('Next'),
                           ),
@@ -71,13 +60,13 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                       }
                     },
                     onStepContinue: () {
-                      if (step_index < 4) {
+                      if (step_index < 1) {
                         setState(() {
                           step_index += 1;
                         });
                       }
-                      if (step_index == 4) {
-                        submitExercise();
+                      if (step_index == 1) {
+                        submitBodyProg();
                       }
                     },
                     onStepTapped: (int index) {
@@ -87,53 +76,26 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                     },
                     steps: [
                       Step(
-                          title: const Text("Write a title for the workout :"),
-                          content: TextField(
-                            controller: titleController,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9a-zA-Z ]")),
-                            ],
-                          )),
-                      Step(
-                          title:
-                              const Text("Pick a difficulty for the workout :"),
-                          content: DropdownButton(
-                              value: selectedDifficulty,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedDifficulty = newValue!;
-                                });
-                              },
-                              items: difficulties)),
-                      Step(
                           title: const Text(
-                              "Enter the average duration in minutes for the workout :"),
+                              "Enter your current weight in lbs:"),
                           content: TextField(
                             controller: timeController,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(
-                                  RegExp("[0-9]")),
+                                  RegExp("[0-9.]")),
                             ],
                           )),
                       Step(
                           title: const Text(
-                              "Upload an image that describes the workout :"),
+                              "Pick images from your gallery :"),
                           content: TextField(
                             controller: imageURLController,
-                          )),
-                      Step(
-                          title: const Text(
-                              "Write a description for the workout :"),
-                          content: TextField(
-                            controller: descController,
-                            maxLines: null,
                           )),
                     ]),
               ),
             ),
             const SizedBox(
-              height: 100,
+              height: 90,
             )
           ],
         ),
@@ -147,7 +109,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              heroTag: "createworkoutexitbtn",
+              heroTag: "createbodyprogexitbtn",
               child: const  Icon(Icons.arrow_back),
             ),
           ),
@@ -155,31 +117,6 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
       ),
     );
   }
-
-  void submitExercise() {
-    if (titleController.text.isNotEmpty &&
-        timeController.text.isNotEmpty &&
-        descController.text.isNotEmpty) {
-      String title = titleController.text;
-      int time = int.parse(timeController.text);
-      String desc = descController.text;
-      var difficulty = Workout.translateStringToDifficulty(selectedDifficulty);
-      String? imageURL = imageURLController.text;
-      Workout createdWorkout = Workout(
-          id: UniqueKey().toString(),
-          imageURL: imageURL,
-          createdBy: "Baher",
-          createdAt: DateTime.now(),
-          title: title,
-          difficulty: difficulty,
-          time: time,
-          description: desc,
-          exercises: [],
-          days: [],
-          progression: [],
-          );
-      widget.create_callback(createdWorkout);
-      Navigator.of(context).pop();
-    }
-  }
+  
+  void submitBodyProg() {}
 }

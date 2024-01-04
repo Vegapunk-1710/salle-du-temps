@@ -139,7 +139,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                 Navigator.of(context).pop();
               },
               heroTag: "addworkoutexitbtn",
-              child: const Icon(Icons.exit_to_app),
+              child: const  Icon(Icons.arrow_back),
             ),
           ),
           Padding(

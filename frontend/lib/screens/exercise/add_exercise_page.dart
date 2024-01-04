@@ -116,7 +116,7 @@ class _AddExerciseState extends State<AddExercise> {
                 Navigator.of(context).pop();
               },
               heroTag: "addexerciseexitbtn",
-              child: const Icon(Icons.exit_to_app),
+              child: const  Icon(Icons.arrow_back),
             ),
           ),
           Padding(
