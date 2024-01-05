@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateBodyProgPage extends StatefulWidget {
-  CreateBodyProgPage({Key? key}) : super(key: key);
+  final Function(String? addedPath) callback;
+  CreateBodyProgPage(this.callback, {Key? key}) : super(key: key);
 
   @override
   State<CreateBodyProgPage> createState() => _CreateBodyProgPageState();
@@ -17,6 +19,21 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ImagePicker imagePicker = ImagePicker();
+    List<XFile> imageFileList = [];
+
+    void selectImages() async {
+      final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
+      setState(() {
+        if (selectedImages!.isNotEmpty) {
+          imageFileList.addAll(selectedImages);
+        }
+        imageFileList.forEach((image) {
+          widget.callback(image.path);
+        });
+      });
+    }
+
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -24,7 +41,7 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
           children: [
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("Create A Workout",
+              child: Text("Create A Body Transfomation",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
             ),
             Padding(
@@ -76,8 +93,8 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
                     },
                     steps: [
                       Step(
-                          title: const Text(
-                              "Enter your current weight in lbs:"),
+                          title:
+                              const Text("Enter your current weight in lbs:"),
                           content: TextField(
                             controller: timeController,
                             inputFormatters: <TextInputFormatter>[
@@ -86,10 +103,15 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
                             ],
                           )),
                       Step(
-                          title: const Text(
-                              "Pick images from your gallery :"),
-                          content: TextField(
-                            controller: imageURLController,
+                          title: const Text("Pick images from your gallery :"),
+                          content: Column(
+                            children: [
+                              imageFileList.isNotEmpty ? Text("${imageFileList.length}Selected Images") : SizedBox.shrink(),
+                              TextButton(
+                                onPressed: selectImages,
+                                child: const Text("Click To Pick"),
+                              ),
+                            ],
                           )),
                     ]),
               ),
@@ -110,13 +132,15 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
                 Navigator.of(context).pop();
               },
               heroTag: "createbodyprogexitbtn",
-              child: const  Icon(Icons.arrow_back),
+              child: const Icon(Icons.arrow_back),
             ),
           ),
         ],
       ),
     );
   }
-  
-  void submitBodyProg() {}
+
+  void submitBodyProg() {
+
+  }
 }

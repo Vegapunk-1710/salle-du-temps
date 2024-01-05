@@ -1,8 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/body/body_prog_page.dart';
-import 'package:frontend/screens/body/create_body_prog_page.dart';
+import 'package:frontend/widgets/image_widget.dart';
 import 'package:frontend/widgets/workout_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -61,13 +60,7 @@ class _HomePageState extends State<HomePage> {
                     width: 100,
                   ),
                   Text(
-                      "${DateTime.now()
-                              .toIso8601String()
-                              .substring(0, 10)
-                              .split("-")[1]}/${DateTime.now()
-                              .toIso8601String()
-                              .substring(0, 10)
-                              .split("-")[2]}",
+                      "${DateTime.now().toIso8601String().substring(0, 10).split("-")[1]}/${DateTime.now().toIso8601String().substring(0, 10).split("-")[2]}",
                       style: const TextStyle(fontWeight: FontWeight.w600)),
                 ],
               )),
@@ -91,30 +84,16 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Body Transformation",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 22))),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BodyProgPage()));
-                },
-                child: GridView.builder(
-                  shrinkWrap: true,
+              padding: const EdgeInsets.all(8.0),
+              child: GridView(
+                shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3),
-                  itemBuilder: (_, index) => const FlutterLogo(),
-                  itemCount: 3,
-                ),
-              ),
-            ],
-          ),
-        )
+                      crossAxisCount: 2),
+                  children: [
+                    Card(child:Center(child: Text("Body Transformation")),elevation: 10,),
+                    Card(child:Center(child: Text("Statistics")),elevation: 10,),
+                  ]),
+            ),
       ],
     )));
   }

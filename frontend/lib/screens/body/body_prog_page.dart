@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/body/create_body_prog_page.dart';
 
@@ -9,18 +11,27 @@ class BodyProgPage extends StatefulWidget {
 }
 
 class _BodyProgPageState extends State<BodyProgPage> {
+  List<String> paths = [];
+  
+  callback(String? addedPath) {
+    setState(() {
+      paths.add(addedPath!);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Scrollbar(
           child: GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3),
-                    itemBuilder: (_, index) => const FlutterLogo(),
-                    itemCount: 19,
-                  ),
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3),
+            itemBuilder: (_, index) =>
+                Image.file(File(paths[index]), fit: BoxFit.cover),
+            itemCount: paths.length,
+          ),
         ),
       ),
       floatingActionButton: Row(
@@ -33,18 +44,20 @@ class _BodyProgPageState extends State<BodyProgPage> {
                 Navigator.of(context).pop();
               },
               heroTag: "bodyprogexitbtn",
-              child: const  Icon(Icons.arrow_back),
+              child: const Icon(Icons.arrow_back),
             ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => CreateBodyProgPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CreateBodyProgPage(callback)));
               },
               heroTag: "bodyprogcreatebtn",
-              child: const  Icon(Icons.create),
+              child: const Icon(Icons.create),
             ),
           ),
         ],
