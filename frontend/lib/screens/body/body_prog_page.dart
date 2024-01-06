@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/material.dart';
@@ -19,63 +20,42 @@ class _BodyProgPageState extends State<BodyProgPage> {
 
   @override
   initState() {
-    loadBodyProgData();
+    getProgressions();
     super.initState();
   }
 
-  Future<List<BodyProgression>> loadBodyProgData() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/bodyProgData.json');
-    print(file.path);
-    if (!await file.exists()) {
-      await file.create();
-      return [];
-    } else {
-      // file.writeAsStringSync('');
-      final contents = await file.readAsString();
-      print("Getting Contents :" + contents);
-      final content = json.decode(contents);
-      setState(() {
-        print(BodyProgression.fromJson(content));
-        progressions.add(BodyProgression.fromJson(content));
-      });
-      return [];
-      // try {
-      //   final contents = await file.readAsString();
-      //   print("Printing Contents :" + contents);
-      //   Iterable content = json.decode(contents);
-      //   progressions = List<BodyProgression>.from(
-      //       content.map((model) => BodyProgression.fromJson(model)));
-      //   return progressions;
-      // } catch (e) {
-      //   return [];
-      // }
-    }
-  }
-
-  saveBodyProgData(BodyProgression progression) async {
+  saveProgression() async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/bodyProgData.json');
     if (await file.exists()) {
-      file.writeAsString(json.encode(progression.toJson()));
+      file.writeAsStringSync('');
+      file.writeAsString(
+          jsonEncode(progressions.map((p) => p.toJson()).toList()));
     }
   }
 
-  readBodyProgData() async {
+  getProgressions() async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/bodyProgData.json');
     final contents = await file.readAsString();
-    print("Reading Contents :" + contents);
-    final content = json.decode(contents);
-    final p = BodyProgression.fromJson(content);
-    print(p);
+    try {
+      Iterable p = json.decode(contents);
+      setState(() {
+        progressions = List<BodyProgression>.from(
+            p.map((model) => BodyProgression.fromJson(model)));
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Body Progressions File is empty.");
+      }
+    }
   }
 
   callback(BodyProgression progression) {
     setState(() {
       progressions.add(progression);
-      saveBodyProgData(progression);
-      readBodyProgData();
+      saveProgression();
+      getProgressions();
     });
   }
 
@@ -101,15 +81,14 @@ class _BodyProgPageState extends State<BodyProgPage> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Hero(
-                    tag: 'bodyproghero' + progressions[index].id,
+                    tag: 'bodyproghero${progressions[index].id}',
                     child: Image.file(File(progressions[index].imagesPaths[0]),
-                        //     errorBuilder: (context, error, stackTrace) {
-                        //   return SizedBox(
-                        //       width: MediaQuery.of(context).size.width,
-                        //       child: const Card(
-                        //           elevation: 10, child: Icon(Icons.image)));
-                        // },
-                        fit: BoxFit.cover),
+                        errorBuilder: (context, error, stackTrace) {
+                      return SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: const Card(
+                              elevation: 10, child: Icon(Icons.image)));
+                    }, fit: BoxFit.cover),
                   ),
                 ),
               ),

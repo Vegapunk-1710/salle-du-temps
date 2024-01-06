@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class BodyProgression {
   String id;
   DateTime createdAt;
@@ -21,13 +19,13 @@ class BodyProgression {
   BodyProgression.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         createdAt = DateTime.parse(json['createdAt']),
-        imagesPaths = json['imagesPaths'].toString().replaceAll('"', '').substring(1,json['imagesPaths'].toString().length-1).split(","),
-        currentWeight = double.parse(json['currentWeight']);
+        imagesPaths = json['imagesPaths'].cast<String>(),
+        currentWeight = json['currentWeight'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'createdAt': createdAt.toIso8601String(),
-        'imagesPaths': jsonEncode(imagesPaths, toEncodable: (c)=> c.toString()),
-        'currentWeight' : currentWeight.toString()
+        'imagesPaths': imagesPaths,
+        'currentWeight' : currentWeight
       };
 }
