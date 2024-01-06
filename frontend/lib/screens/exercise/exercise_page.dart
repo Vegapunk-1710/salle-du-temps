@@ -23,7 +23,7 @@ class _ExercisePageState extends State<ExercisePage> {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-         CustomImageNetwork(imageURL: widget.exercise.imageURL, showIcon: false),
+         CustomImageNetwork(imageURL: widget.exercise.imageURL, showIcon: false,fit: BoxFit.fill,),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

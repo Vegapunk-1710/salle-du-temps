@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/body/body_prog_page.dart';
-import 'package:frontend/widgets/image_widget.dart';
 import 'package:frontend/widgets/workout_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -84,16 +83,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView(
-                shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  children: [
-                    Card(child:Center(child: Text("Body Transformation")),elevation: 10,),
-                    Card(child:Center(child: Text("Statistics")),elevation: 10,),
-                  ]),
+          padding: const EdgeInsets.all(8.0),
+          child: GridView(
+              shrinkWrap: true,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2),
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BodyProgPage()));
+                    },
+                    child: const Card(
+                      elevation: 10,
+                      child: Center(child: Text("Body Transformation")),
+                    )),
+                const Card(
+                  elevation: 10,
+                  child: Center(child: Text("Statistics")),
+                ),
+              ]
             ),
+        ),
       ],
     )));
   }

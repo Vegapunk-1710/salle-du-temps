@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/models/body_prog_model.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateBodyProgPage extends StatefulWidget {
-  final Function(String? addedPath) callback;
+  final Function(BodyProgression progression) callback;
   CreateBodyProgPage(this.callback, {Key? key}) : super(key: key);
 
   @override
@@ -12,26 +15,20 @@ class CreateBodyProgPage extends StatefulWidget {
 
 class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
   int step_index = 0;
-  TextEditingController titleController = TextEditingController();
-  TextEditingController timeController = TextEditingController();
-  TextEditingController imageURLController = TextEditingController();
-  TextEditingController descController = TextEditingController();
+  List<XFile> imageFileList = [];
+  TextEditingController weightController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final ImagePicker imagePicker = ImagePicker();
-    List<XFile> imageFileList = [];
 
     void selectImages() async {
+      imageFileList = [];
       final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
-      setState(() {
-        if (selectedImages!.isNotEmpty) {
-          imageFileList.addAll(selectedImages);
-        }
-        imageFileList.forEach((image) {
-          widget.callback(image.path);
-        });
-      });
+      if (selectedImages!.isNotEmpty) {
+        imageFileList.addAll(selectedImages);
+      }
+      setState(() {});
     }
 
     return Scaffold(
@@ -81,6 +78,7 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
                         setState(() {
                           step_index += 1;
                         });
+                        return;
                       }
                       if (step_index == 1) {
                         submitBodyProg();
@@ -96,7 +94,7 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
                           title:
                               const Text("Enter your current weight in lbs:"),
                           content: TextField(
-                            controller: timeController,
+                            controller: weightController,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(
                                   RegExp("[0-9.]")),
@@ -106,7 +104,18 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
                           title: const Text("Pick images from your gallery :"),
                           content: Column(
                             children: [
-                              imageFileList.isNotEmpty ? Text("${imageFileList.length}Selected Images") : SizedBox.shrink(),
+                              imageFileList.isNotEmpty
+                                  ? GridView.builder(
+                                      shrinkWrap: true,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3),
+                                      itemBuilder: (_, index) => Image.file(
+                                          File(imageFileList[index].path),
+                                          fit: BoxFit.cover),
+                                      itemCount: imageFileList.length,
+                                    )
+                                  : const SizedBox.shrink(),
                               TextButton(
                                 onPressed: selectImages,
                                 child: const Text("Click To Pick"),
@@ -141,6 +150,18 @@ class _CreateBodyProgPageState extends State<CreateBodyProgPage> {
   }
 
   void submitBodyProg() {
-
+    if (imageFileList.isNotEmpty && weightController.text.isNotEmpty) {
+      List<String> imagesPaths = [];
+      for (var imageFile in imageFileList) {
+        imagesPaths.add(imageFile.path);
+      }
+      BodyProgression progression = BodyProgression(
+        id: UniqueKey().toString(),
+          createdAt: DateTime.now(),
+          currentWeight: double.parse(weightController.text),
+          imagesPaths: imagesPaths);
+      widget.callback(progression);
+      Navigator.of(context).pop();
+    }
   }
 }

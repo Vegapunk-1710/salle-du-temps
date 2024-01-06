@@ -68,7 +68,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           CustomImageNetwork(
-              imageURL: widget.workout.imageURL, showIcon: false),
+              imageURL: widget.workout.imageURL, showIcon: false, fit: BoxFit.fill,),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
