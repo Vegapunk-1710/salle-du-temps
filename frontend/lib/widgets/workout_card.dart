@@ -19,11 +19,11 @@ class WorkoutCard extends StatelessWidget {
       child: Card(
           elevation: 10,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
                   flex: 1,
-                  child: CustomImageNetwork(imageURL: workout.imageURL,showIcon: true,)
+                  child: CustomImageNetwork(imageURL: workout.imageURL,showIcon: true,fit: BoxFit.fitWidth)
                   ),
               Expanded(
                   flex: 1,
