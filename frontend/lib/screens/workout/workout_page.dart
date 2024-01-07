@@ -56,7 +56,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  finish_workout_callback(List<Exercise> modifiedExercises, String time) {
+  endWorkoutCallback(List<Exercise> modifiedExercises, String time) {
     setState(() {
       exercises = modifiedExercises;
     });
@@ -68,7 +68,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           CustomImageNetwork(
-              imageURL: widget.workout.imageURL, showIcon: false, fit: BoxFit.fill,),
+            imageURL: widget.workout.imageURL,
+            showIcon: false,
+            fit: BoxFit.fill,
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -77,11 +80,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(widget.workout.title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 22)),
+                    Flexible(
+                      child: Text(widget.workout.title,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 22)),
+                    ),
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.delete_forever))
+                        onPressed: () {},
+                        icon: const Icon(Icons.delete_forever))
                   ],
                 ),
                 Row(
@@ -225,10 +231,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => StartWorkoutPage(Exercise.db()
-                          .where((i) =>
-                              widget.workout.exercises.any((j) => i.id == j))
-                          .toList(),finish_workout_callback)));
+                      builder: (context) => StartWorkoutPage(
+                          exercises,
+                          endWorkoutCallback)));
             },
             heroTag: "workoutstartbtn",
             child: const Text("START"),

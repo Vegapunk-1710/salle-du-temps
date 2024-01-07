@@ -7,8 +7,8 @@ import 'package:frontend/screens/exercise/exercise_page.dart';
 class StartWorkoutPage extends StatefulWidget {
   final List<Exercise> exercises;
   final Function(List<Exercise> modifiedExercises, String time)
-      finish_workout_callback;
-  StartWorkoutPage(this.exercises, this.finish_workout_callback, {Key? key})
+      endWorkoutCallback;
+  StartWorkoutPage(this.exercises, this.endWorkoutCallback, {Key? key})
       : super(key: key);
 
   @override
@@ -45,7 +45,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
               flex: 1,
               child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("Let's Workout",
+                child: Text("Let's Train!",
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
               ),
@@ -72,15 +72,28 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(widget.exercises[page_index].title,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 22)),
-                                      Text(
-                                          "~ ${widget.exercises[page_index].time} mins",
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w300,
-                                              fontSize: 14)),
+                                      Flexible(
+                                        child: Text(widget.exercises[page_index].title,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 22)),
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                            "${page_index+1}/${widget.exercises.length}",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 14)
+                                            ),
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                            "~ ${widget.exercises[page_index].time} mins",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 14)
+                                            ),
+                                      ),
                                     ],
                                   ),
                                   const Divider(),
@@ -318,7 +331,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     TextButton(
                         onPressed: () {
-                          widget.finish_workout_callback(widget.exercises,
+                          widget.endWorkoutCallback(widget.exercises,
                               stopwatch.elapsed.toString().split(".").first);
                           Navigator.of(context).pop();
                         },
@@ -326,7 +339,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                     IconButton(
                         onPressed: () {
                           if (page_index == widget.exercises.length - 1) {
-                            widget.finish_workout_callback(widget.exercises,
+                            widget.endWorkoutCallback(widget.exercises,
                               stopwatch.elapsed.toString().split(".").first);
                           Navigator.of(context).pop();
                           } else {

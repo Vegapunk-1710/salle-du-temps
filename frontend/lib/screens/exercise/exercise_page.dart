@@ -29,9 +29,15 @@ class _ExercisePageState extends State<ExercisePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.exercise.title,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 22)),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(widget.exercise.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 22)),
+                  ),
+                ],
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
