@@ -84,7 +84,7 @@ class _ExercisePageState extends State<ExercisePage> {
                       setState(() {
                         if (widget.exercise.progression.isNotEmpty) {
                           var removed =
-                              widget.exercise.progression.removeLast();
+                              widget.exercise.progression.removeAt(0);
                           var snackBar = SnackBar(
                             content: Text(
                                 'Deleted Last Progression : ${removed.$1}'),
@@ -95,6 +95,8 @@ class _ExercisePageState extends State<ExercisePage> {
                                   widget.exercise.progression.add(removed);
                                   widget.exercise.progression
                                       .sort((a, b) => a.$1.compareTo(b.$1));
+                                  var revList =  widget.exercise.progression.reversed ;
+                                  widget.exercise.progression = new List.from(revList);
                                 });
                               },
                             ),
@@ -103,6 +105,7 @@ class _ExercisePageState extends State<ExercisePage> {
                               .showSnackBar(snackBar);
                         }
                       });
+                      FocusManager.instance.primaryFocus?.unfocus();
                     },
                     icon: const Icon(Icons.delete_forever)),
                 Padding(
@@ -138,9 +141,10 @@ class _ExercisePageState extends State<ExercisePage> {
                           int reps =
                               int.parse(progressionRepsController.text);
                           widget.exercise.progression
-                              .add((date, weight, sets, reps));
+                              .insert(0,(date, weight, sets, reps));
                         }
                       });
+                      FocusManager.instance.primaryFocus?.unfocus();
                     },
                     icon: const Icon(Icons.add))
               ],
@@ -167,16 +171,16 @@ class _ExercisePageState extends State<ExercisePage> {
                                 MainAxisAlignment.spaceEvenly,
                             children: [
                               Text(widget
-                                  .exercise.progression[index].$1.toIso8601String().split('T').first),
+                                  .exercise.progression[index].$1.toIso8601String().split('T').first,style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal)),
                               const Icon(Icons.arrow_right),
                               Text(
-                                  "${widget.exercise.progression[index].$2} max lbs"),
+                                  "${widget.exercise.progression[index].$2} max lbs",style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal),),
                               const Icon(Icons.arrow_right),
                               Text(
-                                  "${widget.exercise.progression[index].$3} max sets"),
+                                  "${widget.exercise.progression[index].$3} max sets",style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal),),
                               const Icon(Icons.arrow_right),
                               Text(
-                                  "${widget.exercise.progression[index].$4} max reps")
+                                  "${widget.exercise.progression[index].$4} max reps",style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal))
                             ],
                           ),
                         ),
@@ -187,7 +191,7 @@ class _ExercisePageState extends State<ExercisePage> {
               ),
             ),
         const SizedBox(
-          height: 150,
+          height: 90,
         )
       ])),
       floatingActionButton: Row(

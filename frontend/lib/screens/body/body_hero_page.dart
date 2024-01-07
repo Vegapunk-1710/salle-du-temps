@@ -45,13 +45,15 @@ class _BodyProgHeroState extends State<BodyProgHero> {
                 HeroText("${page_index+1}/${widget.progression.imagesPaths.length}", 25)
               ],),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-              HeroText(widget.progression.createdAt.toIso8601String().split("T").first, 25),
-              HeroText("${widget.progression.currentWeight} lbs" , 25),
-            ],)
+            SafeArea(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                HeroText(widget.progression.createdAt.toIso8601String().split("T").first, 25),
+                HeroText("${widget.progression.currentWeight} lbs" , 25),
+              ],),
+            )
       ]),
     );
   }
