@@ -1,6 +1,7 @@
 class Exercise {
   String id;
   String imageURL;
+  String createdBy;
   DateTime createdAt;
   String title;
   Difficulty difficulty;
@@ -13,6 +14,7 @@ class Exercise {
   Exercise(
       {required this.id,
       required this.imageURL,
+      required this.createdBy,
       required this.createdAt,
       required this.title,
       required this.difficulty,
@@ -50,7 +52,8 @@ class Exercise {
       Exercise(
           id: 'ex1',
           imageURL: "",
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           title: 'Push Ups',
           difficulty: Difficulty.Intermediate,
           time: 10,
@@ -62,7 +65,8 @@ class Exercise {
       Exercise(
           id: 'ex2',
           title: 'Running',
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           imageURL: "",
           difficulty: Difficulty.Beginner,
           time: 30,
@@ -74,7 +78,8 @@ class Exercise {
       Exercise(
           id: 'ex3',
           title: 'Squats',
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           imageURL: "",
           difficulty: Difficulty.Intermediate,
           time: 15,
@@ -86,7 +91,8 @@ class Exercise {
       Exercise(
           id: 'ex4',
           title: 'Plank',
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           imageURL: "",
           difficulty: Difficulty.Advanced,
           time: 5,
@@ -98,7 +104,8 @@ class Exercise {
       Exercise(
           id: 'ex5',
           title: 'Jump Rope',
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           imageURL: "",
           difficulty: Difficulty.Beginner,
           time: 20,
@@ -111,7 +118,8 @@ class Exercise {
           id: 'ex6',
           title: 'Bicycle Crunches',
           imageURL: "",
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           difficulty: Difficulty.Intermediate,
           time: 15,
           type: Type.Strength,
@@ -123,7 +131,8 @@ class Exercise {
           id: 'ex7',
           title: 'Lunges',
           imageURL: "",
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           difficulty: Difficulty.Beginner,
           time: 10,
           type: Type.Strength,
@@ -135,8 +144,9 @@ class Exercise {
       Exercise(
           id: 'ex8',
           title: 'Pull-Ups',
-          createdAt:DateTime.now(),
+          createdAt: DateTime.now(),
           imageURL: "",
+          createdBy: "Rony",
           difficulty: Difficulty.Advanced,
           time: 20,
           type: Type.Strength,
@@ -147,7 +157,8 @@ class Exercise {
       Exercise(
           id: 'ex9',
           title: 'Box Jumps',
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           imageURL: "",
           difficulty: Difficulty.Intermediate,
           time: 15,
@@ -159,7 +170,8 @@ class Exercise {
       Exercise(
           id: 'ex10',
           title: 'Mountain Climbers',
-          createdAt:DateTime.now(),
+          createdBy: "Rony",
+          createdAt: DateTime.now(),
           imageURL: "",
           difficulty: Difficulty.Beginner,
           time: 10,

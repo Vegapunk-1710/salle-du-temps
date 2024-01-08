@@ -195,6 +195,7 @@ class _CreateExerciseState extends State<CreateExercise> {
           id: UniqueKey().toString(),
           title: title,
           imageURL: imageURL,
+          createdBy: "Rony",
           createdAt: DateTime.now(),
           difficulty: difficulty,
           time: time,
