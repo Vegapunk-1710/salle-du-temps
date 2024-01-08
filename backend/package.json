@@ -9,6 +9,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "prisma": "^5.7.1"
+    "@types/node": "^20.10.7",
+    "prisma": "^5.7.1",
+    "ts-node": "^10.9.2"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1"
   }
 }
