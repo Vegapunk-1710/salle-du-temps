@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -26,11 +29,9 @@ model Workout {
   createdBy String 
   createdAt DateTime @default(now())
   title String 
-  difficulty String
+  difficulty Difficulty
   time Int 
   description String
-  days String[]
-  progression String[]
   exercises Exercise[]
   users User[]
 }
@@ -41,11 +42,24 @@ model Exercise {
   createdBy String 
   createdAt DateTime @default(now())
   title String 
-  difficulty String
+  difficulty Difficulty
   time Int 
-  type String
+  type Type
   tutorial String
   setsreps String
-  progression String[]
   workouts Workout[]
+}
+
+enum Difficulty {
+  Beginner
+  Intermediate
+  Advanced
+}
+
+
+enum Type { 
+  Aerobic
+  Strength
+  Stretching
+  Balance 
 }

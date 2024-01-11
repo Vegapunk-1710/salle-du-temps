@@ -1,5 +1,5 @@
 import {PrismaClient} from "@prisma/client"
-import {exercises} from "../data/exercises"
+import { exercises } from "./data/exercises";
 
 
 const prisma = new PrismaClient();
@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function main(){
    await prisma.user.create({
     data: {
-        username:'dr.vegapunk',
+        username:'vegapunk',
         password:'rony123',
         name:'Rony',
         dob:'2000-10-17',

@@ -1,12 +1,3 @@
--- CreateEnum
-CREATE TYPE "Difficulty" AS ENUM ('Beginner', 'Intermediate', 'Advanced');
-
--- CreateEnum
-CREATE TYPE "Days" AS ENUM ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
-
--- CreateEnum
-CREATE TYPE "Type" AS ENUM ('Aerobic', 'Strength', 'Stretching', 'Balance');
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -29,9 +20,11 @@ CREATE TABLE "Workout" (
     "createdBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" TEXT NOT NULL,
-    "difficulty" "Difficulty" NOT NULL,
+    "difficulty" TEXT NOT NULL,
     "time" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
+    "days" TEXT[],
+    "progression" TEXT[],
 
     CONSTRAINT "Workout_pkey" PRIMARY KEY ("id")
 );
@@ -43,11 +36,12 @@ CREATE TABLE "Exercise" (
     "createdBy" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" TEXT NOT NULL,
-    "difficulty" "Difficulty" NOT NULL,
+    "difficulty" TEXT NOT NULL,
     "time" INTEGER NOT NULL,
-    "type" "Type" NOT NULL,
+    "type" TEXT NOT NULL,
     "tutorial" TEXT NOT NULL,
     "setsreps" TEXT NOT NULL,
+    "progression" TEXT[],
 
     CONSTRAINT "Exercise_pkey" PRIMARY KEY ("id")
 );
