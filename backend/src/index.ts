@@ -13,4 +13,4 @@ const server = new ApolloServer({
   }
   );
   
-  console.log(`🚀  Server ready at: ${url}`);
+  console.log(`Server ready at: ${url}`);

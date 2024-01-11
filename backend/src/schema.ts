@@ -47,6 +47,11 @@ export const typeDefs = `#graphql
 
   type Query {
     exercises: [Exercise]!
+    exercisesByCreator(createdBy:String) : [Exercise]!
+    workouts: [Workout]!
+    users: [User]!
+    user(username:String): User!
+    userNameById(id:String) : User!
   }
 `;
 
