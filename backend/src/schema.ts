@@ -1,17 +1,13 @@
-import { GraphQLScalarType, Kind } from 'graphql';
-
 export const typeDefs = `#graphql
   
-  scalar Date
-
   type User {
     id : String
     username : String 
     password : String 
     name : String
     dob : String
-    createdAt : Date
-    updatedAt : Date 
+    createdAt : String
+    updatedAt : String 
     startingWeight : Float
     height : Int
     workouts : [Workout]
@@ -21,13 +17,13 @@ export const typeDefs = `#graphql
     id : String 
     imageURL : String 
     createdBy : String 
-    createdAt : Date
+    createdAt : String
     title : String 
     difficulty : String
     time : Int 
     description : String
     days : [String]
-    progression : [String]
+    progression : [WorkoutProgrssion]
     exercises : [Exercise]
   }
 
@@ -35,14 +31,28 @@ export const typeDefs = `#graphql
     id : String
     imageURL : String
     createdBy : String 
-    createdAt : Date 
+    createdAt : String 
     title : String 
     difficulty : String
     time : Int 
     type : String
     tutorial : String
     setsreps : String
-    progression : [String]
+    progression : [ExerciseProgression]
+  }
+
+  type WorkoutProgrssion{
+    id : String
+    date: String
+    time : String
+  } 
+
+  type ExerciseProgression{
+    id: String
+    date: String
+    weight : Int
+    sets: Int
+    reps: Int
   }
 
   type Query {
@@ -54,26 +64,3 @@ export const typeDefs = `#graphql
     userNameById(id:String) : User!
   }
 `;
-
-export const dateScalar = new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
-    serialize(value) {
-      if (value instanceof Date) {
-        return value.getTime(); 
-      }
-      throw Error('GraphQL Date Scalar serializer expected a `Date` object');
-    },
-    parseValue(value) {
-      if (typeof value === 'number') {
-        return new Date(value); 
-      }
-      throw new Error('GraphQL Date Scalar parser expected a `number`');
-    },
-    parseLiteral(ast) {
-      if (ast.kind === Kind.INT) {
-        return new Date(parseInt(ast.value, 10));
-      }
-      return null;
-    },
-  });

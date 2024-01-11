@@ -13,10 +13,10 @@ model User {
   password String 
   name String
   dob String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt String
+  updatedAt String
   startingWeight Float
-  height Int
+  height Int 
   workouts Workout[]
 }
 
@@ -24,13 +24,13 @@ model Workout {
   id String @id @default(uuid())
   imageURL String 
   createdBy String 
-  createdAt DateTime @default(now())
+  createdAt String
   title String 
   difficulty String
   time Int 
   description String
   days String[]
-  progression String[]
+  progression WorkoutProgrssion[]
   exercises Exercise[]
   users User[]
 }
@@ -39,13 +39,29 @@ model Exercise {
   id String @id @default(uuid())
   imageURL String
   createdBy String 
-  createdAt DateTime @default(now())
+  createdAt String
   title String 
   difficulty String
   time Int 
   type String
   tutorial String
   setsreps String
-  progression String[]
+  progression ExerciseProgression[]
   workouts Workout[]
 }
+
+model WorkoutProgrssion{
+    id String @id @default(uuid())
+    date String
+    time String
+    workouts Workout[]
+  } 
+
+model ExerciseProgression{
+    id String @id @default(uuid())
+    date String
+    weight Int
+    sets Int
+    reps Int
+    exercises Exercise[]
+  }

@@ -5,6 +5,7 @@ import 'package:frontend/screens/main/settings_page.dart';
 import 'package:frontend/screens/main/workouts_page.dart';
 
 void main() {
+  
   runApp(const MainApp());
 }
 
