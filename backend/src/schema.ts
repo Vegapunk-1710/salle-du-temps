@@ -22,9 +22,8 @@ export const typeDefs = `#graphql
     difficulty : String
     time : Int 
     description : String
-    days : [String]
-    progression : [WorkoutProgrssion]
     exercises : [Exercise]
+    users : [User]
   }
 
   type Exercise {
@@ -38,21 +37,32 @@ export const typeDefs = `#graphql
     type : String
     tutorial : String
     setsreps : String
-    progression : [ExerciseProgression]
+    workouts : [Workout]
   }
 
   type WorkoutProgrssion{
     id : String
+    createdBy : String
+    workoutId : String
     date: String
     time : String
   } 
 
   type ExerciseProgression{
     id: String
+    createdBy: String
+    exerciseId: String
     date: String
     weight : Int
     sets: Int
     reps: Int
+  }
+
+  type Days{
+    id: String
+    createdBy: String
+    workoutId: String
+    days: [String]
   }
 
   type Query {

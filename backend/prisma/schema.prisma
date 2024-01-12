@@ -17,7 +17,7 @@ model User {
   updatedAt String
   startingWeight Float
   height Int 
-  workouts Workout[]
+  workouts WorkoutsRelations[] 
 }
 
 model Workout {
@@ -29,10 +29,8 @@ model Workout {
   difficulty String
   time Int 
   description String
-  days String[]
-  progression WorkoutProgrssion[]
-  exercises Exercise[]
-  users User[]
+  exercises ExercisesRelations[]
+  users WorkoutsRelations[] 
 }
 
 model Exercise {
@@ -46,22 +44,49 @@ model Exercise {
   type String
   tutorial String
   setsreps String
-  progression ExerciseProgression[]
-  workouts Workout[]
+  workouts ExercisesRelations[]
 }
+
+model WorkoutsRelations {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  workout   Workout  @relation(fields: [workoutId], references: [id])
+  workoutId String
+
+  @@id([userId, workoutId])
+}
+
+model ExercisesRelations {
+  workout    Workout   @relation(fields: [workoutId], references: [id])
+  workoutId  String
+  exercise   Exercise  @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+
+  @@id([workoutId, exerciseId])
+}
+
 
 model WorkoutProgrssion{
     id String @id @default(uuid())
+    createdBy String
+    workoutId String
     date String
     time String
-    workouts Workout[]
   } 
 
 model ExerciseProgression{
     id String @id @default(uuid())
+    createdBy  String
+    exerciseId String
     date String
     weight Int
     sets Int
     reps Int
-    exercises Exercise[]
   }
+
+model Days {
+  id String @id @default(uuid())
+  createdBy  String
+  workoutId String
+  days String[]
+}
