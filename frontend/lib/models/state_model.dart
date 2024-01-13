@@ -3,21 +3,26 @@ import 'package:frontend/models/user_model.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class AppState {
-  static final HttpLink httpLink = HttpLink(
+  final HttpLink _endpoint = HttpLink(
     'http://192.168.2.159:4000/',
   );
-  static GraphQLClient clientToQuery() =>
-      GraphQLClient(link: httpLink, cache: GraphQLCache());
-  static final GraphQLClient client = clientToQuery();
+  late final GraphQLClient _client;
+  String _username = "";
+  String _password = "";
+  late User user;
 
-  static late User user;
+  AppState(String username, String password) {
+    _username = username;
+    _password = password;
+    _client = GraphQLClient(link: _endpoint, cache: GraphQLCache());
+  }
 
-  static void getUser({required String username}) async {
+  void getUser(Function(bool isFinished) loading_callback) async {
     try {
-      QueryResult result = await client.query(
+      QueryResult result = await _client.query(
         QueryOptions(
           document: gql("""
-              query User(\$username: String) {
+             query User(\$username: String) {
                 user(username: \$username) {
                   id
                   username
@@ -37,12 +42,6 @@ class AppState {
                     difficulty
                     time
                     description
-                    days
-                    progression {
-                      id
-                      date
-                      time
-                    }
                     exercises {
                       id
                       imageURL
@@ -54,19 +53,12 @@ class AppState {
                       type
                       tutorial
                       setsreps
-                      progression {
-                        id
-                        date
-                        weight
-                        sets
-                        reps
-                      }
                     }
                   }
                 }
               }
             """),
-          variables: {"username": username},
+          variables: {"username": _username},
           fetchPolicy: FetchPolicy.noCache,
         ),
       );
@@ -74,12 +66,13 @@ class AppState {
         throw (Exception(result.exception));
       }
       if (kDebugMode) {
-        print(result.data!['user']);
+        print(result.data!);
       }
-      var user = User.fromJson(result.data!['user']);
+      user = User.fromJson(result.data!['user']);
       if (kDebugMode) {
         print(user);
       }
+      loading_callback(false);
     } catch (e) {
       if (kDebugMode) {
         print(e);
