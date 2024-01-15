@@ -70,7 +70,6 @@ export const typeDefs = `#graphql
     workouts: [Workout]!
     searchWorkouts(query:String) : [Workout]!
     user(username:String): User!
-    userNameById(id:String) : User!
   }
 
   type Mutation {

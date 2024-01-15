@@ -1,10 +1,31 @@
 import prisma from "./lib/prisma.js";
 
+async function getWorkoutsWithCreatedByName(workouts : any) {
+  for (let i = 0; i < workouts.length; i++) {
+    const user = await prisma.user.findUniqueOrThrow({
+      where:{
+        id: workouts[i].createdBy
+      },
+      select: {
+        name: true,
+      },
+    });
+    workouts[i] = {
+      ...workouts[i],
+      createdBy : user.name
+    }
+  }
+  return workouts;
+}
+
 export const resolvers = {
     Query: {
       exercises: async () => await prisma.exercise.findMany(),
 
-      workouts: async () => await prisma.workout.findMany(),
+      workouts: async () => {
+        const workouts = await prisma.workout.findMany();
+        return getWorkoutsWithCreatedByName(workouts);
+      },
       searchWorkouts : async (_,args) => await prisma.workout.findMany({
         where:{
           OR:[
@@ -53,17 +74,9 @@ export const resolvers = {
         const workouts = user.workouts.map(relation => relation.workout);
         return {
           ...user,
-          workouts: workouts,
+          workouts: getWorkoutsWithCreatedByName(workouts),
         };
       },
-      userNameById : async (_,args) => await prisma.user.findUniqueOrThrow({
-        where:{
-          id: args.id
-        },
-        select: {
-          name: true,
-        },
-      })
     },
     Mutation : {
       createWorkout : async (_,args) => {
