@@ -81,6 +81,35 @@ class AppState {
     return null;
   }
 
+  Future<List<Workout>> getWorkouts(Function isDoneCallback) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query Query {
+          workouts {
+            id
+            imageURL
+            createdBy
+            createdAt
+            title
+            difficulty
+            time
+            description
+          }
+        }
+        """, {});
+      List<Workout> workouts = await result['workouts']
+          .map<Workout>((w) => Workout.fromJson(w))
+          .toList();
+      isDoneCallback(true);
+      return workouts;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
   Future<List<Workout>> searchWorkouts(String searchQuery) async {
     try {
       Map<String, dynamic> result = await query("""

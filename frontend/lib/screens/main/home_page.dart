@@ -30,10 +30,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     if (widget.appState.user.workouts.isEmpty) {
       todayWorkout = null;
-    }
-    else{
+    } else {
       //need an algo for that
-       todayWorkout = widget.appState.user.workouts[0];
+      todayWorkout = widget.appState.user.workouts[0];
     }
     super.initState();
   }
@@ -44,47 +43,51 @@ class _HomePageState extends State<HomePage> {
 
     return SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text("Let's Grind, ${widget.appState.user.name}",
-                                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-                              ),
-                              const SizedBox(
-                                width: 100,
-                              ),
-                              Flexible(
-                                child: Text(
-                                                "${DateTime.now().toIso8601String().substring(0, 10).split("-")[1]}/${DateTime.now().toIso8601String().substring(0, 10).split("-")[2]}",
-                                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-                              ),
-                            ],
-                          )),
-                Column(
-                  children: [
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
         Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text("$dayName's Workout",
-                style: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 22))),
-        todayWorkout == null
-            ? const Center(
-                child: Text("No Workouts For Today"),
-              )
-            : SizedBox(
-                height: MediaQuery.of(context).size.height / 2.7,
-                child: WorkoutCard(
-                  workout: todayWorkout!,
-                )),
-                  ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text("Let's Grind, ${widget.appState.user.name}",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 22)),
                 ),
-                SizedBox(height: 100,)
+                const SizedBox(
+                  width: 100,
+                ),
+                Flexible(
+                  child: Text(
+                      "${DateTime.now().toIso8601String().substring(0, 10).split("-")[1]}/${DateTime.now().toIso8601String().substring(0, 10).split("-")[2]}",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 22)),
+                ),
               ],
-            ));
+            )),
+        Column(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("$dayName's Workout",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 22))),
+            todayWorkout == null
+                ? const Center(
+                    child: Text("No Workouts For Today"),
+                  )
+                : SizedBox(
+                    height: MediaQuery.of(context).size.height / 2.7,
+                    child: WorkoutCard(
+                      workout: todayWorkout!,
+                    )),
+          ],
+        ),
+        const SizedBox(
+          height: 100,
+        )
+      ],
+    ));
   }
 }

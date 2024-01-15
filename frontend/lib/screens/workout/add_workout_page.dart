@@ -4,7 +4,9 @@ import 'package:frontend/models/workout_model.dart';
 class AddWorkoutPage extends StatefulWidget {
   final Function(Workout addedWorkout) addCallback;
   final Function(String searchQuery) searchCallback;
-  AddWorkoutPage(this.searchCallback, this.addCallback, {Key? key})
+  final Function(Function isDoneCallback) getCallback;
+  AddWorkoutPage(this.getCallback, this.searchCallback, this.addCallback,
+      {Key? key})
       : super(key: key);
 
   @override
@@ -12,97 +14,120 @@ class AddWorkoutPage extends StatefulWidget {
 }
 
 class _AddWorkoutPageState extends State<AddWorkoutPage> {
+  bool loading = true;
   late List<Workout> workouts;
   late List<Workout> queried;
-  Map<String, Workout> selected = {};
+  late Map<String, Workout> selected;
 
   @override
   void initState() {
-    workouts = Workout.db();
-    queried = Workout.db();
+    initWorkouts();
     super.initState();
+  }
+
+  initWorkouts() async {
+    workouts = await widget.getCallback(isDoneCallback);
+    queried = workouts;
+    selected = {};
+  }
+
+  isDoneCallback(bool isDone) {
+    if (isDone) {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text("Add A Workout",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SearchAnchor(
-                  builder: (BuildContext context, SearchController controller) {
-                return SearchBar(
-                  controller: controller,
-                  padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 16.0)),
-                  onChanged: (query) async {
-                    List<Workout> searchedWorkouts =
-                        await widget.searchCallback(query);
-                    setState(() {
-                      if (query.isEmpty) {
-                        queried = workouts;
-                      } else {
-                        queried = searchedWorkouts;
-                      }
-                    });
-                  },
-                  leading: const Icon(Icons.search),
-                  trailing: const <Widget>[],
-                );
-              }, suggestionsBuilder:
-                      (BuildContext context, SearchController controller) {
-                return <ListTile>[];
-              }),
-            ),
-            ListView.builder(
-                shrinkWrap: true,
-                itemCount: queried.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 2,
-                    child: ListTile(
-                      title: Text(queried[index].title),
-                      subtitle: FittedBox(
-                        child: Row(
-                          children: [
-                            Text("By : ${queried[index].createdBy}, "),
-                            Text(
-                                "Difficulty : ${queried[index].difficulty.name}, "),
-                            Text("Time : ~${queried[index].time} mins"),
-                          ],
-                        ),
+          child: loading
+              ? const Center(child: RefreshProgressIndicator())
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text("Add A Workout",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 22)),
                       ),
-                      trailing: selected.containsKey(queried[index].id)
-                          ? const Icon(Icons.check)
-                          : const Icon(Icons.circle_outlined),
-                      selected: selected.containsKey(queried[index].id),
-                      enableFeedback: true,
-                      onTap: () {
-                        setState(() {
-                          if (selected.containsKey(queried[index].id)) {
-                            selected.remove(queried[index].id);
-                          } else {
-                            selected[queried[index].id] = queried[index];
-                          }
-                        });
-                      },
-                    ),
-                  );
-                }),
-            const SizedBox(
-              height: 100,
-            )
-          ],
-        ),
-      )),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SearchAnchor(builder: (BuildContext context,
+                            SearchController controller) {
+                          return SearchBar(
+                            controller: controller,
+                            padding: const MaterialStatePropertyAll<EdgeInsets>(
+                                EdgeInsets.symmetric(horizontal: 16.0)),
+                            onChanged: (query) async {
+                              List<Workout> searchedWorkouts =
+                                  await widget.searchCallback(query);
+                              setState(() {
+                                if (query.isEmpty) {
+                                  queried = workouts;
+                                } else {
+                                  queried = searchedWorkouts;
+                                }
+                              });
+                            },
+                            leading: const Icon(Icons.search),
+                            trailing: const <Widget>[],
+                          );
+                        }, suggestionsBuilder: (BuildContext context,
+                            SearchController controller) {
+                          return <ListTile>[];
+                        }),
+                      ),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: queried.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              elevation: 2,
+                              child: ListTile(
+                                title: Text(queried[index].title),
+                                subtitle: FittedBox(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                          "By : ${queried[index].createdBy}, "),
+                                      Text(
+                                          "Difficulty : ${queried[index].difficulty.name}, "),
+                                      Text(
+                                          "Time : ~${queried[index].time} mins"),
+                                    ],
+                                  ),
+                                ),
+                                trailing:
+                                    selected.containsKey(queried[index].id)
+                                        ? const Icon(Icons.check)
+                                        : const Icon(Icons.circle_outlined),
+                                selected:
+                                    selected.containsKey(queried[index].id),
+                                enableFeedback: true,
+                                onTap: () {
+                                  setState(() {
+                                    if (selected
+                                        .containsKey(queried[index].id)) {
+                                      selected.remove(queried[index].id);
+                                    } else {
+                                      selected[queried[index].id] =
+                                          queried[index];
+                                    }
+                                  });
+                                },
+                              ),
+                            );
+                          }),
+                      const SizedBox(
+                        height: 100,
+                      )
+                    ],
+                  ),
+                )),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

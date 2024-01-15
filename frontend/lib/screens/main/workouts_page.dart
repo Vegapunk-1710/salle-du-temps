@@ -34,6 +34,12 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     }
   }
 
+  getCallback(Function isDoneCallback) async {
+     List<Workout>? workouts =
+        await widget.appState.getWorkouts(isDoneCallback);
+    return workouts;
+  }
+
   searchCallback(String searchQuery) async {
     List<Workout>? queriedWorkouts =
         await widget.appState.searchWorkouts(searchQuery);
@@ -57,7 +63,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
       child: Column(
         children: [
           const Expanded(
-              flex: 9,
+              flex: 8,
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text("Workouts",
@@ -97,9 +103,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => AddWorkoutPage(
-                                        searchCallback, addCallback)));
+                                        getCallback,searchCallback, addCallback)));
                           },
-                          icon: Icon(Icons.add))),
+                          icon: const Icon(Icons.add))),
                   Expanded(
                       flex: 2,
                       child: IconButton(
@@ -110,7 +116,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                                     builder: (context) =>
                                         CreateWorkoutPage(createCallback)));
                           },
-                          icon: Icon(Icons.create))),
+                          icon: const Icon(Icons.create))),
                 ],
               ),
             ),
