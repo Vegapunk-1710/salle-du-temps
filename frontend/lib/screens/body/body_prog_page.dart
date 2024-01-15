@@ -136,30 +136,17 @@ class _BodyProgPageState extends State<BodyProgPage> {
         ),
       ),
       floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              heroTag: "bodyprogexitbtn",
-              child: const Icon(Icons.arrow_back),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CreateBodyProgPage(callback)));
-              },
-              heroTag: "bodyprogcreatebtn",
-              child: const Icon(Icons.create),
-            ),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CreateBodyProgPage(callback)));
+            },
+            heroTag: "bodyprogcreatebtn",
+            child: const Icon(Icons.create),
           ),
         ],
       ),

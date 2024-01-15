@@ -43,70 +43,48 @@ class _HomePageState extends State<HomePage> {
     dayName = daysOfWeek[now.weekday - 1];
 
     return SafeArea(
-        child: Center(
-            child: ListView(
-      children: [
-        FittedBox(
-          child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Let's Grind, ${widget.appState.user.name}",
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(
-                    width: 100,
-                  ),
-                  Text(
-                      "${DateTime.now().toIso8601String().substring(0, 10).split("-")[1]}/${DateTime.now().toIso8601String().substring(0, 10).split("-")[2]}",
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
-                ],
-              )),
-        ),
-        Column(
-          children: [
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("$dayName's Workout",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 22))),
-            todayWorkout == null
-                ? const Center(
-                    child: Text("No Workouts For Today"),
-                  )
-                : SizedBox(
-                    height: MediaQuery.of(context).size.height / 2.7,
-                    child: WorkoutCard(
-                      workout: todayWorkout!,
-                    )),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BodyProgPage()));
-                    },
-                    child: const Card(
-                      elevation: 10,
-                      child: Center(child: Text("Body Transformation")),
-                    )),
-                const Card(
-                  elevation: 10,
-                  child: Center(child: Text("Statistics")),
+                Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text("Let's Grind, ${widget.appState.user.name}",
+                                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+                              ),
+                              const SizedBox(
+                                width: 100,
+                              ),
+                              Flexible(
+                                child: Text(
+                                                "${DateTime.now().toIso8601String().substring(0, 10).split("-")[1]}/${DateTime.now().toIso8601String().substring(0, 10).split("-")[2]}",
+                                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
+                              ),
+                            ],
+                          )),
+                Column(
+                  children: [
+        Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("$dayName's Workout",
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600, fontSize: 22))),
+        todayWorkout == null
+            ? const Center(
+                child: Text("No Workouts For Today"),
+              )
+            : SizedBox(
+                height: MediaQuery.of(context).size.height / 2.7,
+                child: WorkoutCard(
+                  workout: todayWorkout!,
+                )),
+                  ],
                 ),
-              ]),
-        ),
-      ],
-    )));
+                SizedBox(height: 100,)
+              ],
+            ));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/state_model.dart';
+import 'package:frontend/screens/body/body_prog_page.dart';
 import 'package:frontend/screens/main/home_page.dart';
 import 'package:frontend/screens/main/settings_page.dart';
 import 'package:frontend/screens/main/workouts_page.dart';
@@ -54,7 +55,7 @@ class _LandingPageState extends State<LandingPage> {
   late final List<Widget> _pages = <Widget>[
     HomePage(appState),
     WorkoutsPage(appState),
-    SettingsPage(appState),
+    BodyProgPage(),
   ];
 
    @override
@@ -84,8 +85,8 @@ class _LandingPageState extends State<LandingPage> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.sports_gymnastics), label: "Workouts"),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: "Settings",
+              icon: Icon(Icons.stacked_bar_chart),
+              label: "Body Progression",
             ),
           ]),
     );
