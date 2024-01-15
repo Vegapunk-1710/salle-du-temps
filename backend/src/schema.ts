@@ -68,6 +68,7 @@ export const typeDefs = `#graphql
   type Query {
     exercises: [Exercise]!
     workouts: [Workout]!
+    searchWorkouts(query:String) : [Workout]!
     user(username:String): User!
     userNameById(id:String) : User!
   }

@@ -34,6 +34,12 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     }
   }
 
+  searchCallback(String searchQuery) async {
+    List<Workout>? queriedWorkouts =
+        await widget.appState.searchWorkouts(searchQuery);
+    return queriedWorkouts;
+  }
+
   add_callback(Workout addedWorkout) {
     setState(() {
       if (workouts.where((i) => i.id == addedWorkout.id).toList().isEmpty) {
@@ -89,7 +95,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        AddWorkoutPage(add_callback)));
+                                        AddWorkoutPage(searchCallback, add_callback)));
                           },
                           icon: Icon(Icons.add))),
                   Expanded(

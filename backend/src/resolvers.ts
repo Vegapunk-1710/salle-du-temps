@@ -3,7 +3,41 @@ import prisma from "./lib/prisma.js";
 export const resolvers = {
     Query: {
       exercises: async () => await prisma.exercise.findMany(),
+
       workouts: async () => await prisma.workout.findMany(),
+      searchWorkouts : async (_,args) => await prisma.workout.findMany({
+        where:{
+          OR:[
+            {
+              description :{
+                contains : args.query,
+                mode: 'insensitive',
+              }
+            },
+            {
+              difficulty :{
+                contains : args.query,
+                mode: 'insensitive',
+              }
+            },
+            {
+              title :{
+                contains : args.query,
+                mode: 'insensitive',
+              }
+            },
+            {
+              createdAt :{
+                contains : args.query,
+                mode: 'insensitive',
+              }
+            },
+
+          ]
+          
+          
+        }
+      }),
 
 
       user: async (_,args) => {

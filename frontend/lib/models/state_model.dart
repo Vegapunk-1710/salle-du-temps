@@ -81,6 +81,35 @@ class AppState {
     return null;
   }
 
+  Future<List<Workout>> searchWorkouts(String searchQuery) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query Query(\$query: String) {
+          searchWorkouts(query: \$query) {
+            id
+            imageURL
+            createdBy
+            createdAt
+            title
+            difficulty
+            time
+            description
+          }
+        }
+        """, {"query": searchQuery});
+      List<Workout> workouts = await result['searchWorkouts']
+          .map<Workout>((w) => Workout.fromJson(w))
+          .toList();
+      print(workouts);
+      return workouts;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
   Future<Map<String, dynamic>> query(
       String query, Map<String, dynamic> variables) async {
     QueryResult result = await _client.query(
@@ -93,9 +122,9 @@ class AppState {
     if (result.hasException) {
       throw (Exception(result.exception));
     }
-    if (kDebugMode) {
-      print(result.data!);
-    }
+    // if (kDebugMode) {
+    //   print(result.data!);
+    // }
     return result.data!;
   }
 }

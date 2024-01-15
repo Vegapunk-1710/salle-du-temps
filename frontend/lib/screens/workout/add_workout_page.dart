@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/workout_model.dart';
 
 class AddWorkoutPage extends StatefulWidget {
-  final Function(Workout addedWorkout) add_callback;
-  AddWorkoutPage(this.add_callback, {Key? key})
+  final Function(Workout addedWorkout) addCallback;
+  final Function(String searchQuery) searchCallback;
+  AddWorkoutPage(this.searchCallback, this.addCallback, {Key? key})
       : super(key: key);
 
   @override
@@ -42,41 +43,14 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                   controller: controller,
                   padding: const MaterialStatePropertyAll<EdgeInsets>(
                       EdgeInsets.symmetric(horizontal: 16.0)),
-                  onChanged: (query) {
+                  onChanged: (query) async {
+                    List<Workout> searchedWorkouts =
+                        await widget.searchCallback(query);
                     setState(() {
                       if (query.isEmpty) {
                         queried = workouts;
                       } else {
-                        queried = workouts
-                            .where((w) =>
-                                w.createdBy
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()) ||
-                                w.createdAt
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()) ||
-                                w.days
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()) ||
-                                w.title
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()) ||
-                                w.description
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()) ||
-                                w.description
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()) ||
-                                w.time
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase()))
-                            .toList();
+                        queried = searchedWorkouts;
                       }
                     });
                   },
@@ -139,7 +113,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                 Navigator.of(context).pop();
               },
               heroTag: "addworkoutexitbtn",
-              child: const  Icon(Icons.arrow_back),
+              child: const Icon(Icons.arrow_back),
             ),
           ),
           Padding(
@@ -149,7 +123,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                 List<Workout> selectedWorkouts =
                     workouts.where((w) => selected.contains(w.id)).toList();
                 for (Workout w in selectedWorkouts) {
-                  widget.add_callback(w);
+                  widget.addCallback(w);
                 }
                 Navigator.of(context).pop();
               },
