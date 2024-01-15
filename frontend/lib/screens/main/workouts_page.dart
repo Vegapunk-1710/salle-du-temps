@@ -40,11 +40,13 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     return queriedWorkouts;
   }
 
-  add_callback(Workout addedWorkout) {
+  addCallback(Workout addedWorkout) {
     setState(() {
-      if (workouts.where((i) => i.id == addedWorkout.id).toList().isEmpty) {
-        workouts.add(addedWorkout);
-        queried.add(addedWorkout);
+      if (widget.appState.user.workouts
+          .where((i) => i.id == addedWorkout.id)
+          .toList()
+          .isEmpty) {
+        widget.appState.user.workouts.add(addedWorkout);
       }
     });
   }
@@ -94,8 +96,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddWorkoutPage(searchCallback, add_callback)));
+                                    builder: (context) => AddWorkoutPage(
+                                        searchCallback, addCallback)));
                           },
                           icon: Icon(Icons.add))),
                   Expanded(

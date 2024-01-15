@@ -32,10 +32,7 @@ export const resolvers = {
                 mode: 'insensitive',
               }
             },
-
           ]
-          
-          
         }
       }),
 

@@ -14,7 +14,7 @@ class AddWorkoutPage extends StatefulWidget {
 class _AddWorkoutPageState extends State<AddWorkoutPage> {
   late List<Workout> workouts;
   late List<Workout> queried;
-  List<String> selected = <String>[];
+  Map<String, Workout> selected = {};
 
   @override
   void initState() {
@@ -80,17 +80,17 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                           ],
                         ),
                       ),
-                      trailing: selected.contains(queried[index].id)
+                      trailing: selected.containsKey(queried[index].id)
                           ? const Icon(Icons.check)
                           : const Icon(Icons.circle_outlined),
-                      selected: selected.contains(queried[index].id),
+                      selected: selected.containsKey(queried[index].id),
                       enableFeedback: true,
                       onTap: () {
                         setState(() {
-                          if (selected.contains(queried[index].id)) {
+                          if (selected.containsKey(queried[index].id)) {
                             selected.remove(queried[index].id);
                           } else {
-                            selected.add(queried[index].id);
+                            selected[queried[index].id] = queried[index];
                           }
                         });
                       },
@@ -120,8 +120,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: FloatingActionButton(
               onPressed: () {
-                List<Workout> selectedWorkouts =
-                    workouts.where((w) => selected.contains(w.id)).toList();
+                List<Workout> selectedWorkouts = selected.values.toList();
                 for (Workout w in selectedWorkouts) {
                   widget.addCallback(w);
                 }

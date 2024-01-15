@@ -100,7 +100,6 @@ class AppState {
       List<Workout> workouts = await result['searchWorkouts']
           .map<Workout>((w) => Workout.fromJson(w))
           .toList();
-      print(workouts);
       return workouts;
     } catch (e) {
       if (kDebugMode) {
