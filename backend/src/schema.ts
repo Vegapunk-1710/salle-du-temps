@@ -67,10 +67,22 @@ export const typeDefs = `#graphql
 
   type Query {
     exercises: [Exercise]!
-    exercisesByCreator(createdBy:String) : [Exercise]!
     workouts: [Workout]!
-    users: [User]!
     user(username:String): User!
     userNameById(id:String) : User!
+  }
+
+  type Mutation {
+    createWorkout(workout: CreateWorkoutInput!) : Workout!
+  }
+
+  input CreateWorkoutInput{
+    imageURL : String!, 
+    createdBy : String!,
+    createdAt : String!,
+    title : String!, 
+    difficulty : String!,
+    time : Int!, 
+    description : String!,
   }
 `;

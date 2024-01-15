@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/state_model.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage(AppState appState, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

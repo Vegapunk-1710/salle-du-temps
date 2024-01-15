@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/state_model.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/workout/add_workout_page.dart';
 import 'package:frontend/screens/workout/create_workout_page.dart';
@@ -6,7 +7,8 @@ import 'package:frontend/screens/workout/workout_page.dart';
 import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutsPage extends StatefulWidget {
-  WorkoutsPage({Key? key}) : super(key: key);
+  final AppState appState;
+  WorkoutsPage(this.appState, {Key? key}) : super(key: key);
 
   @override
   State<WorkoutsPage> createState() => _WorkoutsPageState();
@@ -16,27 +18,29 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
   late List<Workout> workouts;
   late List<Workout> queried;
 
-  create_callback(Workout createdWorkout) {
-    setState(() {
-      workouts.add(createdWorkout);
-      queried.add(createdWorkout);
-    });
+  @override
+  void initState() {
+    workouts = widget.appState.user.workouts;
+    queried = widget.appState.user.workouts;
+    super.initState();
+  }
+
+  createCallback(Map<String, dynamic> data) async {
+    Workout? createdWorkout = await widget.appState.createWorkout(data);
+    if (createdWorkout != null) {
+      setState(() {
+        widget.appState.user.workouts.add(createdWorkout);
+      });
+    }
   }
 
   add_callback(Workout addedWorkout) {
     setState(() {
-      if(workouts.where((i) => i.id == addedWorkout.id).toList().isEmpty){
+      if (workouts.where((i) => i.id == addedWorkout.id).toList().isEmpty) {
         workouts.add(addedWorkout);
         queried.add(addedWorkout);
       }
     });
-  }
-
-  @override
-  void initState() {
-    workouts = Workout.db();
-    queried = Workout.db();
-    super.initState();
   }
 
   @override
@@ -45,7 +49,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
       child: Column(
         children: [
           const Expanded(
-              flex: 7,
+              flex: 9,
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text("Workouts",
@@ -84,7 +88,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AddWorkoutPage(add_callback)));
+                                    builder: (context) =>
+                                        AddWorkoutPage(add_callback)));
                           },
                           icon: Icon(Icons.add))),
                   Expanded(
@@ -95,7 +100,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        CreateWorkoutPage(create_callback)));
+                                        CreateWorkoutPage(createCallback)));
                           },
                           icon: Icon(Icons.create))),
                 ],

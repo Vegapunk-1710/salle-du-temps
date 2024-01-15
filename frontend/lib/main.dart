@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/models/state_model.dart';
 import 'package:frontend/screens/main/home_page.dart';
 import 'package:frontend/screens/main/settings_page.dart';
 import 'package:frontend/screens/main/workouts_page.dart';
@@ -27,13 +28,13 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const LandingPage(),
+      home: LandingPage(),
     );
   }
 }
 
 class LandingPage extends StatefulWidget {
-  const LandingPage({super.key});
+  LandingPage({super.key});
 
   @override
   State<LandingPage> createState() => _LandingPageState();
@@ -41,6 +42,8 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
+  bool loading = true;
+  late AppState appState;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -48,16 +51,29 @@ class _LandingPageState extends State<LandingPage> {
     });
   }
 
-  static final List<Widget> _pages = <Widget>[
-    HomePage(),
-    WorkoutsPage(),
-    const SettingsPage(),
+  late final List<Widget> _pages = <Widget>[
+    HomePage(appState),
+    WorkoutsPage(appState),
+    SettingsPage(appState),
   ];
+
+   @override
+  void initState() {
+    appState = AppState("vegapunk", "rony123");
+    appState.getUser(loadingCallback);
+    super.initState();
+  }
+
+  loadingCallback(bool isFinished) {
+    setState(() {
+      loading = isFinished;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages.elementAt(_selectedIndex),
+      body: loading ? Center(child: const RefreshProgressIndicator()) : _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,

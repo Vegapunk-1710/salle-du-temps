@@ -1,33 +1,46 @@
 class Workout {
-  String id;
-  String imageURL;
-  String createdBy;
-  DateTime createdAt;
-  String title;
-  Difficulty difficulty;
-  int time;
-  String description;
-  List<String> exercises;
-  List<Days> days;
-  List<(DateTime date, String time)> progression;
+  late String id;
+  late String imageURL;
+  late String createdBy;
+  late DateTime createdAt;
+  late String title;
+  late Difficulty difficulty;
+  late int time;
+  late String description;
+  late List<String> exercises;
+  late List<Days> days;
+  late List<(DateTime date, String time)> progression;
 
-  Workout({
-    required this.id,
-    required this.imageURL,
-    required this.createdBy,
-    required this.createdAt,
-    required this.title,
-    required this.difficulty,
-    required this.time,
-    required this.description,
-    required this.exercises,
-    required this.days,
-    required this.progression
-  });
+  Workout(
+      {required this.id,
+      required this.imageURL,
+      required this.createdBy,
+      required this.createdAt,
+      required this.title,
+      required this.difficulty,
+      required this.time,
+      required this.description,
+      required this.exercises,
+      required this.days,
+      required this.progression});
 
   @override
   String toString() {
     return "id : $id\nimageURL : $imageURL \ntitle : $title\ndifficulty : $difficulty\ntime : $time\ndescription : $description\nfrequency : $days\exercises : $exercises\n";
+  }
+
+  Workout.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    imageURL = json['imageURL'];
+    createdBy = json['createdBy'];
+    createdAt = DateTime.parse(json['createdAt']);
+    title = json['title'];
+    difficulty = translateStringToDifficulty(json['difficulty']);
+    time = json['time'];
+    description = json['description'];
+    exercises = [];
+    days = [];
+    progression = [];
   }
 
   static Days translateStringToDay(String name) {
@@ -67,7 +80,8 @@ class Workout {
       ),
       Workout(
         id: 'w3',
-        imageURL: "https://cdn.yogajournal.com/wp-content/uploads/2023/02/GettyImages-1066259522-scaled.jpg",
+        imageURL:
+            "https://cdn.yogajournal.com/wp-content/uploads/2023/02/GettyImages-1066259522-scaled.jpg",
         createdBy: "Rony",
         createdAt: DateTime.now(),
         title: 'Yoga and Flexibility',
