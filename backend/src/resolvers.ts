@@ -26,36 +26,39 @@ export const resolvers = {
         const workouts = await prisma.workout.findMany();
         return getWorkoutsWithCreatedByName(workouts);
       },
-      searchWorkouts : async (_,args) => await prisma.workout.findMany({
-        where:{
-          OR:[
-            {
-              description :{
-                contains : args.query,
-                mode: 'insensitive',
-              }
-            },
-            {
-              difficulty :{
-                contains : args.query,
-                mode: 'insensitive',
-              }
-            },
-            {
-              title :{
-                contains : args.query,
-                mode: 'insensitive',
-              }
-            },
-            {
-              createdAt :{
-                contains : args.query,
-                mode: 'insensitive',
-              }
-            },
-          ]
-        }
-      }),
+      searchWorkouts : async (_,args) => {
+        const workouts = await prisma.workout.findMany({
+          where:{
+            OR:[
+              {
+                description :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                difficulty :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                title :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                createdAt :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+            ]
+          }
+        });
+        return getWorkoutsWithCreatedByName(workouts);
+      },
 
 
       user: async (_,args) => {
