@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:frontend/models/workout_model.dart';
 
 class User {
@@ -34,12 +35,11 @@ class User {
     username = json['username'];
     password = json['password'];
     name = json['name'];
-
     dob = DateTime.parse(json['dob']);
     createdAt = DateTime.parse(json['createdAt']);
     updatedAt = DateTime.parse(json['updatedAt']);
     startingWeight = json['startingWeight'];
     height = json['height'];
-    workouts =  [];
+    workouts = json['workouts'].map<Workout>((w) => Workout.fromJson(w)).toList();
   }
 }

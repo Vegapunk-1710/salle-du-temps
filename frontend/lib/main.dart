@@ -59,7 +59,7 @@ class _LandingPageState extends State<LandingPage> {
 
    @override
   void initState() {
-    appState = AppState("vegapunk", "rony123");
+    appState = AppState("tarzan", "rony123");
     appState.getUser(loadingCallback);
     super.initState();
   }
