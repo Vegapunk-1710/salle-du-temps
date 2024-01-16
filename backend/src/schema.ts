@@ -70,6 +70,7 @@ export const typeDefs = `#graphql
     workouts: [Workout]!
     searchWorkouts(query:String) : [Workout]!
     user(username:String): User!
+    days(userId:String,workoutId:String) : Days!
   }
 
   type Mutation {
@@ -77,6 +78,7 @@ export const typeDefs = `#graphql
     addWorkout(userId:String, workoutId:String) : Boolean!
     deleteWorkout(userId:String,workoutId:String) : Boolean!
     deleteWorkoutForAll(userId:String,workoutId:String) : Boolean!
+    updateDays(userId:String,workoutId:String,days:[String]) : Days!
   }
 
   input CreateWorkoutInput{

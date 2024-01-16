@@ -79,6 +79,14 @@ export const resolvers = {
           workouts: getWorkoutsWithCreatedByName(workouts),
         };
       },
+      days : async (_,args) => {
+        return await prisma.days.findFirstOrThrow({
+          where : {
+            createdBy: args.userId,
+            workoutId: args.workoutId
+          }
+        });
+      }
     },
     Mutation : {
       createWorkout : async (_,args) => {
@@ -134,9 +142,6 @@ export const resolvers = {
       }, 
       deleteWorkoutForAll : async (_,args) => {
         const workout = await prisma.workout.findUnique({where:{id:args.workoutId}});
-        console.log(args.userId);
-        console.log(workout.createdBy);
-        console.log(args.userId === workout.createdBy);
         if(args.userId === workout.createdBy){
           await prisma.workoutsRelations.deleteMany({
             where:{
@@ -161,6 +166,33 @@ export const resolvers = {
           });
           return false;
         }
-      },     
+      }, 
+      updateDays : async (_,args) => {
+        let id;
+        try{
+          const d = await prisma.days.findFirstOrThrow({
+            where : {
+              createdBy: args.userId,
+              workoutId: args.workoutId
+            }
+          });
+          id = d.id;
+        } catch(e){
+          id = '';
+        }
+        return await prisma.days.upsert({
+          where :{
+            id :id,
+          },
+          create:{
+            createdBy: args.userId,
+            workoutId: args.workoutId,
+            days: args.days,
+          },
+          update:{
+            days: args.days
+          }
+        });
+      }    
     }
   };

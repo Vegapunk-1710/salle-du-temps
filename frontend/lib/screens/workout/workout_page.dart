@@ -230,6 +230,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                widget.refreshCallback();
               },
               heroTag: "workoutexitbtn",
               child: const Icon(Icons.arrow_back),
@@ -275,7 +276,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void handleDeleteExercise(BuildContext context) {
-    showDialog(
+    if(exercises.isNotEmpty){
+      showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
@@ -295,6 +297,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ],
       ),
     );
+    }
   }
 
   void handleDeleteWorkout(BuildContext context) {
