@@ -8,7 +8,9 @@ import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutsPage extends StatefulWidget {
   final AppState appState;
-  WorkoutsPage(this.appState, {Key? key}) : super(key: key);
+  final Function refreshCallback;
+  WorkoutsPage(this.appState, this.refreshCallback, {Key? key})
+      : super(key: key);
 
   @override
   State<WorkoutsPage> createState() => _WorkoutsPageState();
@@ -35,8 +37,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
   }
 
   getCallback(Function isDoneCallback) async {
-     List<Workout>? workouts =
-        await widget.appState.getWorkouts(isDoneCallback);
+    List<Workout>? workouts = await widget.appState.getWorkouts(isDoneCallback);
     return workouts;
   }
 
@@ -52,8 +53,15 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           .where((i) => i.id == addedWorkout.id)
           .toList()
           .isEmpty) {
+        widget.appState.addWorkout(addedWorkout.id);
         widget.appState.user.workouts.add(addedWorkout);
       }
+    });
+  }
+
+  refreshCallback() {
+    setState(() {
+      widget.refreshCallback();
     });
   }
 
@@ -103,7 +111,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => AddWorkoutPage(
-                                        getCallback,searchCallback, addCallback)));
+                                        getCallback,
+                                        searchCallback,
+                                        addCallback)));
                           },
                           icon: const Icon(Icons.add))),
                   Expanded(
@@ -135,8 +145,11 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    WorkoutPage(workout: queried[index])));
+                                builder: (context) => WorkoutPage(
+                                      workout: queried[index],
+                                      appState: widget.appState,
+                                      refreshCallback: refreshCallback,
+                                    )));
                       },
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),

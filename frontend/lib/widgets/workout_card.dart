@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/state_model.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/workout/workout_page.dart';
 import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutCard extends StatelessWidget {
   final Workout workout;
-  const WorkoutCard({Key? key, required this.workout}) : super(key: key);
+  final AppState appState;
+  final Function refreshCallback;
+  const WorkoutCard({Key? key, required this.workout, required this.appState, required this.refreshCallback})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,11 @@ class WorkoutCard extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => WorkoutPage(workout: workout)));
+                builder: (context) => WorkoutPage(
+                      workout: workout,
+                      appState: appState,
+                      refreshCallback: refreshCallback,
+                    )));
       },
       child: Card(
           elevation: 10,
@@ -23,8 +31,10 @@ class WorkoutCard extends StatelessWidget {
             children: [
               Expanded(
                   flex: 1,
-                  child: CustomImageNetwork(imageURL: workout.imageURL,showIcon: true,fit: BoxFit.fitWidth)
-                  ),
+                  child: CustomImageNetwork(
+                      imageURL: workout.imageURL,
+                      showIcon: true,
+                      fit: BoxFit.fitWidth)),
               Expanded(
                   flex: 1,
                   child: ListTile(
@@ -32,10 +42,16 @@ class WorkoutCard extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${workout.description.substring(0, 33)}...",
+
+                        Flexible(
+                          child: Text(
+                            workout.description,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        SizedBox(height: 5,),
+                        const SizedBox(
+                          height: 5,
+                        ),
                         Text(
                           "Difficulty : ${workout.difficulty.name.toString()}",
                         ),
@@ -50,7 +66,6 @@ class WorkoutCard extends StatelessWidget {
                                     "Days : ${workout.days.toString().substring(1, workout.days.toString().length - 1).replaceAll("Days.", "")}"),
                       ],
                     ),
-                    // trailing: position == null ? Text("") : Text(position!),
                   ))
             ],
           )),

@@ -6,7 +6,8 @@ import 'package:frontend/widgets/workout_card.dart';
 
 class HomePage extends StatefulWidget {
   final AppState appState;
-  HomePage(this.appState, {Key? key}) : super(key: key);
+  final Function refreshCallback;
+  HomePage(this.appState, this.refreshCallback, {Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -35,6 +36,12 @@ class _HomePageState extends State<HomePage> {
       todayWorkout = widget.appState.user.workouts[0];
     }
     super.initState();
+  }
+
+  refreshCallback() {
+    setState(() {
+      widget.refreshCallback();
+    });
   }
 
   @override
@@ -81,6 +88,8 @@ class _HomePageState extends State<HomePage> {
                     height: MediaQuery.of(context).size.height / 2.7,
                     child: WorkoutCard(
                       workout: todayWorkout!,
+                      appState: widget.appState,
+                      refreshCallback: refreshCallback,
                     )),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/exercise_model.dart';
+import 'package:frontend/models/state_model.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:frontend/screens/exercise/add_exercise_page.dart';
 import 'package:frontend/screens/exercise/create_exercise_page.dart';
@@ -10,7 +11,14 @@ import 'package:frontend/widgets/image_widget.dart';
 
 class WorkoutPage extends StatefulWidget {
   final Workout workout;
-  WorkoutPage({Key? key, required this.workout}) : super(key: key);
+  final AppState appState;
+  final Function refreshCallback;
+  WorkoutPage(
+      {Key? key,
+      required this.workout,
+      required this.appState,
+      required this.refreshCallback})
+      : super(key: key);
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -86,7 +94,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               fontWeight: FontWeight.w600, fontSize: 22)),
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          handleDeleteWorkout(context);
+                        },
                         icon: const Icon(Icons.delete_forever))
                   ],
                 ),
@@ -153,7 +163,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           icon: const Icon(Icons.stacked_bar_chart_sharp)),
                       IconButton(
                           onPressed: () {
-                            handleDelete(context);
+                            handleDeleteExercise(context);
                           },
                           icon: const Icon(Icons.delete_forever))
                     ],
@@ -208,7 +218,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
             ),
           ),
           const SizedBox(
-            height: 90,
+            height: 100,
           )
         ]),
       ),
@@ -231,9 +241,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => StartWorkoutPage(
-                          exercises,
-                          endWorkoutCallback)));
+                      builder: (context) =>
+                          StartWorkoutPage(exercises, endWorkoutCallback)));
             },
             heroTag: "workoutstartbtn",
             child: const Text("START"),
@@ -265,7 +274,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     exercises.clear();
   }
 
-  void handleDelete(BuildContext context) {
+  void handleDeleteExercise(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -286,6 +295,58 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ],
       ),
     );
+  }
+
+  void handleDeleteWorkout(BuildContext context) {
+    if (widget.appState.user.name == widget.workout.createdBy) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          title: const Text("Delete this workout ?"),
+          content: Text(
+              "Are you sure you want to delete ${widget.workout.title} ? Select 'For Me' to remove the workout from your workouts OR 'For All' to permanently remove the workout."),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text("No")),
+            TextButton(
+                onPressed: () {
+                  deleteWorkout(context, true);
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text("For Me")),
+            TextButton(
+                onPressed: () {
+                  deleteWorkout(context, false);
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text("For All")),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          title: const Text("Delete this workout ?"),
+          content: Text(
+              "Are you sure you want to delete ${widget.workout.title} from your workouts ?"),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text("No")),
+            TextButton(
+                onPressed: () {
+                  deleteWorkout(context, true);
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text("Yes")),
+          ],
+        ),
+      );
+    }
   }
 
   void deleteExercise(BuildContext context) {
@@ -311,6 +372,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     });
+  }
+
+  void deleteWorkout(BuildContext context, bool isForMe) {
+    if (isForMe) {
+      widget.appState.deleteWorkout(widget.workout.id);
+    } else {
+      widget.appState.deleteWorkoutForAll(widget.workout.id);
+    }
+    setState(() {
+      widget.appState.user.workouts.remove(widget.workout);
+      widget.refreshCallback();
+    });
+    Navigator.of(context).pop();
   }
 
   void handleDays(String day, bool? newValue) {

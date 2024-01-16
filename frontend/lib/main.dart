@@ -53,8 +53,8 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   late final List<Widget> _pages = <Widget>[
-    HomePage(appState),
-    WorkoutsPage(appState),
+    HomePage(appState, refreshCallback),
+    WorkoutsPage(appState,refreshCallback),
     BodyProgPage(),
   ];
 
@@ -63,6 +63,11 @@ class _LandingPageState extends State<LandingPage> {
     appState = AppState("tarzan", "rony123");
     appState.getUser(loadingCallback);
     super.initState();
+  }
+
+  void refreshCallback(){
+    setState(() {
+    });
   }
 
   loadingCallback(bool isFinished) {

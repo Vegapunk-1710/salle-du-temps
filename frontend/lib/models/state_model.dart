@@ -138,6 +138,48 @@ class AppState {
     }
   }
 
+  void addWorkout(String workoutId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        mutation AddWorkout(\$userId: String, \$workoutId: String) {
+          addWorkout(userId: \$userId, workoutId: \$workoutId) 
+        }
+        """, {"userId": user.id,"workoutId": workoutId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  Future<void> deleteWorkout(String workoutId) async {
+  try {
+      Map<String, dynamic> result = await query("""
+        mutation DeleteWorkout(\$userId: String, \$workoutId: String) {
+          deleteWorkout(userId: \$userId, workoutId: \$workoutId)
+        }
+        """, {"userId": user.id,"workoutId": workoutId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  void deleteWorkoutForAll(String workoutId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        mutation DeleteWorkout(\$userId: String, \$workoutId: String) {
+          deleteWorkoutForAll(userId: \$userId, workoutId: \$workoutId)
+        }
+        """, {"userId": user.id,"workoutId": workoutId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
   Future<Map<String, dynamic>> query(
       String query, Map<String, dynamic> variables) async {
     QueryResult result = await _client.query(
@@ -150,9 +192,8 @@ class AppState {
     if (result.hasException) {
       throw (Exception(result.exception));
     }
-    // if (kDebugMode) {
-    //   print(result.data!);
-    // }
     return result.data!;
   }
+
+
 }

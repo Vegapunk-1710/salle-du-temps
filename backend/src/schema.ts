@@ -74,6 +74,9 @@ export const typeDefs = `#graphql
 
   type Mutation {
     createWorkout(workout: CreateWorkoutInput!) : Workout!
+    addWorkout(userId:String, workoutId:String) : Boolean!
+    deleteWorkout(userId:String,workoutId:String) : Boolean!
+    deleteWorkoutForAll(userId:String,workoutId:String) : Boolean!
   }
 
   input CreateWorkoutInput{

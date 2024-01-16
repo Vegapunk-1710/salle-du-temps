@@ -1,3 +1,4 @@
+import { Console } from "console";
 import prisma from "./lib/prisma.js";
 
 async function getWorkoutsWithCreatedByName(workouts : any) {
@@ -59,8 +60,6 @@ export const resolvers = {
         });
         return getWorkoutsWithCreatedByName(workouts);
       },
-
-
       user: async (_,args) => {
         const user = await prisma.user.findUnique({
           where:{
@@ -83,6 +82,14 @@ export const resolvers = {
     },
     Mutation : {
       createWorkout : async (_,args) => {
+        const user = await prisma.user.findUniqueOrThrow({
+          where:{
+            id: args.workout.createdBy
+          },
+          select: {
+            name: true,
+          },
+        });
         const workout = await prisma.workout.create({
           data:{
             imageURL : args.workout.imageURL,
@@ -100,8 +107,60 @@ export const resolvers = {
             workoutId: workout.id,
           }
         });
-        return workout;
+        return {
+          ...workout,
+          createdBy : user.name
+        };
       },
-
+      addWorkout : async (_,args) => {
+        await prisma.workoutsRelations.create({
+          data:{
+            userId: args.userId,
+            workoutId: args.workoutId,
+          }
+        });
+        return true;
+      },
+      deleteWorkout : async (_,args) => {
+        await prisma.workoutsRelations.delete({
+          where:{
+            userId_workoutId :{ 
+              userId: args.userId,
+              workoutId: args.workoutId,
+            }
+          }
+        });
+        return true;
+      }, 
+      deleteWorkoutForAll : async (_,args) => {
+        const workout = await prisma.workout.findUnique({where:{id:args.workoutId}});
+        console.log(args.userId);
+        console.log(workout.createdBy);
+        console.log(args.userId === workout.createdBy);
+        if(args.userId === workout.createdBy){
+          await prisma.workoutsRelations.deleteMany({
+            where:{
+              workoutId: args.workoutId
+            }
+          });
+          await prisma.workout.delete({
+            where: {
+              id : args.workoutId
+            }
+          });
+          return true;
+        }
+        else{
+          await prisma.workoutsRelations.delete({
+            where:{
+              userId_workoutId :{ 
+                userId: args.userId,
+                workoutId: args.workoutId,
+              }
+            }
+          });
+          return false;
+        }
+      },     
     }
   };
