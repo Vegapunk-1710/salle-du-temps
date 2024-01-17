@@ -72,6 +72,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return exercises;
   }
 
+  searchCallback(String searchQuery) async {
+    List<Exercise> exercises =
+        await widget.appState.searchExercises(searchQuery);
+    return exercises;
+  }
+
   addCallback(Exercise newExercise) {
     setState(() {
       if (exercises.where((i) => i.id == newExercise.id).toList().isEmpty) {
@@ -293,7 +299,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AddExercise(addCallback, getCallback)));
+            builder: (context) => AddExercise(addCallback, getCallback,searchCallback)));
   }
 
   void handleCreate(BuildContext context) {

@@ -1,31 +1,89 @@
 import { Console } from "console";
 import prisma from "./lib/prisma.js";
 
-async function getWorkoutsWithCreatedByName(workouts : any) {
-  for (let i = 0; i < workouts.length; i++) {
+async function getEntitiesWithCreatedByName(entities : any) {
+  for (let i = 0; i < entities.length; i++) {
     const user = await prisma.user.findUniqueOrThrow({
       where:{
-        id: workouts[i].createdBy
+        id: entities[i].createdBy
       },
       select: {
         name: true,
       },
     });
-    workouts[i] = {
-      ...workouts[i],
+    entities[i] = {
+      ...entities[i],
       createdBy : user.name
     }
   }
-  return workouts;
+  return entities;
 }
 
 export const resolvers = {
     Query: {
-      exercises: async () => await prisma.exercise.findMany(),
+      exercises: async () => {
+        const exercises = await prisma.exercise.findMany({
+          orderBy : {
+            createdAt : 'desc'
+          },
+          take : 10
+        });
+        return getEntitiesWithCreatedByName(exercises);
+      },
+      searchExercises : async (_,args) => {
+        const exercises = await prisma.exercise.findMany({
+          where:{
+            OR:[
+              {
+                tutorial :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                difficulty :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                type :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                title :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+                createdAt :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+              {
+               setsreps :{
+                  contains : args.query,
+                  mode: 'insensitive',
+                }
+              },
+            ]
+          }
+        });
+        return getEntitiesWithCreatedByName(exercises);
+      },
 
       workouts: async () => {
-        const workouts = await prisma.workout.findMany();
-        return getWorkoutsWithCreatedByName(workouts);
+        const workouts = await prisma.workout.findMany({
+          orderBy : {
+            createdAt : 'desc'
+          },
+          take : 10
+        });
+        return getEntitiesWithCreatedByName(workouts);
       },
       searchWorkouts : async (_,args) => {
         const workouts = await prisma.workout.findMany({
@@ -58,7 +116,7 @@ export const resolvers = {
             ]
           }
         });
-        return getWorkoutsWithCreatedByName(workouts);
+        return getEntitiesWithCreatedByName(workouts);
       },
       user: async (_,args) => {
         const user = await prisma.user.findUnique({
@@ -76,7 +134,7 @@ export const resolvers = {
         const workouts = user.workouts.map(relation => relation.workout);
         return {
           ...user,
-          workouts: getWorkoutsWithCreatedByName(workouts),
+          workouts: getEntitiesWithCreatedByName(workouts),
         };
       },
       days : async (_,args) => {

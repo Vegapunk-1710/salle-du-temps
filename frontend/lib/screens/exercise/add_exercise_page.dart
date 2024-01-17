@@ -5,7 +5,10 @@ import 'package:frontend/models/exercise_model.dart';
 class AddExercise extends StatefulWidget {
   final Function(Exercise newExercise) addCallback;
   final Function() getCallback;
-  AddExercise(this.addCallback, this.getCallback, {Key? key}) : super(key: key);
+  final Function(String searchQuery) searchCallback;
+  AddExercise(this.addCallback, this.getCallback, this.searchCallback,
+      {Key? key})
+      : super(key: key);
 
   @override
   State<AddExercise> createState() => _AddExerciseState();
@@ -58,24 +61,20 @@ class _AddExerciseState extends State<AddExercise> {
                             controller: controller,
                             padding: const MaterialStatePropertyAll<EdgeInsets>(
                                 EdgeInsets.symmetric(horizontal: 16.0)),
-                            onChanged: (query) {
+                            onChanged: (query) async {
+                              List<Exercise> searchedExercises =
+                                  await widget.searchCallback(query);
+                              print(query);
                               setState(() {
+                                loading = true;
                                 if (query.isEmpty) {
                                   queriedExercises = newExercises;
+                                  loading = false;
+                                  return;
                                 } else {
-                                  queriedExercises = newExercises
-                                      .where((i) =>
-                                          i.title
-                                              .toLowerCase()
-                                              .contains(query.toLowerCase()) ||
-                                          i.type.name
-                                              .toLowerCase()
-                                              .contains(query.toLowerCase()) ||
-                                          i.difficulty.name
-                                              .toLowerCase()
-                                              .contains(query.toLowerCase()) ||
-                                          i.time.toString().contains(query))
-                                      .toList();
+                                  queriedExercises = searchedExercises;
+                                  loading = false;
+                                  return;
                                 }
                               });
                             },
@@ -92,44 +91,42 @@ class _AddExerciseState extends State<AddExercise> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: queriedExercises.length,
                           itemBuilder: (context, index) {
-
-                              return Card(
-                                elevation: 2,
-                                child: ListTile(
-                                  title: Text(queriedExercises[index].title),
-                                  subtitle: FittedBox(
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                            "Type : ${queriedExercises[index].type.name}, "),
-                                        Text(
-                                            "Difficulty : ${queriedExercises[index].difficulty.name}, "),
-                                        Text(
-                                            "Time : ~${queriedExercises[index].time} mins"),
-                                      ],
-                                    ),
+                            return Card(
+                              elevation: 2,
+                              child: ListTile(
+                                title: Text(queriedExercises[index].title),
+                                subtitle: FittedBox(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                          "Type : ${queriedExercises[index].type.name}, "),
+                                      Text(
+                                          "Difficulty : ${queriedExercises[index].difficulty.name}, "),
+                                      Text(
+                                          "Time : ~${queriedExercises[index].time} mins"),
+                                    ],
                                   ),
-                                  trailing: selected
-                                          .contains(queriedExercises[index].id)
-                                      ? const Icon(Icons.check)
-                                      : const Icon(Icons.circle_outlined),
-                                  selected: selected
-                                      .contains(queriedExercises[index].id),
-                                  enableFeedback: true,
-                                  onTap: () {
-                                    setState(() {
-                                      if (selected.contains(
-                                          queriedExercises[index].id)) {
-                                        selected
-                                            .remove(queriedExercises[index].id);
-                                      } else {
-                                        selected
-                                            .add(queriedExercises[index].id);
-                                      }
-                                    });
-                                  },
                                 ),
-                              );
+                                trailing: selected
+                                        .contains(queriedExercises[index].id)
+                                    ? const Icon(Icons.check)
+                                    : const Icon(Icons.circle_outlined),
+                                selected: selected
+                                    .contains(queriedExercises[index].id),
+                                enableFeedback: true,
+                                onTap: () {
+                                  setState(() {
+                                    if (selected
+                                        .contains(queriedExercises[index].id)) {
+                                      selected
+                                          .remove(queriedExercises[index].id);
+                                    } else {
+                                      selected.add(queriedExercises[index].id);
+                                    }
+                                  });
+                                },
+                              ),
+                            );
                           }),
                       const SizedBox(
                         height: 100,

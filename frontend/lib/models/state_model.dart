@@ -252,7 +252,36 @@ class AppState {
       List<Exercise> exercises = await result['exercises']
           .map<Exercise>((e) => Exercise.fromJson(e))
           .toList();
-      print(exercises);
+      return exercises;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
+  Future<List<Exercise>> searchExercises(String searchQuery) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query SearchExercises(\$query: String) {
+          searchExercises(query: \$query) {
+            id
+            imageURL
+            createdBy
+            createdAt
+            title
+            difficulty
+            time
+            type
+            tutorial
+            setsreps
+          }
+        }
+        """, {"query": searchQuery});
+      List<Exercise> exercises = await result['searchExercises']
+          .map<Exercise>((e) => Exercise.fromJson(e))
+          .toList();
       return exercises;
     } catch (e) {
       if (kDebugMode) {
