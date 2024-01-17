@@ -7,7 +7,6 @@ import 'package:frontend/screens/main/settings_page.dart';
 import 'package:frontend/screens/main/workouts_page.dart';
 
 void main() {
-  
   runApp(const MainApp());
 }
 
@@ -54,32 +53,34 @@ class _LandingPageState extends State<LandingPage> {
 
   late final List<Widget> _pages = <Widget>[
     HomePage(appState, refreshCallback),
-    WorkoutsPage(appState,refreshCallback),
+    WorkoutsPage(appState, refreshCallback),
     BodyProgPage(),
   ];
 
-   @override
+  @override
   void initState() {
-    appState = AppState("tarzan", "rony123");
-    appState.getUser(loadingCallback);
+    initUser();
     super.initState();
   }
 
-  void refreshCallback(){
+  Future<void> initUser() async {
+    appState = AppState("tarzan", "rony123");
+    bool isLoading = await appState.getUser();
     setState(() {
+      loading = isLoading;
     });
   }
 
-  loadingCallback(bool isFinished) {
-    setState(() {
-      loading = isFinished;
-    });
+  void refreshCallback() {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: loading ? Center(child: const RefreshProgressIndicator()) : _pages.elementAt(_selectedIndex),
+      body: loading
+          ? Center(child: const RefreshProgressIndicator())
+          : _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,

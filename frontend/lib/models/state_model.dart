@@ -20,7 +20,7 @@ class AppState {
     _client = GraphQLClient(link: _endpoint, cache: GraphQLCache());
   }
 
-  void getUser(Function(bool isFinished) loadingCallback) async {
+  Future<bool> getUser() async {
     try {
       Map<String, dynamic> result = await query("""
         query Query(\$username: String) {
@@ -48,11 +48,12 @@ class AppState {
           }
         """, {"username": _username});
       user = User.fromJson(result['user']);
-      loadingCallback(false);
+      return false;
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
+      return true;
     }
   }
 
@@ -83,7 +84,7 @@ class AppState {
     return null;
   }
 
-  Future<List<Workout>> getWorkouts(Function isDoneCallback) async {
+  Future<List<Workout>> getWorkouts() async {
     try {
       Map<String, dynamic> result = await query("""
         query Query {
@@ -102,7 +103,6 @@ class AppState {
       List<Workout> workouts = await result['workouts']
           .map<Workout>((w) => Workout.fromJson(w))
           .toList();
-      isDoneCallback(true);
       return workouts;
     } catch (e) {
       if (kDebugMode) {
@@ -207,7 +207,8 @@ class AppState {
           }
         }
         """, {"userId": user.id, "workoutId": workoutId});
-      List<String> returnedDays = await result['days']['days'].map<String>((day) => day.toString())
+      List<String> returnedDays = await result['days']['days']
+          .map<String>((day) => day.toString())
           .toList();
       return returnedDays;
     } catch (e) {
@@ -243,6 +244,4 @@ class AppState {
     }
     return result.data!;
   }
-
-  
 }

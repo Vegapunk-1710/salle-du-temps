@@ -36,8 +36,8 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     }
   }
 
-  getCallback(Function isDoneCallback) async {
-    List<Workout>? workouts = await widget.appState.getWorkouts(isDoneCallback);
+  getCallback() async {
+    List<Workout>? workouts = await widget.appState.getWorkouts();
     return workouts;
   }
 

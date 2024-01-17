@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/state_model.dart';
 import 'package:frontend/models/workout_model.dart';
-import 'package:frontend/screens/body/body_prog_page.dart';
 import 'package:frontend/widgets/workout_card.dart';
 
 class HomePage extends StatefulWidget {

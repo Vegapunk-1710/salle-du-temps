@@ -4,7 +4,7 @@ import 'package:frontend/models/workout_model.dart';
 class AddWorkoutPage extends StatefulWidget {
   final Function(Workout addedWorkout) addCallback;
   final Function(String searchQuery) searchCallback;
-  final Function(Function isDoneCallback) getCallback;
+  final Function() getCallback;
   AddWorkoutPage(this.getCallback, this.searchCallback, this.addCallback,
       {Key? key})
       : super(key: key);
@@ -26,17 +26,13 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
   }
 
   initWorkouts() async {
-    workouts = await widget.getCallback(isDoneCallback);
-    queried = workouts;
-    selected = {};
-  }
-
-  isDoneCallback(bool isDone) {
-    if (isDone) {
-      setState(() {
-        loading = false;
-      });
-    }
+    List<Workout> returnedWorkouts = await widget.getCallback();
+    setState(() {
+      workouts = returnedWorkouts;
+      queried = workouts;
+      selected = {};
+      loading = false;
+    });
   }
 
   @override
