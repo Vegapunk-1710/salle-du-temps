@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:frontend/models/exercise_model.dart';
 import 'package:frontend/models/user_model.dart';
 import 'package:frontend/models/workout_model.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -227,6 +228,37 @@ class AppState {
       if (kDebugMode) {
         print(e);
       }
+    }
+  }
+
+  Future<List<Exercise>> getExercises() async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query Query {
+          exercises {
+            id
+            imageURL
+            createdBy
+            createdAt
+            title
+            difficulty
+            time
+            type
+            tutorial
+            setsreps
+          }
+        }
+        """, {});
+      List<Exercise> exercises = await result['exercises']
+          .map<Exercise>((e) => Exercise.fromJson(e))
+          .toList();
+      print(exercises);
+      return exercises;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
     }
   }
 

@@ -67,7 +67,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  callback(Exercise newExercise) {
+  getCallback() async {
+    List<Exercise> exercises = await widget.appState.getExercises();
+    return exercises;
+  }
+
+  addCallback(Exercise newExercise) {
     setState(() {
       if (exercises.where((i) => i.id == newExercise.id).toList().isEmpty) {
         exercises.add(newExercise);
@@ -285,14 +290,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void handleAdd(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => AddExercise(callback)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddExercise(addCallback, getCallback)));
   }
 
   void handleCreate(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CreateExercise(callback)));
+        MaterialPageRoute(builder: (context) => CreateExercise(addCallback)));
   }
 
   void handleOrder(BuildContext context) {
@@ -301,7 +308,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => OrderExercise(callback, unordered)));
+            builder: (context) => OrderExercise(addCallback, unordered)));
     exercises.clear();
   }
 

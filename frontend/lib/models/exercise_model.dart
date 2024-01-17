@@ -1,15 +1,15 @@
 class Exercise {
-  String id;
-  String imageURL;
-  String createdBy;
-  DateTime createdAt;
-  String title;
-  Difficulty difficulty;
-  int time;
-  Type type;
-  String tutorial;
-  String setsreps;
-  List<(DateTime date, int weight, int maxSets, int maxReps)> progression;
+  late String id;
+  late String imageURL;
+  late String createdBy;
+  late DateTime createdAt;
+  late String title;
+  late Difficulty difficulty;
+  late int time;
+  late Type type;
+  late String tutorial;
+  late String setsreps;
+  late List<(DateTime date, int weight, int maxSets, int maxReps)> progression;
 
   Exercise(
       {required this.id,
@@ -27,6 +27,20 @@ class Exercise {
   @override
   String toString() {
     return "id : $id\nimageURL : $imageURL \ntitle : $title\ndifficulty : $difficulty\ntime : $time\ntype : $type\ntutorial : $tutorial\nsetsreps : $setsreps\nprogression : $progression\n";
+  }
+
+  Exercise.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    imageURL = json['imageURL'];
+    createdBy = json['createdBy'];
+    createdAt = DateTime.parse(json['createdAt']);
+    title = json['title'];
+    difficulty = translateStringToDifficulty(json['difficulty']);
+    time = json['time'];
+    type = translateStringToType(json['type']);
+    tutorial = json['tutorial'];
+    setsreps = json['setsreps'];
+    progression = [];
   }
 
   static Difficulty translateStringToDifficulty(String name) {
