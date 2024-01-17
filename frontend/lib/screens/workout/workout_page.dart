@@ -26,6 +26,7 @@ class WorkoutPage extends StatefulWidget {
 
 class _WorkoutPageState extends State<WorkoutPage> {
   int exer_index = 0;
+  bool loading = true;
   late List<Exercise> exercises;
   final List<String> daysOfWeek = [
     'Monday',
@@ -44,16 +45,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
     exercises = Exercise.db()
         .where((i) => widget.workout.exercises.any((j) => i.id == j))
         .toList();
-    selectedDays = {
-      'Monday': widget.workout.days.contains(Days.Monday),
-      'Tuesday': widget.workout.days.contains(Days.Tuesday),
-      'Wednesday': widget.workout.days.contains(Days.Wednesday),
-      'Thursday': widget.workout.days.contains(Days.Thursday),
-      'Friday': widget.workout.days.contains(Days.Friday),
-      'Saturday': widget.workout.days.contains(Days.Saturday),
-      'Sunday': widget.workout.days.contains(Days.Sunday),
-    };
+    initDays();
     super.initState();
+  }
+
+  initDays() async {
+    List<String> days = await widget.appState.getDays(widget.workout.id);
+    setState(() {
+      widget.workout.days =
+          days.map((day) => Workout.translateStringToDay(day)).toList();
+      selectedDays = {
+        'Monday': widget.workout.days.contains(Days.Monday),
+        'Tuesday': widget.workout.days.contains(Days.Tuesday),
+        'Wednesday': widget.workout.days.contains(Days.Wednesday),
+        'Thursday': widget.workout.days.contains(Days.Thursday),
+        'Friday': widget.workout.days.contains(Days.Friday),
+        'Saturday': widget.workout.days.contains(Days.Saturday),
+        'Sunday': widget.workout.days.contains(Days.Sunday),
+      };
+      loading = false;
+    });
   }
 
   callback(Exercise newExercise) {
@@ -73,155 +84,174 @@ class _WorkoutPageState extends State<WorkoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          CustomImageNetwork(
-            imageURL: widget.workout.imageURL,
-            showIcon: false,
-            fit: BoxFit.fill,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: loading
+          ? const Center(
+              child: RefreshProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: Text(widget.workout.title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 22)),
+                    CustomImageNetwork(
+                      imageURL: widget.workout.imageURL,
+                      showIcon: false,
+                      fit: BoxFit.fill,
                     ),
-                    IconButton(
-                        onPressed: () {
-                          handleDeleteWorkout(context);
-                        },
-                        icon: const Icon(Icons.delete_forever))
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("DIFFICULTY : ${widget.workout.difficulty.name}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w300, fontSize: 14)),
-                    Text("TIME : ~${widget.workout.time} mins",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w300, fontSize: 14)),
-                  ],
-                ),
-                widget.workout.days.isEmpty
-                    ? const Text("DAYS : Not Active",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w300, fontSize: 14))
-                    : widget.workout.days.length == 7
-                        ? const Text("DAYS : All Week",
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(widget.workout.title,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 22)),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    handleDeleteWorkout(context);
+                                  },
+                                  icon: const Icon(Icons.delete_forever))
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  "DIFFICULTY : ${widget.workout.difficulty.name}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 14)),
+                              Text("TIME : ~${widget.workout.time} mins",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 14)),
+                            ],
+                          ),
+                          widget.workout.days.isEmpty
+                              ? const Text("DAYS : Not Active",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 14))
+                              : widget.workout.days.length == 7
+                                  ? const Text("DAYS : All Week",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 14))
+                                  : Text(
+                                      "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Description",
                             style: TextStyle(
-                                fontWeight: FontWeight.w300, fontSize: 14))
-                        : Text(
-                            "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
+                                fontWeight: FontWeight.w600, fontSize: 22))),
+                    Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(widget.workout.description,
                             style: const TextStyle(
-                                fontWeight: FontWeight.w300, fontSize: 14)),
-              ],
-            ),
-          ),
-          const Divider(),
-          const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Description",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
-          Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(widget.workout.description,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w400, fontSize: 16))),
-          Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Exercises",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            handleAdd(context);
-                          },
-                          icon: const Icon(Icons.add)),
-                      IconButton(
-                          onPressed: () {
-                            handleCreate(context);
-                          },
-                          icon: const Icon(Icons.create)),
-                      IconButton(
-                          onPressed: () {
-                            handleOrder(context);
-                          },
-                          icon: const Icon(Icons.stacked_bar_chart_sharp)),
-                      IconButton(
-                          onPressed: () {
-                            handleDeleteExercise(context);
-                          },
-                          icon: const Icon(Icons.delete_forever))
-                    ],
-                  ),
-                ],
-              )),
-          SizedBox(
-            height: MediaQuery.of(context).size.height / 3.1,
-            child: PageView.builder(
-              itemCount: exercises.length,
-              controller:
-                  PageController(viewportFraction: 0.9, keepPage: false),
-              onPageChanged: (index) => setState(() => exer_index = index),
-              itemBuilder: (context, index) {
-                return AnimatedPadding(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.fastOutSlowIn,
-                    padding: EdgeInsets.all(exer_index == index ? 0.0 : 8.0),
-                    child: ExerciseCard(
-                      exercise: exercises[exer_index],
-                      position: "${exer_index + 1}/${exercises.length}",
-                    ));
-              },
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text("Workout Schedule",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22)),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: FittedBox(
-              child: Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: daysOfWeek.map((String day) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Checkbox(
-                        value: selectedDays[day],
-                        onChanged: (bool? newValue) {
-                          handleDays(day, newValue);
+                                fontWeight: FontWeight.w400, fontSize: 16))),
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Exercises",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 22)),
+                            Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      handleAdd(context);
+                                    },
+                                    icon: const Icon(Icons.add)),
+                                IconButton(
+                                    onPressed: () {
+                                      handleCreate(context);
+                                    },
+                                    icon: const Icon(Icons.create)),
+                                IconButton(
+                                    onPressed: () {
+                                      handleOrder(context);
+                                    },
+                                    icon: const Icon(
+                                        Icons.stacked_bar_chart_sharp)),
+                                IconButton(
+                                    onPressed: () {
+                                      handleDeleteExercise(context);
+                                    },
+                                    icon: const Icon(Icons.delete_forever))
+                              ],
+                            ),
+                          ],
+                        )),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 3.1,
+                      child: PageView.builder(
+                        itemCount: exercises.length,
+                        controller: PageController(
+                            viewportFraction: 0.9, keepPage: false),
+                        onPageChanged: (index) =>
+                            setState(() => exer_index = index),
+                        itemBuilder: (context, index) {
+                          return AnimatedPadding(
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.fastOutSlowIn,
+                              padding: EdgeInsets.all(
+                                  exer_index == index ? 0.0 : 8.0),
+                              child: ExerciseCard(
+                                exercise: exercises[exer_index],
+                                position:
+                                    "${exer_index + 1}/${exercises.length}",
+                              ));
                         },
                       ),
-                      Text(day),
-                    ],
-                  );
-                }).toList(),
-              ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Workout Schedule",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 22)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FittedBox(
+                        child: Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: daysOfWeek.map((String day) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Checkbox(
+                                  value: selectedDays[day],
+                                  onChanged: (bool? newValue) {
+                                    handleDays(day, newValue);
+                                  },
+                                ),
+                                Text(day),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 100,
+                    )
+                  ]),
             ),
-          ),
-          const SizedBox(
-            height: 100,
-          )
-        ]),
-      ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -276,27 +306,27 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   void handleDeleteExercise(BuildContext context) {
-    if(exercises.isNotEmpty){
+    if (exercises.isNotEmpty) {
       showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text("Delete this exercise ?"),
-        content: Text(
-            "Are you sure you want to delete ${exercises[exer_index].title} from your workout ?"),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text("No")),
-          TextButton(
-              onPressed: () {
-                deleteExercise(context);
-                Navigator.pop(context, 'OK');
-              },
-              child: const Text("Yes")),
-        ],
-      ),
-    );
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          title: const Text("Delete this exercise ?"),
+          content: Text(
+              "Are you sure you want to delete ${exercises[exer_index].title} from your workout ?"),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text("No")),
+            TextButton(
+                onPressed: () {
+                  deleteExercise(context);
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text("Yes")),
+          ],
+        ),
+      );
     }
   }
 
@@ -383,6 +413,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     } else {
       widget.appState.deleteWorkoutForAll(widget.workout.id);
     }
+    widget.appState.deleteDays(widget.workout.id);
     setState(() {
       widget.appState.user.workouts.remove(widget.workout);
       widget.refreshCallback();
@@ -406,5 +437,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
         return firstPos.compareTo(secondPos);
       });
     });
+    List<String> daysAsNames =
+        widget.workout.days.map((day) => day.name).toList();
+    widget.appState.addDays(widget.workout.id, daysAsNames);
+    widget.refreshCallback();
   }
 }

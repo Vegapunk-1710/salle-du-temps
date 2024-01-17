@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:frontend/models/user_model.dart';
 import 'package:frontend/models/workout_model.dart';
@@ -144,7 +146,7 @@ class AppState {
         mutation AddWorkout(\$userId: String, \$workoutId: String) {
           addWorkout(userId: \$userId, workoutId: \$workoutId) 
         }
-        """, {"userId": user.id,"workoutId": workoutId});
+        """, {"userId": user.id, "workoutId": workoutId});
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -153,12 +155,12 @@ class AppState {
   }
 
   Future<void> deleteWorkout(String workoutId) async {
-  try {
+    try {
       Map<String, dynamic> result = await query("""
         mutation DeleteWorkout(\$userId: String, \$workoutId: String) {
           deleteWorkout(userId: \$userId, workoutId: \$workoutId)
         }
-        """, {"userId": user.id,"workoutId": workoutId});
+        """, {"userId": user.id, "workoutId": workoutId});
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -172,7 +174,54 @@ class AppState {
         mutation DeleteWorkout(\$userId: String, \$workoutId: String) {
           deleteWorkoutForAll(userId: \$userId, workoutId: \$workoutId)
         }
-        """, {"userId": user.id,"workoutId": workoutId});
+        """, {"userId": user.id, "workoutId": workoutId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  void addDays(String workoutId, List<String> days) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        mutation Mutation(\$userId: String, \$workoutId: String, \$days: [String]) {
+          updateDays(userId: \$userId, workoutId: \$workoutId, days: \$days) {
+            days
+          }
+        }
+        """, {"userId": user.id, "workoutId": workoutId, "days": days});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  Future<List<String>> getDays(String workoutId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query Query(\$userId: String, \$workoutId: String) {
+          days(userId: \$userId, workoutId: \$workoutId) {
+            days
+          }
+        }
+        """, {"userId": user.id, "workoutId": workoutId});
+      List<String> returnedDays = await result['days']['days'].map<String>((day) => day.toString())
+          .toList();
+      return returnedDays;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<void> deleteDays(String workoutId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        mutation Mutation(\$userId: String, \$workoutId: String) {
+          deleteDays(userId: \$userId, workoutId: \$workoutId)
+        }
+        """, {"userId": user.id, "workoutId": workoutId});
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -195,5 +244,5 @@ class AppState {
     return result.data!;
   }
 
-
+  
 }

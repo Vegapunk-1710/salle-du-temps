@@ -193,6 +193,19 @@ export const resolvers = {
             days: args.days
           }
         });
+      },
+      deleteDays : async (_,args) => {
+        try{
+          await prisma.days.deleteMany({
+            where : {
+              createdBy: args.userId,
+              workoutId: args.workoutId
+            }
+          });
+          return true; 
+        } catch(e){
+          return false;
+        }
       }    
     }
   };
