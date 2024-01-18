@@ -291,6 +291,20 @@ class AppState {
     }
   }
 
+  Future<void> addExercise(String exerciseId, String workoutId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+       mutation Mutation(\$workoutId: String, \$exerciseId: String) {
+          addExercise(workoutId: \$workoutId, exerciseId: \$exerciseId)
+        }
+        """, {"workoutId": workoutId,"exerciseId": exerciseId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
   Future<Map<String, dynamic>> query(
       String query, Map<String, dynamic> variables) async {
     QueryResult result = await _client.query(
@@ -305,4 +319,6 @@ class AppState {
     }
     return result.data!;
   }
+
+  
 }

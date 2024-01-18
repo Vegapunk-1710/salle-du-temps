@@ -264,6 +264,26 @@ export const resolvers = {
         } catch(e){
           return false;
         }
-      }    
+      },
+      addExercise : async (_,args) => {
+        try {
+          const count = await prisma.exercisesRelations.count({
+            where: {
+              workoutId: args.exerciseId,
+            },
+          });
+          await prisma.exercisesRelations.create({
+            data:{
+              exerciseId : args.exerciseId,
+              workoutId: args.workoutId,
+              order: count+1
+            }
+          });
+          return count+1;
+        }
+        catch(e){
+          return -1;
+        }
+      } 
     }
   };

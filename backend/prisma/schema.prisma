@@ -62,6 +62,7 @@ model ExercisesRelations {
   workoutId  String
   exercise   Exercise  @relation(fields: [exerciseId], references: [id])
   exerciseId String
+  order      Int
 
   @@id([workoutId, exerciseId])
 }

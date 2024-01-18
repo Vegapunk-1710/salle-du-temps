@@ -81,6 +81,7 @@ export const typeDefs = `#graphql
     deleteWorkoutForAll(userId:String,workoutId:String) : Boolean!
     updateDays(userId:String,workoutId:String,days:[String]) : Days!
     deleteDays(userId:String,workoutId:String): Boolean!
+    addExercise(workoutId:String, exerciseId:String): Int!
   }
 
   input CreateWorkoutInput{

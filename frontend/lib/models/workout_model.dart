@@ -1,3 +1,5 @@
+import 'package:frontend/models/exercise_model.dart';
+
 class Workout {
   late String id;
   late String imageURL;
@@ -7,7 +9,7 @@ class Workout {
   late Difficulty difficulty;
   late int time;
   late String description;
-  late List<String> exercises;
+  late List<Exercise> exercises;
   late List<Days> days;
   late List<(DateTime date, String time)> progression;
 
@@ -74,7 +76,7 @@ class Workout {
         time: 60,
         description:
             'A comprehensive full-body workout aimed at increasing overall strength.',
-        exercises: ['ex1', 'ex3', 'ex5'],
+        exercises: [],
         days: [],
         progression: [],
       ),
@@ -89,7 +91,7 @@ class Workout {
         time: 30,
         description:
             'A relaxing yoga routine to improve flexibility and reduce stress.',
-        exercises: ['ex7', 'ex8', 'ex9'],
+        exercises: [],
         days: [],
         progression: [],
       )

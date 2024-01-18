@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:frontend/models/exercise_model.dart';
 
 class AddExercise extends StatefulWidget {
-  final Function(Exercise newExercise) addCallback;
+  final Function(List<Exercise> addedExercises) addCallback;
   final Function() getCallback;
   final Function(String searchQuery) searchCallback;
   AddExercise(this.addCallback, this.getCallback, this.searchCallback,
@@ -20,8 +20,8 @@ class _AddExerciseState extends State<AddExercise> {
   bool loading = true;
   late List<Exercise> newExercises;
   late List<Exercise> queriedExercises;
-  late List<String> selected;
-  Timer? _debounce = Timer(const Duration(milliseconds: 100),(){});
+  late Map<String, Exercise> selected;
+  Timer? _debounce = Timer(const Duration(milliseconds: 100), () {});
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _AddExerciseState extends State<AddExercise> {
     setState(() {
       newExercises = returnedExercises;
       queriedExercises = newExercises;
-      selected = <String>[];
+      selected = {};
       loading = false;
     });
   }
@@ -65,17 +65,19 @@ class _AddExerciseState extends State<AddExercise> {
                             padding: const MaterialStatePropertyAll<EdgeInsets>(
                                 EdgeInsets.symmetric(horizontal: 16.0)),
                             onChanged: (query) {
-                               if (_debounce?.isActive ?? false) _debounce?.cancel();
-                                _debounce = Timer(const Duration(milliseconds: 100), () async {
-                              List<Exercise> searchedExercises =
-                                  await widget.searchCallback(query);
-                                  setState(() {
-                                    if (query.isEmpty) {
-                                      queriedExercises = newExercises;
-                                    } else {
-                                      queriedExercises = searchedExercises;
-                                    }
-                                  });
+                              if (_debounce?.isActive ?? false)
+                                _debounce?.cancel();
+                              _debounce = Timer(
+                                  const Duration(milliseconds: 100), () async {
+                                List<Exercise> searchedExercises =
+                                    await widget.searchCallback(query);
+                                setState(() {
+                                  if (query.isEmpty) {
+                                    queriedExercises = newExercises;
+                                  } else {
+                                    queriedExercises = searchedExercises;
+                                  }
+                                });
                               });
                             },
                             leading: const Icon(Icons.search),
@@ -108,20 +110,21 @@ class _AddExerciseState extends State<AddExercise> {
                                   ),
                                 ),
                                 trailing: selected
-                                        .contains(queriedExercises[index].id)
+                                        .containsKey(queriedExercises[index].id)
                                     ? const Icon(Icons.check)
                                     : const Icon(Icons.circle_outlined),
                                 selected: selected
-                                    .contains(queriedExercises[index].id),
+                                    .containsKey(queriedExercises[index].id),
                                 enableFeedback: true,
                                 onTap: () {
                                   setState(() {
-                                    if (selected
-                                        .contains(queriedExercises[index].id)) {
+                                    if (selected.containsKey(
+                                        queriedExercises[index].id)) {
                                       selected
                                           .remove(queriedExercises[index].id);
                                     } else {
-                                      selected.add(queriedExercises[index].id);
+                                      selected[queriedExercises[index].id] =
+                                          queriedExercises[index];
                                     }
                                   });
                                 },
@@ -151,12 +154,8 @@ class _AddExerciseState extends State<AddExercise> {
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: FloatingActionButton(
               onPressed: () {
-                List<Exercise> selectedExercises = newExercises
-                    .where((exercise) => selected.contains(exercise.id))
-                    .toList();
-                for (Exercise s in selectedExercises) {
-                  widget.addCallback(s);
-                }
+                List<Exercise> selectedExercises = selected.values.toList();
+                widget.addCallback(selectedExercises);
                 Navigator.of(context).pop();
               },
               heroTag: "addexercisebtn",

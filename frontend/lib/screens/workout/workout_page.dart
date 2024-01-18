@@ -78,11 +78,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
     return exercises;
   }
 
-  addCallback(Exercise newExercise) {
-    setState(() {
-      if (exercises.where((i) => i.id == newExercise.id).toList().isEmpty) {
-        exercises.add(newExercise);
-      }
+  addCallback(List<Exercise> addedExercises) {
+    addedExercises.forEach((exercise) async {
+       if (widget.workout.exercises
+        .where((i) => i.id == exercise.id)
+        .toList()
+        .isEmpty) {
+      setState(() {
+        widget.workout.exercises.add(exercise);
+      });
+      await widget.appState.addExercise(exercise.id, widget.workout.id);
+    }
     });
   }
 
@@ -299,22 +305,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AddExercise(addCallback, getCallback,searchCallback)));
+            builder: (context) =>
+                AddExercise(addCallback, getCallback, searchCallback)));
   }
 
   void handleCreate(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CreateExercise(addCallback)));
+    // Navigator.push(context,
+    //     MaterialPageRoute(builder: (context) => CreateExercise(addCallback)));
   }
 
   void handleOrder(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     List<Exercise> unordered = List.from(exercises);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => OrderExercise(addCallback, unordered)));
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => OrderExercise(addCallback, unordered)));
     exercises.clear();
   }
 
