@@ -25,9 +25,8 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-  int exer_index = 0;
+  int exerciseIndex = 0;
   bool loading = true;
-  late List<Exercise> exercises;
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -42,16 +41,26 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   @override
   void initState() {
-    exercises = Exercise.db()
-        .where((i) => widget.workout.exercises.any((j) => i.id == j))
-        .toList();
-    initDays();
+    initWorkout();
     super.initState();
   }
 
-  initDays() async {
-    List<String> days = await widget.appState.getDays(widget.workout.id);
+  initWorkout() async {
+    List<String> days;
+    List<Exercise> exercises;
+    if (widget.workout.days.isEmpty) {
+      days = await widget.appState.getDays(widget.workout.id);
+    } else {
+      days = widget.workout.days.map((day) => day.name).toList();
+    }
+    if (widget.workout.exercises.isEmpty) {
+      exercises =
+          await widget.appState.getWorkoutExercises(widget.workout.id);
+    } else {
+      exercises = widget.workout.exercises;
+    }
     setState(() {
+      widget.workout.exercises = exercises;
       widget.workout.days =
           days.map((day) => Workout.translateStringToDay(day)).toList();
       selectedDays = {
@@ -80,21 +89,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   addCallback(List<Exercise> addedExercises) {
     addedExercises.forEach((exercise) async {
-       if (widget.workout.exercises
-        .where((i) => i.id == exercise.id)
-        .toList()
-        .isEmpty) {
-      setState(() {
-        widget.workout.exercises.add(exercise);
-      });
-      await widget.appState.addExercise(exercise.id, widget.workout.id);
-    }
+      if (widget.workout.exercises
+          .where((i) => i.id == exercise.id)
+          .toList()
+          .isEmpty) {
+        setState(() {
+          widget.workout.exercises.add(exercise);
+        });
+        widget.appState.addExercise(exercise.id, widget.workout.id);
+      }
     });
   }
 
   endWorkoutCallback(List<Exercise> modifiedExercises, String time) {
     setState(() {
-      exercises = modifiedExercises;
+      // exercises = modifiedExercises;
     });
   }
 
@@ -216,21 +225,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 3.1,
                       child: PageView.builder(
-                        itemCount: exercises.length,
+                        itemCount: widget.workout.exercises.length,
                         controller: PageController(
                             viewportFraction: 0.9, keepPage: false),
                         onPageChanged: (index) =>
-                            setState(() => exer_index = index),
+                            setState(() => exerciseIndex = index),
                         itemBuilder: (context, index) {
                           return AnimatedPadding(
                               duration: const Duration(milliseconds: 400),
                               curve: Curves.fastOutSlowIn,
                               padding: EdgeInsets.all(
-                                  exer_index == index ? 0.0 : 8.0),
+                                  exerciseIndex == index ? 0.0 : 8.0),
                               child: ExerciseCard(
-                                exercise: exercises[exer_index],
+                                exercise: widget.workout.exercises[exerciseIndex],
                                 position:
-                                    "${exer_index + 1}/${exercises.length}",
+                                    "${exerciseIndex + 1}/${widget.workout.exercises.length}",
                               ));
                         },
                       ),
@@ -289,8 +298,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          StartWorkoutPage(exercises, endWorkoutCallback)));
+                      builder: (context) => StartWorkoutPage(
+                          widget.workout.exercises, endWorkoutCallback)));
             },
             heroTag: "workoutstartbtn",
             child: const Text("START"),
@@ -317,23 +326,23 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void handleOrder(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    List<Exercise> unordered = List.from(exercises);
+    List<Exercise> unordered = List.from(widget.workout.exercises);
     // Navigator.push(
     //     context,
     //     MaterialPageRoute(
     //         builder: (context) => OrderExercise(addCallback, unordered)));
-    exercises.clear();
+    widget.workout.exercises.clear();
   }
 
   void handleDeleteExercise(BuildContext context) {
-    if (exercises.isNotEmpty) {
+    if (widget.workout.exercises.isNotEmpty) {
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
           title: const Text("Delete this exercise ?"),
           content: Text(
-              "Are you sure you want to delete ${exercises[exer_index].title} from your workout ?"),
+              "Are you sure you want to delete ${widget.workout.exercises[exerciseIndex].title} from your workout ?"),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -404,20 +413,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void deleteExercise(BuildContext context) {
     setState(() {
-      int rmv_index = exer_index;
-      if (exercises.isNotEmpty) {
-        if (exer_index == exercises.length - 1 && exer_index > 0) {
-          rmv_index = exer_index;
-          exer_index -= 1;
+      int rmv_index = exerciseIndex;
+      if (widget.workout.exercises.isNotEmpty) {
+        if (exerciseIndex == widget.workout.exercises.length - 1 &&
+            exerciseIndex > 0) {
+          rmv_index = exerciseIndex;
+          exerciseIndex -= 1;
         }
-        Exercise removed = exercises.removeAt(rmv_index);
+        Exercise removed = widget.workout.exercises.removeAt(rmv_index);
         var snackBar = SnackBar(
           content: Text('Deleted Exercise : ${removed.title}'),
           action: SnackBarAction(
             label: 'Undo',
             onPressed: () {
               setState(() {
-                exercises.add(removed);
+                widget.workout.exercises.add(removed);
               });
             },
           ),

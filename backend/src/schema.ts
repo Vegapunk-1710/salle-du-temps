@@ -72,6 +72,7 @@ export const typeDefs = `#graphql
     searchWorkouts(query:String) : [Workout]!
     user(username:String): User!
     days(userId:String,workoutId:String) : Days!
+    workoutExercises(workoutId:String): [Exercise]!
   }
 
   type Mutation {

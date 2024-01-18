@@ -144,6 +144,25 @@ export const resolvers = {
             workoutId: args.workoutId
           }
         });
+      },
+      workoutExercises : async (_,args) => {
+        try {
+          const exerciseRelations = await prisma.exercisesRelations.findMany({
+            where: {
+              workoutId: args.workoutId,
+            },
+            orderBy: {
+              order: 'asc', 
+            },
+            include: {
+              exercise: true,
+            },
+          });
+      
+          return getEntitiesWithCreatedByName(exerciseRelations.map(relation => relation.exercise));
+        } catch (error) {
+          return [];
+        }
       }
     },
     Mutation : {
