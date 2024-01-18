@@ -69,7 +69,6 @@ class _AddExerciseState extends State<AddExercise> {
                                 _debounce = Timer(const Duration(milliseconds: 100), () async {
                               List<Exercise> searchedExercises =
                                   await widget.searchCallback(query);
-                                  print(query);
                                   setState(() {
                                     if (query.isEmpty) {
                                       queriedExercises = newExercises;
