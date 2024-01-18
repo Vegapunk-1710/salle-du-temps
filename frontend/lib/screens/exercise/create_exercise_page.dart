@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:frontend/models/exercise_model.dart';
 
 class CreateExercise extends StatefulWidget {
-  final Function(Exercise newExercise) callback;
+  final Function(Map<String,dynamic> data) callback;
   CreateExercise(this.callback, {Key? key}) : super(key: key);
 
   @override
@@ -188,23 +188,20 @@ class _CreateExerciseState extends State<CreateExercise> {
       int time = int.parse(timeController.text);
       String tutorial = tutotialController.text;
       String setsreps = setsrepsController.text;
-      var difficulty = Exercise.translateStringToDifficulty(selectedDifficulty);
-      var type = Exercise.translateStringToType(selectedType);
+      String difficulty = selectedDifficulty;
+      String type = selectedType;
       String? imageURL = imageURLController.text;
-      Exercise newExercise = Exercise(
-          id: UniqueKey().toString(),
-          title: title,
-          imageURL: imageURL,
-          createdBy: "Rony",
-          createdAt: DateTime.now(),
-          difficulty: difficulty,
-          time: time,
-          type: type,
-          tutorial: tutorial,
-          setsreps: setsreps,
-          progression: []
-          );
-      widget.callback(newExercise);
+      Map<String, dynamic> data = {
+          "title": title,
+          "imageURL": imageURL,
+          "createdAt": DateTime.now().toIso8601String(),
+          "difficulty": difficulty,
+          "time": time,
+          "type": type,
+          "tutorial": tutorial,
+          "setsreps": setsreps,
+      };
+      widget.callback(data);
       Navigator.of(context).pop();
     }
   }

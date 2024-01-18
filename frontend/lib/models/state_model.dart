@@ -335,18 +335,53 @@ class AppState {
     }
   }
 
-  Future<void> updateOrder(String exerciseId, String workoutId, int order) async {
+  Future<void> updateOrder(
+      String exerciseId, String workoutId, int order) async {
     try {
       Map<String, dynamic> result = await query("""
        mutation Mutation(\$workoutId: String, \$exerciseId: String, \$order: Int) {
         updateOrder(workoutId: \$workoutId, exerciseId: \$exerciseId, order: \$order)
       }
-        """, {"workoutId": workoutId, "exerciseId": exerciseId, "order":order});
+        """,
+          {"workoutId": workoutId, "exerciseId": exerciseId, "order": order});
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
     }
+  }
+
+  Future<Exercise?> createExercise(Map<String, dynamic> data) async {
+    try {
+      data['createdBy'] = user.id;
+      Map<String, dynamic> result = await query("""
+        mutation Mutation(\$exercise: CreateExerciseInput!) {
+        createExercise(exercise: \$exercise) {
+          id
+          imageURL
+          createdBy
+          createdAt
+          title
+          difficulty
+          time
+          type
+          tutorial
+          setsreps
+        }
+      }
+        """, {"exercise": data});
+      Exercise exercise = Exercise.fromJson(result['createExercise']);
+      return exercise;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  void deleteExercise(String exerciseId, String workoutId){
+    
   }
 
   Future<Map<String, dynamic>> query(

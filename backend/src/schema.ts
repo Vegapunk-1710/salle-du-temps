@@ -84,6 +84,7 @@ export const typeDefs = `#graphql
     deleteDays(userId:String,workoutId:String): Boolean!
     addExercise(workoutId:String, exerciseId:String): Int!
     updateOrder(workoutId:String, exerciseId:String, order:Int): Int!
+    createExercise(exercise: CreateExerciseInput!) : Exercise!
   }
 
   input CreateWorkoutInput{
@@ -94,5 +95,17 @@ export const typeDefs = `#graphql
     difficulty : String!,
     time : Int!, 
     description : String!,
+  }
+
+  input CreateExerciseInput{
+    imageURL : String!, 
+    createdBy : String!,
+    createdAt : String!,
+    title : String!, 
+    difficulty : String!,
+    time : Int!, 
+    type : String!,
+    tutorial : String!,
+    setsreps : String!,
   }
 `;

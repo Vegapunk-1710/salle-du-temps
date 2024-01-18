@@ -321,6 +321,33 @@ export const resolvers = {
         } catch(e){
           return -1;
         }
+      },
+      createExercise: async (_,args) => {
+        const user = await prisma.user.findUniqueOrThrow({
+          where:{
+            id: args.exercise.createdBy
+          },
+          select: {
+            name: true,
+          },
+        });
+        const exercise = await prisma.exercise.create({
+          data:{
+            imageURL : args.exercise.imageURL,
+            createdBy : args.exercise.createdBy,
+            createdAt : args.exercise.createdAt,
+            title: args.exercise.title,
+            difficulty : args.exercise.difficulty,
+            time : args.exercise.time,
+            type : args.exercise.type,
+            tutorial : args.exercise.tutorial,
+            setsreps : args.exercise.setsreps
+          }
+        });
+        return {
+          ...exercise,
+          createdBy : user.name
+        }
       }
     }
   };

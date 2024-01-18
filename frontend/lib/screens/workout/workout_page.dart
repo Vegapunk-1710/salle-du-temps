@@ -116,6 +116,16 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
+  createCallback(Map<String, dynamic> data) async {
+    Exercise? createdExercise = await widget.appState.createExercise(data);
+    if(createdExercise != null){
+      setState(() {
+        widget.workout.exercises.add(createdExercise);
+      });
+      widget.appState.addExercise(createdExercise.id, widget.workout.id);
+    }
+  }
+
   endWorkoutCallback(List<Exercise> modifiedExercises, String time) {
     setState(() {
       // exercises = modifiedExercises;
@@ -336,8 +346,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void handleCreate(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    // Navigator.push(context,
-    //     MaterialPageRoute(builder: (context) => CreateExercise(addCallback)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => CreateExercise(createCallback)));
   }
 
   void handleOrder(BuildContext context) {
