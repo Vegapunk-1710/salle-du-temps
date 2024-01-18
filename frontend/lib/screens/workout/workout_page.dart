@@ -45,6 +45,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
     super.initState();
   }
 
+  refreshCallback() {
+    setState(() {
+      widget.refreshCallback();
+    });
+  }
+
   initWorkout() async {
     List<String> days;
     List<Exercise> exercises;
@@ -54,8 +60,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
       days = widget.workout.days.map((day) => day.name).toList();
     }
     if (widget.workout.exercises.isEmpty) {
-      exercises =
-          await widget.appState.getWorkoutExercises(widget.workout.id);
+      exercises = await widget.appState.getWorkoutExercises(widget.workout.id);
     } else {
       exercises = widget.workout.exercises;
     }
@@ -96,9 +101,19 @@ class _WorkoutPageState extends State<WorkoutPage> {
         setState(() {
           widget.workout.exercises.add(exercise);
         });
-        widget.appState.addExercise(exercise.id, widget.workout.id);
+        await widget.appState.addExercise(exercise.id, widget.workout.id);
       }
     });
+  }
+
+  orderCallback(List<Exercise> reorderedExercises) {
+    for (int i = 0; i < reorderedExercises.length; i++) {
+      setState(() {
+        widget.workout.exercises[i] = reorderedExercises[i];
+      });
+      widget.appState
+          .updateOrder(reorderedExercises[i].id, widget.workout.id, i + 1);
+    }
   }
 
   endWorkoutCallback(List<Exercise> modifiedExercises, String time) {
@@ -237,7 +252,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               padding: EdgeInsets.all(
                                   exerciseIndex == index ? 0.0 : 8.0),
                               child: ExerciseCard(
-                                exercise: widget.workout.exercises[exerciseIndex],
+                                exercise:
+                                    widget.workout.exercises[exerciseIndex],
                                 position:
                                     "${exerciseIndex + 1}/${widget.workout.exercises.length}",
                               ));
@@ -327,11 +343,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void handleOrder(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     List<Exercise> unordered = List.from(widget.workout.exercises);
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => OrderExercise(addCallback, unordered)));
-    widget.workout.exercises.clear();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => OrderExercise(orderCallback, unordered)));
   }
 
   void handleDeleteExercise(BuildContext context) {

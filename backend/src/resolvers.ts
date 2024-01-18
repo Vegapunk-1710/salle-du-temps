@@ -288,7 +288,7 @@ export const resolvers = {
         try {
           const count = await prisma.exercisesRelations.count({
             where: {
-              workoutId: args.exerciseId,
+              workoutId: args.workoutId,
             },
           });
           await prisma.exercisesRelations.create({
@@ -303,6 +303,24 @@ export const resolvers = {
         catch(e){
           return -1;
         }
-      } 
+      },
+      updateOrder: async (_,args) => {
+        try {
+          const updatedRelation = await prisma.exercisesRelations.update({
+            where: {
+              workoutId_exerciseId: { // This assumes a composite key of workoutId and exerciseId
+                workoutId: args.workoutId,
+                exerciseId: args.exerciseId,
+              },
+            },
+            data: {
+              order: args.order,
+            },
+          });
+          return updatedRelation.order;
+        } catch(e){
+          return -1;
+        }
+      }
     }
   };

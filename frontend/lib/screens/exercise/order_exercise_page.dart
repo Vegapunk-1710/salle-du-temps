@@ -3,7 +3,7 @@ import 'package:frontend/models/exercise_model.dart';
 
 class OrderExercise extends StatefulWidget {
   final List<Exercise> exercises;
-  final Function(Exercise newExercise) callback;
+  final Function(List<Exercise> reorderedExercises) callback;
   OrderExercise(this.callback, this.exercises, {Key? key}) : super(key: key);
 
   @override
@@ -38,6 +38,7 @@ class _OrderExerciseState extends State<OrderExercise> {
                     _reorderExercises(oldIndex, newIndex);
                   });
                 },
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Card(
                     key: ValueKey(widget.exercises[index]),
@@ -72,9 +73,7 @@ class _OrderExerciseState extends State<OrderExercise> {
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: FloatingActionButton(
               onPressed: () {
-                for (Exercise s in unorderedExercises) {
-                  widget.callback(s);
-                }
+                widget.callback(unorderedExercises);
                 Navigator.of(context).pop();
               },
               heroTag: "orderexerciseexitbtn",
@@ -85,9 +84,7 @@ class _OrderExerciseState extends State<OrderExercise> {
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: FloatingActionButton(
               onPressed: () {
-                for (Exercise s in widget.exercises) {
-                  widget.callback(s);
-                }
+                widget.callback(widget.exercises);
                 Navigator.of(context).pop();
               },
               heroTag: "orderexercisebtn",

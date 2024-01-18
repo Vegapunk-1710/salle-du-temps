@@ -321,13 +321,27 @@ class AppState {
     }
   }
 
-  void addExercise(String exerciseId, String workoutId) async {
+  Future<void> addExercise(String exerciseId, String workoutId) async {
     try {
       Map<String, dynamic> result = await query("""
        mutation Mutation(\$workoutId: String, \$exerciseId: String) {
           addExercise(workoutId: \$workoutId, exerciseId: \$exerciseId)
         }
         """, {"workoutId": workoutId, "exerciseId": exerciseId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  Future<void> updateOrder(String exerciseId, String workoutId, int order) async {
+    try {
+      Map<String, dynamic> result = await query("""
+       mutation Mutation(\$workoutId: String, \$exerciseId: String, \$order: Int) {
+        updateOrder(workoutId: \$workoutId, exerciseId: \$exerciseId, order: \$order)
+      }
+        """, {"workoutId": workoutId, "exerciseId": exerciseId, "order":order});
     } catch (e) {
       if (kDebugMode) {
         print(e);
