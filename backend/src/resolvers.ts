@@ -1,4 +1,3 @@
-import { Console } from "console";
 import prisma from "./lib/prisma.js";
 
 async function getEntitiesWithCreatedByName(entities : any) {
@@ -11,9 +10,10 @@ async function getEntitiesWithCreatedByName(entities : any) {
         name: true,
       },
     });
+
     entities[i] = {
       ...entities[i],
-      createdBy : user.name
+      createdBy : user.name,
     }
   }
   return entities;

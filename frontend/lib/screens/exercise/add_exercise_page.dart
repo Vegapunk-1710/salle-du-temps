@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/exercise_model.dart';
@@ -19,6 +21,7 @@ class _AddExerciseState extends State<AddExercise> {
   late List<Exercise> newExercises;
   late List<Exercise> queriedExercises;
   late List<String> selected;
+  Timer? _debounce = Timer(const Duration(milliseconds: 100),(){});
 
   @override
   void initState() {
@@ -61,21 +64,19 @@ class _AddExerciseState extends State<AddExercise> {
                             controller: controller,
                             padding: const MaterialStatePropertyAll<EdgeInsets>(
                                 EdgeInsets.symmetric(horizontal: 16.0)),
-                            onChanged: (query) async {
+                            onChanged: (query) {
+                               if (_debounce?.isActive ?? false) _debounce?.cancel();
+                                _debounce = Timer(const Duration(milliseconds: 100), () async {
                               List<Exercise> searchedExercises =
                                   await widget.searchCallback(query);
-                              print(query);
-                              setState(() {
-                                loading = true;
-                                if (query.isEmpty) {
-                                  queriedExercises = newExercises;
-                                  loading = false;
-                                  return;
-                                } else {
-                                  queriedExercises = searchedExercises;
-                                  loading = false;
-                                  return;
-                                }
+                                  print(query);
+                                  setState(() {
+                                    if (query.isEmpty) {
+                                      queriedExercises = newExercises;
+                                    } else {
+                                      queriedExercises = searchedExercises;
+                                    }
+                                  });
                               });
                             },
                             leading: const Icon(Icons.search),
