@@ -21,7 +21,7 @@ class _AddExerciseState extends State<AddExercise> {
   late List<Exercise> newExercises;
   late List<Exercise> queriedExercises;
   late Map<String, Exercise> selected;
-  Timer? _debounce = Timer(const Duration(milliseconds: 100), () {});
+  Timer? _debounce = Timer(const Duration(milliseconds: 500), () {});
 
   @override
   void initState() {
@@ -68,7 +68,7 @@ class _AddExerciseState extends State<AddExercise> {
                               if (_debounce?.isActive ?? false)
                                 _debounce?.cancel();
                               _debounce = Timer(
-                                  const Duration(milliseconds: 100), () async {
+                                  const Duration(milliseconds: 500), () async {
                                 List<Exercise> searchedExercises =
                                     await widget.searchCallback(query);
                                 setState(() {

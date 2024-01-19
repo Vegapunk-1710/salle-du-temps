@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/models/workout_model.dart';
 
@@ -18,6 +20,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
   late List<Workout> workouts;
   late List<Workout> queried;
   late Map<String, Workout> selected;
+  Timer? _debounce = Timer(const Duration(milliseconds: 500), () {});
 
   @override
   void initState() {
@@ -58,7 +61,11 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                             controller: controller,
                             padding: const MaterialStatePropertyAll<EdgeInsets>(
                                 EdgeInsets.symmetric(horizontal: 16.0)),
-                            onChanged: (query) async {
+                            onChanged: (query)  {
+                              if (_debounce?.isActive ?? false)
+                                _debounce?.cancel();
+                              _debounce = Timer(
+                                  const Duration(milliseconds: 500), () async {
                               List<Workout> searchedWorkouts =
                                   await widget.searchCallback(query);
                               setState(() {
@@ -68,6 +75,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                                   queried = searchedWorkouts;
                                 }
                               });
+                            });
                             },
                             leading: const Icon(Icons.search),
                             trailing: const <Widget>[],

@@ -5,8 +5,10 @@ import 'package:frontend/widgets/image_widget.dart';
 
 class ExercisePage extends StatefulWidget {
   final Exercise exercise;
-
-  ExercisePage({Key? key, required this.exercise}) : super(key: key);
+  final Function(Exercise removedExercise) removedCallback;
+  ExercisePage(
+      {Key? key, required this.exercise, required this.removedCallback})
+      : super(key: key);
 
   @override
   State<ExercisePage> createState() => _ExercisePageState();
@@ -20,22 +22,31 @@ class _ExercisePageState extends State<ExercisePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-         CustomImageNetwork(imageURL: widget.exercise.imageURL, showIcon: false,fit: BoxFit.fill,),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        CustomImageNetwork(
+          imageURL: widget.exercise.imageURL,
+          showIcon: false,
+          fit: BoxFit.fill,
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
                     child: Text(widget.exercise.title,
                         style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 22)),
                   ),
+                  IconButton(
+                      onPressed: () {
+                        handleDelete(context);
+                      },
+                      icon: const Icon(Icons.delete_forever))
                 ],
               ),
               Row(
@@ -69,8 +80,7 @@ class _ExercisePageState extends State<ExercisePage> {
         const Padding(
             padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
             child: Text("Tutorial",
-                style:
-                    TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
         Padding(
             padding: const EdgeInsets.all(20),
             child: Text(widget.exercise.tutorial,
@@ -79,8 +89,7 @@ class _ExercisePageState extends State<ExercisePage> {
         const Padding(
             padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
             child: Text("Recommended Sets/Reps",
-                style:
-                    TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
         Padding(
             padding: const EdgeInsets.all(20),
             child: Text(widget.exercise.setsreps,
@@ -89,8 +98,7 @@ class _ExercisePageState extends State<ExercisePage> {
         const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text("Personal Progression",
-                style:
-                    TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22))),
         Center(
           child: FittedBox(
             child: Row(
@@ -99,8 +107,7 @@ class _ExercisePageState extends State<ExercisePage> {
                     onPressed: () {
                       setState(() {
                         if (widget.exercise.progression.isNotEmpty) {
-                          var removed =
-                              widget.exercise.progression.removeAt(0);
+                          var removed = widget.exercise.progression.removeAt(0);
                           var snackBar = SnackBar(
                             content: Text(
                                 'Deleted Last Progression : ${removed.$1}'),
@@ -111,14 +118,15 @@ class _ExercisePageState extends State<ExercisePage> {
                                   widget.exercise.progression.add(removed);
                                   widget.exercise.progression
                                       .sort((a, b) => a.$1.compareTo(b.$1));
-                                  var revList =  widget.exercise.progression.reversed ;
-                                  widget.exercise.progression = new List.from(revList);
+                                  var revList =
+                                      widget.exercise.progression.reversed;
+                                  widget.exercise.progression =
+                                      new List.from(revList);
                                 });
                               },
                             ),
                           );
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(snackBar);
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
                       });
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -152,12 +160,10 @@ class _ExercisePageState extends State<ExercisePage> {
                           final date = DateTime.now();
                           int weight =
                               int.parse(progressionWeightController.text);
-                          int sets =
-                              int.parse(progressionSetsController.text);
-                          int reps =
-                              int.parse(progressionRepsController.text);
+                          int sets = int.parse(progressionSetsController.text);
+                          int reps = int.parse(progressionRepsController.text);
                           widget.exercise.progression
-                              .insert(0,(date, weight, sets, reps));
+                              .insert(0, (date, weight, sets, reps));
                         }
                       });
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -167,45 +173,68 @@ class _ExercisePageState extends State<ExercisePage> {
             ),
           ),
         ),
-        widget.exercise.progression.toString() == "null" ? SizedBox.shrink() : widget.exercise.progression.isEmpty
-            ? const SizedBox.shrink()
-            : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.exercise.progression.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      children: [
-                        FittedBox(
-                          child: Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
+        widget.exercise.progression.toString() == "null"
+            ? SizedBox.shrink()
+            : widget.exercise.progression.isEmpty
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.exercise.progression.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Column(
                             children: [
-                              Text(widget
-                                  .exercise.progression[index].$1.toIso8601String().split('T').first,style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal)),
-                              const Icon(Icons.arrow_right),
-                              Text(
-                                  "${widget.exercise.progression[index].$2} max lbs",style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal),),
-                              const Icon(Icons.arrow_right),
-                              Text(
-                                  "${widget.exercise.progression[index].$3} max sets",style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal),),
-                              const Icon(Icons.arrow_right),
-                              Text(
-                                  "${widget.exercise.progression[index].$4} max reps",style: TextStyle(fontWeight: index == 0 ? FontWeight.bold : FontWeight.normal))
+                              FittedBox(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                        widget.exercise.progression[index].$1
+                                            .toIso8601String()
+                                            .split('T')
+                                            .first,
+                                        style: TextStyle(
+                                            fontWeight: index == 0
+                                                ? FontWeight.bold
+                                                : FontWeight.normal)),
+                                    const Icon(Icons.arrow_right),
+                                    Text(
+                                      "${widget.exercise.progression[index].$2} max lbs",
+                                      style: TextStyle(
+                                          fontWeight: index == 0
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    const Icon(Icons.arrow_right),
+                                    Text(
+                                      "${widget.exercise.progression[index].$3} max sets",
+                                      style: TextStyle(
+                                          fontWeight: index == 0
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    const Icon(Icons.arrow_right),
+                                    Text(
+                                        "${widget.exercise.progression[index].$4} max reps",
+                                        style: TextStyle(
+                                            fontWeight: index == 0
+                                                ? FontWeight.bold
+                                                : FontWeight.normal))
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
+                  ),
         const SizedBox(
           height: 90,
         )
@@ -220,9 +249,33 @@ class _ExercisePageState extends State<ExercisePage> {
                 Navigator.of(context).pop();
               },
               heroTag: "exerciseexitbtn",
-              child: const  Icon(Icons.arrow_back),
+              child: const Icon(Icons.arrow_back),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  void handleDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text("Delete this exercise ?"),
+        content: Text(
+            "Are you sure you want to delete '${widget.exercise.title}' ?"),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text("No")),
+          TextButton(
+              onPressed: () {
+                widget.removedCallback(widget.exercise);
+                Navigator.pop(context, 'OK');
+                Navigator.of(context).pop();
+              },
+              child: const Text("Yes")),
         ],
       ),
     );

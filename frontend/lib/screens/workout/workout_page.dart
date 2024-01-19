@@ -126,6 +126,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
+  removeCallback(Exercise removedExercise) {
+    if (widget.appState.user.name != removedExercise.createdBy) {
+      widget.appState.deleteExercise(widget.workout.id, removedExercise.id);
+    } else {
+      widget.appState
+          .deleteExerciseForAll(widget.workout.id, removedExercise.id);
+    }
+    setState(() {
+      widget.workout.exercises.remove(removedExercise);
+      exerciseIndex = 0;
+      widget.refreshCallback();
+    });
+  }
+
   endWorkoutCallback(List<Exercise> modifiedExercises, String time) {
     setState(() {
       // exercises = modifiedExercises;
@@ -234,31 +248,35 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             const Text("Exercises",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 22)),
-                            widget.appState.user.name == widget.workout.createdBy ? Row(
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      handleAdd(context);
-                                    },
-                                    icon: const Icon(Icons.add)),
-                                IconButton(
-                                    onPressed: () {
-                                      handleCreate(context);
-                                    },
-                                    icon: const Icon(Icons.create)),
-                                IconButton(
-                                    onPressed: () {
-                                      handleOrder(context);
-                                    },
-                                    icon: const Icon(
-                                        Icons.stacked_bar_chart_sharp)),
-                                IconButton(
-                                    onPressed: () {
-                                      handleDeleteExercise(context);
-                                    },
-                                    icon: const Icon(Icons.delete_forever))
-                              ],
-                            ) : const SizedBox(),
+                            widget.appState.user.name ==
+                                    widget.workout.createdBy
+                                ? Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            handleAdd(context);
+                                          },
+                                          icon: const Icon(Icons.add)),
+                                      IconButton(
+                                          onPressed: () {
+                                            handleCreate(context);
+                                          },
+                                          icon: const Icon(Icons.create)),
+                                      IconButton(
+                                          onPressed: () {
+                                            handleOrder(context);
+                                          },
+                                          icon: const Icon(
+                                              Icons.stacked_bar_chart_sharp)),
+                                      IconButton(
+                                          onPressed: () {
+                                            handleDeleteExercise(context);
+                                          },
+                                          icon:
+                                              const Icon(Icons.delete_forever))
+                                    ],
+                                  )
+                                : const SizedBox(),
                           ],
                         )),
                     SizedBox(
@@ -280,6 +298,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                     widget.workout.exercises[exerciseIndex],
                                 position:
                                     "${exerciseIndex + 1}/${widget.workout.exercises.length}",
+                                removedCallback: removeCallback,
                               ));
                         },
                       ),
@@ -492,7 +511,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
     setState(() {
       widget.workout.exercises.remove(widget.workout.exercises[exerciseIndex]);
-      if(exerciseIndex > 0){
+      if (exerciseIndex > 0) {
         exerciseIndex -= 1;
       }
       widget.refreshCallback();

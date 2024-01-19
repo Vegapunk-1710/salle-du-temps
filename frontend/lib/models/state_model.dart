@@ -11,9 +11,25 @@ class AppState {
   late final GraphQLClient _client;
   String _username = "";
   String _password = "";
+
   late User user;
+  String todayWorkoutId = "";
+
+  List<String> daysOfWeek = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
+  late DateTime now;
+  late String dayName;
 
   AppState(String username, String password) {
+    now = DateTime.now();
+    dayName = daysOfWeek[now.weekday - 1];
     _username = username;
     _password = password;
     _client = GraphQLClient(link: _endpoint, cache: GraphQLCache());
@@ -47,6 +63,14 @@ class AppState {
           }
         """, {"username": _username});
       user = User.fromJson(result['user']);
+      Map<String, dynamic> result2 = await query("""
+        query Query(\$userId: String, \$day: String) {
+          todayWorkout(userId: \$userId, day: \$day) {
+            id
+          }
+        }
+        """, {"userId": user.id, "day": dayName});
+      todayWorkoutId = await result2['todayWorkout']['id'];
       return false;
     } catch (e) {
       if (kDebugMode) {
@@ -190,6 +214,19 @@ class AppState {
           }
         }
         """, {"userId": user.id, "workoutId": workoutId, "days": days});
+      if (days.contains(dayName)) {
+        todayWorkoutId = workoutId;
+      }
+      if (workoutId == todayWorkoutId) {
+        if (!days.contains(dayName)) {
+          todayWorkoutId = "";
+          user.workouts.forEach((workout) {
+            if (workout.days.contains(Workout.translateStringToDay(dayName))) {
+              todayWorkoutId = workout.id;
+            }
+          });
+        }
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -209,6 +246,11 @@ class AppState {
       List<String> returnedDays = await result['days']['days']
           .map<String>((day) => day.toString())
           .toList();
+      if (todayWorkoutId == "") {
+        if (returnedDays.contains(dayName)) {
+          todayWorkoutId = workoutId;
+        }
+      }
       return returnedDays;
     } catch (e) {
       return [];
@@ -222,6 +264,9 @@ class AppState {
           deleteDays(userId: \$userId, workoutId: \$workoutId)
         }
         """, {"userId": user.id, "workoutId": workoutId});
+      if (todayWorkoutId == workoutId) {
+        todayWorkoutId = "";
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -384,7 +429,7 @@ class AppState {
         mutation Mutation(\$workoutId: String, \$exerciseId: String) {
           deleteExercise(workoutId: \$workoutId, exerciseId: \$exerciseId)
         }
-        """, {"workoutId": workoutId,"exerciseId": exerciseId});
+        """, {"workoutId": workoutId, "exerciseId": exerciseId});
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -398,7 +443,11 @@ class AppState {
         mutation Mutation(\$userId: String, \$workoutId: String, \$exerciseId: String) {
           deleteExerciseForAll(userId: \$userId, workoutId: \$workoutId, exerciseId: \$exerciseId)
         }
-        """, {"userId": user.id, "workoutId": workoutId,"exerciseId": exerciseId});
+        """, {
+        "userId": user.id,
+        "workoutId": workoutId,
+        "exerciseId": exerciseId
+      });
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -419,5 +468,18 @@ class AppState {
       throw (Exception(result.exception));
     }
     return result.data!;
+  }
+
+  Workout? getTodaysWorkout() {
+    if (user.workouts.isNotEmpty) {
+      for (int i = 0; i < user.workouts.length; i++) {
+        if (user.workouts[i].id == todayWorkoutId) {
+          return user.workouts[i];
+        }
+      }
+    } else {
+      return null;
+    }
+    return null;
   }
 }

@@ -75,7 +75,24 @@ export const resolvers = {
         });
         return getEntitiesWithCreatedByName(exercises);
       },
-
+      todayWorkout : async (_,args) => {
+        const userDays = await prisma.days.findMany({
+          where: {
+            createdBy: args.userId,
+          },
+        });
+        const todaysWorkouts = userDays.filter(dayEntry => dayEntry.days.includes(args.day));
+        if (todaysWorkouts.length > 0){
+          return await prisma.workout.findFirstOrThrow({
+            where:{
+              id: todaysWorkouts[0].workoutId
+            }
+          })
+        }
+        else {
+          return {"id":""};
+        }
+      },
       workouts: async () => {
         const workouts = await prisma.workout.findMany({
           orderBy : {

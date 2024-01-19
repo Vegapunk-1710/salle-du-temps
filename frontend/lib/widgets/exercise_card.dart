@@ -6,7 +6,8 @@ import 'package:frontend/widgets/image_widget.dart';
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
   final String? position;
-  const ExerciseCard({Key? key, this.position, required this.exercise})
+  final Function(Exercise removedExercise) removedCallback;
+  const ExerciseCard({Key? key, this.position, required this.exercise, required this.removedCallback})
       : super(key: key);
 
   @override
@@ -16,14 +17,23 @@ class ExerciseCard extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ExercisePage(exercise: exercise)));
+                builder: (context) => ExercisePage(
+                      exercise: exercise,
+                      removedCallback: removedCallback,
+                    )));
       },
       child: Card(
           elevation: 10,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(flex:1,child: CustomImageNetwork(imageURL: exercise.imageURL,showIcon: true,fit: BoxFit.fitWidth,)),
+              Expanded(
+                  flex: 1,
+                  child: CustomImageNetwork(
+                    imageURL: exercise.imageURL,
+                    showIcon: true,
+                    fit: BoxFit.fitWidth,
+                  )),
               Expanded(
                   flex: 1,
                   child: ListTile(

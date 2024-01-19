@@ -13,27 +13,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String dayName;
   Workout? todayWorkout;
 
-  DateTime now = DateTime.now();
-  List<String> daysOfWeek = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ];
   @override
   void initState() {
-    if (widget.appState.user.workouts.isEmpty) {
-      todayWorkout = null;
-    } else {
-      //need an algo for that
-      todayWorkout = widget.appState.user.workouts[0];
-    }
+    todayWorkout = widget.appState.getTodaysWorkout();
     super.initState();
   }
 
@@ -45,8 +29,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    dayName = daysOfWeek[now.weekday - 1];
-
     return SafeArea(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("$dayName's Workout",
+                child: Text("${widget.appState.dayName}'s Workout",
                     style: const TextStyle(
                         fontWeight: FontWeight.w600, fontSize: 22))),
             todayWorkout == null
