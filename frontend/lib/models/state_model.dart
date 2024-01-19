@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:frontend/models/exercise_model.dart';
 import 'package:frontend/models/user_model.dart';
@@ -380,8 +378,32 @@ class AppState {
     }
   }
 
-  void deleteExercise(String exerciseId, String workoutId){
-    
+  Future<void> deleteExercise(String workoutId, String exerciseId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        mutation Mutation(\$workoutId: String, \$exerciseId: String) {
+          deleteExercise(workoutId: \$workoutId, exerciseId: \$exerciseId)
+        }
+        """, {"workoutId": workoutId,"exerciseId": exerciseId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  void deleteExerciseForAll(String workoutId, String exerciseId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        mutation Mutation(\$userId: String, \$workoutId: String, \$exerciseId: String) {
+          deleteExerciseForAll(userId: \$userId, workoutId: \$workoutId, exerciseId: \$exerciseId)
+        }
+        """, {"userId": user.id, "workoutId": workoutId,"exerciseId": exerciseId});
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
   }
 
   Future<Map<String, dynamic>> query(

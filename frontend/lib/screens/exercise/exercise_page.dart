@@ -49,9 +49,19 @@ class _ExercisePageState extends State<ExercisePage> {
                           fontWeight: FontWeight.w300, fontSize: 14)),
                 ],
               ),
-              Text("TYPE : ${widget.exercise.type.name}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w300, fontSize: 14)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("TYPE : ${widget.exercise.type.name}",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w300, fontSize: 14)),
+                  Flexible(
+                    child: Text("BY : ${widget.exercise.createdBy}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 14)),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

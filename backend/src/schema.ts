@@ -85,6 +85,8 @@ export const typeDefs = `#graphql
     addExercise(workoutId:String, exerciseId:String): Int!
     updateOrder(workoutId:String, exerciseId:String, order:Int): Int!
     createExercise(exercise: CreateExerciseInput!) : Exercise!
+    deleteExercise(workoutId:String,exerciseId:String) : Boolean!
+    deleteExerciseForAll(userId:String,workoutId:String,exerciseId:String) : Boolean!
   }
 
   input CreateWorkoutInput{

@@ -230,6 +230,16 @@ export const resolvers = {
               id : args.workoutId
             }
           });
+          await prisma.workoutProgrssion.deleteMany({
+            where : {
+              workoutId :  args.workoutId
+            }
+          });
+          await prisma.days.deleteMany({
+            where : {
+              workoutId : args.workoutId
+            }
+          });
           return true;
         }
         else{
@@ -347,6 +357,58 @@ export const resolvers = {
         return {
           ...exercise,
           createdBy : user.name
+        }
+      },
+      deleteExercise: async (_,args) => {
+        try{
+          await prisma.exercisesRelations.delete({
+            where : {
+              workoutId_exerciseId :{
+                exerciseId : args.exerciseId,
+                workoutId : args.workoutId
+              }
+            }
+          });
+          return true;
+        }
+        catch(e){
+          return false;
+        }
+      },
+      deleteExerciseForAll : async (_,args) => {
+        try{
+          const exercise = await prisma.exercise.findUnique({where:{id:args.exerciseId}});
+          if(args.userId === exercise.createdBy){
+          await prisma.exercisesRelations.deleteMany({
+            where : {
+              exerciseId: args.exerciseId
+            }
+          });
+          await prisma.exercise.delete({
+            where : {
+              id: args.exerciseId
+            }
+          });
+          await prisma.exerciseProgression.deleteMany({
+            where : {
+              exerciseId: args.exerciseId
+            }
+          });
+        } 
+        else{
+          await prisma.exercisesRelations.delete({
+            where : {
+              workoutId_exerciseId :{
+                exerciseId : args.exerciseId,
+                workoutId : args.workoutId
+              }
+            }
+          });
+        }
+          return true;
+        }
+        catch(e){
+          return false;
         }
       }
     }

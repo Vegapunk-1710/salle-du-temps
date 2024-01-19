@@ -183,8 +183,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                       fontSize: 14)),
                             ],
                           ),
-                          widget.workout.days.isEmpty
+                          Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                                widget.workout.days.isEmpty
                               ? const Text("DAYS : Not Active",
+                              overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 14))
@@ -193,11 +197,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 14))
-                                  : Text(
-                                      "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 14)),
+                                  : Flexible(
+                                    child: Text(
+                                        "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 14)),
+                                  ),
+                                  Flexible(
+                                    child: Text("BY : ${widget.workout.createdBy}",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 14)),
+                                  ),
+                             ],
+                          )
+                          
                         ],
                       ),
                     ),
