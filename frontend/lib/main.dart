@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/state_model.dart';
 import 'package:frontend/screens/body/body_prog_page.dart';
@@ -10,8 +11,35 @@ void main() {
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  late ThemeMode _themeMode;
+  @override
+  void initState() {
+    var brightness =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    setState(() {
+      _themeMode = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
+    });
+    super.initState();
+  }
+
+  ThemeMode toggleTheme() {
+    setState(() {
+      if (_themeMode == ThemeMode.light) {
+        _themeMode = ThemeMode.dark;
+      } else {
+        _themeMode = ThemeMode.light;
+      }
+    });
+    return _themeMode;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,20 +49,27 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Salle Du Temps',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
-        //black bg
-        //red buttons
-        //white text
-        useMaterial3: true,
-      ),
+          useMaterial3: true,
+          brightness: Brightness.light,
+          colorScheme: const ColorScheme.light(
+            primary: Colors.deepOrange,
+          )),
+      darkTheme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
+          colorScheme: const ColorScheme.dark(
+            primary: Colors.deepPurple,
+          )),
+      themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
-      home: LandingPage(),
+      home: LandingPage(toggleTheme),
     );
   }
 }
 
 class LandingPage extends StatefulWidget {
-  LandingPage({super.key});
+  final Function toggleTheme;
+  LandingPage(this.toggleTheme, {super.key});
 
   @override
   State<LandingPage> createState() => _LandingPageState();
@@ -44,6 +79,7 @@ class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
   bool loading = true;
   late AppState appState;
+  late ThemeMode themeMode;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -52,13 +88,21 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   late final List<Widget> _pages = <Widget>[
-    HomePage(appState, refreshCallback),
+    HomePage(
+      appState,
+      refreshCallback,
+    ),
     WorkoutsPage(appState, refreshCallback),
     BodyProgPage(),
   ];
 
   @override
   void initState() {
+    var brightness =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    setState(() {
+     themeMode = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;  
+    });
     initUser();
     super.initState();
   }
@@ -75,11 +119,12 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {});
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: loading
-          ? Center(child: const RefreshProgressIndicator())
+          ? const Center(child: RefreshProgressIndicator())
           : _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
@@ -95,6 +140,24 @@ class _LandingPageState extends State<LandingPage> {
               label: "Body Progression",
             ),
           ]),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+            child: FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  themeMode = widget.toggleTheme();
+                });
+              },
+              child: Icon(themeMode == ThemeMode.light
+                  ? Icons.sunny_snowing
+                  : Icons.sunny),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
