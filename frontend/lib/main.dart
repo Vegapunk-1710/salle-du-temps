@@ -140,7 +140,7 @@ class _LandingPageState extends State<LandingPage> {
               label: "Body Progression",
             ),
           ]),
-      floatingActionButton: Row(
+      floatingActionButton: _selectedIndex == 0 || _selectedIndex == 1 ? Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
@@ -151,13 +151,20 @@ class _LandingPageState extends State<LandingPage> {
                   themeMode = widget.toggleTheme();
                 });
               },
+              heroTag: "homedarkmodebtn",
               child: Icon(themeMode == ThemeMode.light
                   ? Icons.sunny_snowing
                   : Icons.sunny),
             ),
-          )
+          ),
+          FloatingActionButton(
+              onPressed: () {
+              },
+              heroTag: "homesettingsbtn",
+              child: const Icon(Icons.settings),
+            ),
         ],
-      ),
+      ) : const SizedBox(),
     );
   }
 }

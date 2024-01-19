@@ -344,8 +344,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
             padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.of(context).pop();
                 widget.refreshCallback();
+                Navigator.of(context).pop();
               },
               heroTag: "workoutexitbtn",
               child: const Icon(Icons.arrow_back),
