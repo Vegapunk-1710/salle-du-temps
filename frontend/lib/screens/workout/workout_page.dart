@@ -118,7 +118,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   createCallback(Map<String, dynamic> data) async {
     Exercise? createdExercise = await widget.appState.createExercise(data);
-    if(createdExercise != null){
+    if (createdExercise != null) {
       setState(() {
         widget.workout.exercises.add(createdExercise);
       });
@@ -184,35 +184,34 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             ],
                           ),
                           Row(
-                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                             children: [
-                                widget.workout.days.isEmpty
-                              ? const Text("DAYS : Not Active",
-                              overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 14))
-                              : widget.workout.days.length == 7
-                                  ? const Text("DAYS : All Week",
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              widget.workout.days.isEmpty
+                                  ? const Text("DAYS : Not Active",
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 14))
-                                  : Flexible(
-                                    child: Text(
-                                        "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 14)),
-                                  ),
-                                  Flexible(
-                                    child: Text("BY : ${widget.workout.createdBy}",
+                                  : widget.workout.days.length == 7
+                                      ? const Text("DAYS : All Week",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 14))
+                                      : Flexible(
+                                          child: Text(
+                                              "DAYS : ${widget.workout.days.toString().substring(1, widget.workout.days.toString().length - 1).replaceAll("Days.", "")}",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 14)),
+                                        ),
+                              Flexible(
+                                child: Text("BY : ${widget.workout.createdBy}",
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w300,
                                         fontSize: 14)),
-                                  ),
-                             ],
+                              ),
+                            ],
                           )
-                          
                         ],
                       ),
                     ),
@@ -235,7 +234,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             const Text("Exercises",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 22)),
-                            Row(
+                            widget.appState.user.name == widget.workout.createdBy ? Row(
                               children: [
                                 IconButton(
                                     onPressed: () {
@@ -259,7 +258,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                     },
                                     icon: const Icon(Icons.delete_forever))
                               ],
-                            ),
+                            ) : const SizedBox(),
                           ],
                         )),
                     SizedBox(
@@ -361,8 +360,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void handleCreate(BuildContext context) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CreateExercise(createCallback)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CreateExercise(createCallback)));
   }
 
   void handleOrder(BuildContext context) {
@@ -376,26 +377,56 @@ class _WorkoutPageState extends State<WorkoutPage> {
 
   void handleDeleteExercise(BuildContext context) {
     if (widget.workout.exercises.isNotEmpty) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: const Text("Delete this exercise ?"),
-          content: Text(
-              "Are you sure you want to delete ${widget.workout.exercises[exerciseIndex].title} from your workout ?"),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context, 'Cancel'),
-                child: const Text("No")),
-            TextButton(
-                onPressed: () {
-                  deleteExercise(context);
-                  Navigator.pop(context, 'OK');
-                },
-                child: const Text("Yes")),
-          ],
-        ),
-      );
+      if (widget.appState.user.name ==
+          widget.workout.exercises[exerciseIndex].createdBy) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text("Delete this exercise ?"),
+            content: Text(
+                "Are you sure you want to delete '${widget.workout.exercises[exerciseIndex].title}' ? Select 'For Me' to remove the exercise from this workout OR 'For All' to permanently remove the exercise."),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text("No")),
+              TextButton(
+                  onPressed: () {
+                    deleteExercise(context, true);
+                    Navigator.pop(context, 'OK');
+                  },
+                  child: const Text("For Me")),
+              TextButton(
+                  onPressed: () {
+                    deleteExercise(context, false);
+                    Navigator.pop(context, 'OK');
+                  },
+                  child: const Text("For All")),
+            ],
+          ),
+        );
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text("Delete this exercise ?"),
+            content: Text(
+                "Are you sure you want to delete '${widget.workout.exercises[exerciseIndex].title}' from this workout ?"),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text("No")),
+              TextButton(
+                  onPressed: () {
+                    deleteExercise(context, true);
+                    Navigator.pop(context, 'OK');
+                  },
+                  child: const Text("Yes")),
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -451,29 +482,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
-  void deleteExercise(BuildContext context) {
+  void deleteExercise(BuildContext context, bool isForMe) {
+    if (isForMe) {
+      widget.appState.deleteExercise(
+          widget.workout.id, widget.workout.exercises[exerciseIndex].id);
+    } else {
+      widget.appState.deleteExerciseForAll(
+          widget.workout.id, widget.workout.exercises[exerciseIndex].id);
+    }
     setState(() {
-      int rmv_index = exerciseIndex;
-      if (widget.workout.exercises.isNotEmpty) {
-        if (exerciseIndex == widget.workout.exercises.length - 1 &&
-            exerciseIndex > 0) {
-          rmv_index = exerciseIndex;
-          exerciseIndex -= 1;
-        }
-        Exercise removed = widget.workout.exercises.removeAt(rmv_index);
-        var snackBar = SnackBar(
-          content: Text('Deleted Exercise : ${removed.title}'),
-          action: SnackBarAction(
-            label: 'Undo',
-            onPressed: () {
-              setState(() {
-                widget.workout.exercises.add(removed);
-              });
-            },
-          ),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      widget.workout.exercises.remove(widget.workout.exercises[exerciseIndex]);
+      if(exerciseIndex > 0){
+        exerciseIndex -= 1;
       }
+      widget.refreshCallback();
     });
   }
 

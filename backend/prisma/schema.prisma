@@ -12,7 +12,7 @@ model User {
   id String @id @default(uuid())
   username String @unique
   password String 
-  name String
+  name String @unique
   dob String
   createdAt String
   updatedAt String

@@ -21,7 +21,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Salle Du Temps',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.redAccent),
         //black bg
         //red buttons
         //white text
