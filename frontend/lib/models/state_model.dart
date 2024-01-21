@@ -455,6 +455,69 @@ class AppState {
     }
   }
 
+  Future<List<(DateTime, String)>> getWorkoutProgression(
+      String workoutId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query WorkoutProgression(\$userId: String, \$workoutId: String) {
+          workoutProgression(userId: \$userId, workoutId: \$workoutId) {
+            date
+            time
+          }
+        }
+        """, {
+        "userId": user.id,
+        "workoutId": workoutId,
+      });
+      List<(DateTime, String)> progression = await result['workoutProgression'].map<(DateTime, String)>((e) => (DateTime.parse(e["date"]),e["time"].toString()))
+          .toList();
+      return progression;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
+  addWorkoutProgression(String workoutId, String date, String time) async {
+    try{
+        Map<String, dynamic> result = await query("""
+            mutation Mutation(\$userId: String, \$workoutId: String, \$date: String, \$time: String) {
+              addWorkoutProgression(userId: \$userId, workoutId: \$workoutId, date: \$date, time: \$time)
+            }
+            """, {
+      "userId": user.id,
+      "workoutId": workoutId,
+      "date": date,
+      "time": time,
+    });
+    } catch(e){
+       if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  deleteWorkoutProgression(String workoutId, String date, String time) async {
+    try{
+       Map<String, dynamic> result = await query("""
+       mutation Mutation(\$userId: String, \$workoutId: String, \$time: String, \$date: String) {
+          deleteWorkoutProgresssion(userId: \$userId, workoutId: \$workoutId, time: \$time, date: \$date)
+        }
+        """, {
+      "userId": user.id,
+      "workoutId": workoutId,
+      "date": date,
+      "time": time,
+    });
+    } catch(e){
+       if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
   Future<Map<String, dynamic>> query(
       String query, Map<String, dynamic> variables) async {
     QueryResult result = await _client.query(
@@ -482,4 +545,5 @@ class AppState {
     }
     return null;
   }
+
 }

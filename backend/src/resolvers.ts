@@ -180,6 +180,21 @@ export const resolvers = {
         } catch (error) {
           return [];
         }
+      },
+      workoutProgression : async(_,args) => {
+        try {
+          return await prisma.workoutProgrssion.findMany({
+            where : {
+              createdBy: args.userId,
+              workoutId: args.workoutId
+            },
+            orderBy : {
+              date: 'desc'
+            }
+          });
+        }catch(e){
+          return [];
+        }
       }
     },
     Mutation : {
@@ -242,11 +257,6 @@ export const resolvers = {
               workoutId: args.workoutId
             }
           });
-          await prisma.workout.delete({
-            where: {
-              id : args.workoutId
-            }
-          });
           await prisma.workoutProgrssion.deleteMany({
             where : {
               workoutId :  args.workoutId
@@ -255,6 +265,11 @@ export const resolvers = {
           await prisma.days.deleteMany({
             where : {
               workoutId : args.workoutId
+            }
+          });
+          await prisma.workout.delete({
+            where: {
+              id : args.workoutId
             }
           });
           return true;
@@ -425,6 +440,36 @@ export const resolvers = {
           return true;
         }
         catch(e){
+          return false;
+        }
+      },
+      addWorkoutProgression: async (_,args) => {
+        try {
+          await prisma.workoutProgrssion.create({
+            data: {
+              createdBy: args.userId,
+              workoutId: args.workoutId,
+              date: args.date,
+              time: args.time
+            }
+          });
+          return true;
+        } catch(e){
+          return false;
+        } 
+      },
+      deleteWorkoutProgresssion : async (_,args) => {
+        try {
+          await prisma.workoutProgrssion.deleteMany({
+            where : {
+              createdBy: args.userId,
+              workoutId: args.workoutId,
+              date : args.date,
+              time : args.time
+            }
+          });
+          return true;
+        } catch(e){
           return false;
         }
       }

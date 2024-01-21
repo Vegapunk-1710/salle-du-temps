@@ -92,7 +92,7 @@ class _BodyProgPageState extends State<BodyProgPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: progressions.isEmpty? Center(child: ListTile(title: Text('No Body Progressions Yet.'),subtitle: Text('(Click the "pen" button to create a body progression)'))) : Scrollbar(
+        child: progressions.isEmpty? const Center(child: ListTile(title: Text('No Body Progressions Yet.'),subtitle: Text('(Click the "pen" button to create a body progression)'))) : Scrollbar(
           child: GridView.builder(
             shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

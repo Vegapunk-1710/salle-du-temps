@@ -54,6 +54,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   initWorkout() async {
     List<String> days;
     List<Exercise> exercises;
+    List<(DateTime, String)> progression;
     if (widget.workout.days.isEmpty) {
       days = await widget.appState.getDays(widget.workout.id);
     } else {
@@ -64,10 +65,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
     } else {
       exercises = widget.workout.exercises;
     }
+    if (widget.workout.progression.isEmpty) {
+      progression =
+          await widget.appState.getWorkoutProgression(widget.workout.id);
+    } else {
+      progression = widget.workout.progression;
+    }
     setState(() {
       widget.workout.exercises = exercises;
       widget.workout.days =
           days.map((day) => Workout.translateStringToDay(day)).toList();
+      widget.workout.progression = progression;
       selectedDays = {
         'Monday': widget.workout.days.contains(Days.Monday),
         'Tuesday': widget.workout.days.contains(Days.Tuesday),
@@ -140,9 +148,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
-  endWorkoutCallback(List<Exercise> modifiedExercises, String time) {
+  endWorkoutCallback(String time) async {
+    DateTime date = DateTime.now();
+    await widget.appState
+        .addWorkoutProgression(widget.workout.id, date.toIso8601String(), time);
     setState(() {
-      // exercises = modifiedExercises;
+      widget.workout.progression.insert(0, (date, time));
     });
   }
 
@@ -332,6 +343,69 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("Workout Progression",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 22)),
+                          widget.workout.progression.isNotEmpty
+                              ? IconButton(
+                                  onPressed: () =>
+                                      handleDeleteProgression(context),
+                                  icon: const Icon(Icons.delete_forever))
+                              : const SizedBox.shrink()
+                        ],
+                      ),
+                    ),
+                    widget.workout.progression.isEmpty
+                        ? const Center(
+                            child: Text("No Workout Progressions Yet",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: widget.workout.progression.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Column(
+                                    children: [
+                                      FittedBox(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Text(
+                                                "${widget.workout.progression[index].$1.toIso8601String().split('T').first} ${widget.workout.progression[index].$1.toIso8601String().split('T')[1].split(".").first}",
+                                                style: TextStyle(
+                                                    fontWeight: index == 0
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal)),
+                                            const Icon(Icons.arrow_right),
+                                            Text(
+                                              widget.workout.progression[index]
+                                                  .$2,
+                                              style: TextStyle(
+                                                  fontWeight: index == 0
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                     const SizedBox(
                       height: 100,
                     )
@@ -351,18 +425,20 @@ class _WorkoutPageState extends State<WorkoutPage> {
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          FloatingActionButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => StartWorkoutPage(
-                          widget.workout.exercises, endWorkoutCallback)));
-            },
-            heroTag: "workoutstartbtn",
-            child: const Text("START"),
-          )
+          widget.workout.exercises.isNotEmpty
+              ? FloatingActionButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => StartWorkoutPage(
+                                widget.workout, endWorkoutCallback)));
+                  },
+                  heroTag: "workoutstartbtn",
+                  child: const Icon(Icons.play_circle_outline_rounded),
+                )
+              : const SizedBox.shrink()
         ],
       ),
     );
@@ -501,6 +577,31 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
   }
 
+  handleDeleteProgression(BuildContext context) {
+    if (widget.workout.progression.isNotEmpty) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          title: const Text("Delete the latest progression ?"),
+          content: Text(
+              "Are you sure you want to delete the progression made at ${widget.workout.progression[0].$1.toIso8601String().split("T").first} ${widget.workout.progression[0].$1.toIso8601String().split('T')[1].split(".").first} from your workout ?"),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text("No")),
+            TextButton(
+                onPressed: () {
+                  deleteProgression();
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text("Yes")),
+          ],
+        ),
+      );
+    }
+  }
+
   void deleteExercise(BuildContext context, bool isForMe) {
     if (isForMe) {
       widget.appState.deleteExercise(
@@ -551,6 +652,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
     List<String> daysAsNames =
         widget.workout.days.map((day) => day.name).toList();
     widget.appState.addDays(widget.workout.id, daysAsNames);
+    widget.refreshCallback();
+  }
+
+  void deleteProgression() async {
+    await widget.appState.deleteWorkoutProgression(
+        widget.workout.id,
+        widget.workout.progression[0].$1.toIso8601String(),
+        widget.workout.progression[0].$2);
+    setState(() {
+      widget.workout.progression.removeAt(0);
+    });
     widget.refreshCallback();
   }
 }
