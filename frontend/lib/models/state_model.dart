@@ -6,7 +6,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class AppState {
   final HttpLink _endpoint = HttpLink(
-    'http://192.168.2.159:4000/',
+    'https://salle-du-temps.up.railway.app/',
   );
   late final GraphQLClient _client;
   String _username = "";
