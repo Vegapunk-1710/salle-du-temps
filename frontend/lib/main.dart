@@ -140,7 +140,7 @@ class _LandingPageState extends State<LandingPage> {
               label: "Body Progression",
             ),
           ]),
-      floatingActionButton: _selectedIndex == 0 || _selectedIndex == 1 ? Row(
+      floatingActionButton: _selectedIndex == 0? Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(

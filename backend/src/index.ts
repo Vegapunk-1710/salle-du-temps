@@ -7,10 +7,10 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
   });
-
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
-  }
-  );
+const port = parseInt(process.env.PORT, 10) || 4000;
+const { url } = await startStandaloneServer(server, {
+  listen: { port:  port,},
+}
+);
   
-  console.log(`Server ready at: ${url}`);
+console.log(`Server ready at: ${url}`);
