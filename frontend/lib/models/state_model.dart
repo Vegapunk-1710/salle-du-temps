@@ -6,8 +6,9 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class AppState {
   final HttpLink _endpoint = HttpLink(
-    'https://salle-du-temps.up.railway.app/',
+     kDebugMode ? "http://192.168.2.159:4000/" : 'https://salle-du-temps.up.railway.app/',
   );
+
   late final GraphQLClient _client;
   String _username = "";
   String _password = "";
@@ -469,7 +470,9 @@ class AppState {
         "userId": user.id,
         "workoutId": workoutId,
       });
-      List<(DateTime, String)> progression = await result['workoutProgression'].map<(DateTime, String)>((e) => (DateTime.parse(e["date"]),e["time"].toString()))
+      List<(DateTime, String)> progression = await result['workoutProgression']
+          .map<(DateTime, String)>(
+              (e) => (DateTime.parse(e["date"]), e["time"].toString()))
           .toList();
       return progression;
     } catch (e) {
@@ -481,38 +484,38 @@ class AppState {
   }
 
   addWorkoutProgression(String workoutId, String date, String time) async {
-    try{
-        Map<String, dynamic> result = await query("""
+    try {
+      Map<String, dynamic> result = await query("""
             mutation Mutation(\$userId: String, \$workoutId: String, \$date: String, \$time: String) {
               addWorkoutProgression(userId: \$userId, workoutId: \$workoutId, date: \$date, time: \$time)
             }
             """, {
-      "userId": user.id,
-      "workoutId": workoutId,
-      "date": date,
-      "time": time,
-    });
-    } catch(e){
-       if (kDebugMode) {
+        "userId": user.id,
+        "workoutId": workoutId,
+        "date": date,
+        "time": time,
+      });
+    } catch (e) {
+      if (kDebugMode) {
         print(e);
       }
     }
   }
 
   deleteWorkoutProgression(String workoutId, String date, String time) async {
-    try{
-       Map<String, dynamic> result = await query("""
+    try {
+      Map<String, dynamic> result = await query("""
        mutation Mutation(\$userId: String, \$workoutId: String, \$time: String, \$date: String) {
           deleteWorkoutProgresssion(userId: \$userId, workoutId: \$workoutId, time: \$time, date: \$date)
         }
         """, {
-      "userId": user.id,
-      "workoutId": workoutId,
-      "date": date,
-      "time": time,
-    });
-    } catch(e){
-       if (kDebugMode) {
+        "userId": user.id,
+        "workoutId": workoutId,
+        "date": date,
+        "time": time,
+      });
+    } catch (e) {
+      if (kDebugMode) {
         print(e);
       }
     }
@@ -545,5 +548,4 @@ class AppState {
     }
     return null;
   }
-
 }
