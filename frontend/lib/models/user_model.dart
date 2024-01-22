@@ -40,6 +40,11 @@ class User {
     updatedAt = DateTime.parse(json['updatedAt']);
     startingWeight = json['startingWeight'];
     height = json['height'];
-    workouts = json['workouts'].map<Workout>((w) => Workout.fromJson(w)).toList();
+    try {
+      workouts =
+          json['workouts'].map<Workout>((w) => Workout.fromJson(w)).toList();
+    } catch (e) {
+      workouts = [];
+    }
   }
 }

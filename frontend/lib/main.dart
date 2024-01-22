@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:frontend/login_page.dart';
 import 'package:frontend/models/state_model.dart';
+import 'package:frontend/models/user_model.dart';
 import 'package:frontend/screens/body/body_prog_page.dart';
 import 'package:frontend/screens/main/home_page.dart';
 import 'package:frontend/screens/main/settings_page.dart';
 import 'package:frontend/screens/main/workouts_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MainApp());
@@ -25,7 +28,8 @@ class _MainAppState extends State<MainApp> {
     var brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     setState(() {
-      _themeMode = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
+      _themeMode =
+          brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
     });
     super.initState();
   }
@@ -78,8 +82,10 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
   bool loading = true;
-  late AppState appState;
+  bool userCredFound = false;
+  final AppState appState = AppState();
   late ThemeMode themeMode;
+  late SharedPreferences prefs;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -98,20 +104,59 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   void initState() {
+    initUser();
     var brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     setState(() {
-     themeMode = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;  
+      themeMode =
+          brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
     });
-    initUser();
     super.initState();
   }
 
-  Future<void> initUser() async {
-    appState = AppState("tarzan", "rony123");
-    bool isLoading = await appState.getUser();
+  initUser() async {
+    prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('username') == null ||
+        prefs.getString('password') == null) {
+      setState(() {
+        userCredFound = false;
+        loading = true;
+      });
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  LoadingPage(appState, loginCallback, signUpCallback)));
+    } else {
+      bool isLoading = true;
+      try {
+        isLoading = await appState.getUser(prefs.getString('username')!, prefs.getString('password')!);
+        setState(() {
+          userCredFound = true;
+          loading = isLoading;
+        });
+      } catch (e) {
+        prefs.clear();
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    LoadingPage(appState, loginCallback, signUpCallback)));
+        
+      }
+    }
+  }
+
+  loginCallback() {}
+
+  signUpCallback(String username, String password) async {
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
     setState(() {
-      loading = isLoading;
+      userCredFound = true;
+      loading = false;
     });
   }
 
@@ -119,11 +164,10 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {});
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: loading
+      body: !userCredFound && loading
           ? const Center(child: RefreshProgressIndicator())
           : _pages.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -140,31 +184,32 @@ class _LandingPageState extends State<LandingPage> {
               label: "Body Progression",
             ),
           ]),
-      floatingActionButton: _selectedIndex == 0? Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-            child: FloatingActionButton(
-              onPressed: () {
-                setState(() {
-                  themeMode = widget.toggleTheme();
-                });
-              },
-              heroTag: "homedarkmodebtn",
-              child: Icon(themeMode == ThemeMode.light
-                  ? Icons.sunny_snowing
-                  : Icons.sunny),
-            ),
-          ),
-          FloatingActionButton(
-              onPressed: () {
-              },
-              heroTag: "homesettingsbtn",
-              child: const Icon(Icons.settings),
-            ),
-        ],
-      ) : const SizedBox(),
+      floatingActionButton: _selectedIndex == 0
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        themeMode = widget.toggleTheme();
+                      });
+                    },
+                    heroTag: "homedarkmodebtn",
+                    child: Icon(themeMode == ThemeMode.light
+                        ? Icons.sunny_snowing
+                        : Icons.sunny),
+                  ),
+                ),
+                FloatingActionButton(
+                  onPressed: () {},
+                  heroTag: "homesettingsbtn",
+                  child: const Icon(Icons.settings),
+                ),
+              ],
+            )
+          : const SizedBox(),
     );
   }
 }

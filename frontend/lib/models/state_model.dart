@@ -30,42 +30,44 @@ class AppState {
   late DateTime now;
   late String dayName;
 
-  AppState(String username, String password) {
+  AppState() {
     now = DateTime.now();
     dayName = daysOfWeek[now.weekday - 1];
-    _username = username;
-    _password = password;
+    _username = "";
+    _password = "";
     _client = GraphQLClient(link: _endpoint, cache: GraphQLCache());
   }
 
-  Future<bool> getUser() async {
+  Future<bool> getUser(String username, String password) async {
+    _username = username;
+    _password = password;
     try {
       Map<String, dynamic> result = await query("""
-        query Query(\$username: String) {
-            user(username: \$username) {
+        query Login(\$username: String, \$password: String) {
+          login(username: \$username, password: \$password) {
+            id
+            username
+            password
+            name
+            dob
+            createdAt
+            updatedAt
+            startingWeight
+            height
+            workouts {
               id
-              username
-              password
-              name
-              dob
+              imageURL
+              createdBy
               createdAt
-              updatedAt
-              startingWeight
-              height
-              workouts {
-                id
-                imageURL
-                createdBy
-                createdAt
-                title
-                difficulty
-                time
-                description
-              }
+              title
+              difficulty
+              time
+              description
             }
           }
-        """, {"username": _username});
-      user = User.fromJson(result['user']);
+        }
+        """, {"username": _username, "password": _password});
+      user = User.fromJson(result['login']);
       Map<String, dynamic> result2 = await query("""
         query Query(\$userId: String, \$day: String) {
           todayWorkout(userId: \$userId, day: \$day) {
@@ -80,6 +82,49 @@ class AppState {
         print(e);
       }
       return true;
+    }
+  }
+
+  Future<User> signUp(String username, String password, String name, String dob,
+      String createdAt, String updatedAt, int weight, int height) async {
+    try {
+      Map<String, dynamic> result = await query("""
+       mutation SignUp(\$user: CreateUserInput) {
+        signUp(user: \$user) {
+          id
+          username
+          password
+          name
+          dob
+          createdAt
+          updatedAt
+          startingWeight
+          height
+        }
+      }
+        """, {
+        "user": {
+          "createdAt": createdAt,
+          "dob": dob,
+          "height": height,
+          "name": name,
+          "password": password,
+          "updatedAt": updatedAt,
+          "username": username,
+          "weight": weight
+        }
+      });
+      user = User.fromJson(result['signUp']);
+      _username = user.username;
+      _password = user.password;
+      return user;
+    } catch (e) {
+      throw (e
+          .toString()
+          .split("Unexpected error value:")[1]
+          .split(",")
+          .first
+          .replaceAll('"', ''));
     }
   }
 

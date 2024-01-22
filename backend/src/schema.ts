@@ -71,7 +71,7 @@ export const typeDefs = `#graphql
     todayWorkout(userId:String,day:String) : Workout
     workouts: [Workout]!
     searchWorkouts(query:String) : [Workout]!
-    user(username:String): User!
+    login(username:String, password:String): User!
     days(userId:String,workoutId:String) : Days!
     workoutExercises(workoutId:String): [Exercise]!
     workoutProgression(userId:String,workoutId:String) : [WorkoutProgrssion]!
@@ -79,6 +79,7 @@ export const typeDefs = `#graphql
   }
 
   type Mutation {
+    signUp(user:CreateUserInput): User!
     createWorkout(workout: CreateWorkoutInput!) : Workout!
     addWorkout(userId:String, workoutId:String) : Boolean!
     deleteWorkout(userId:String,workoutId:String) : Boolean!
@@ -116,5 +117,16 @@ export const typeDefs = `#graphql
     type : String!,
     tutorial : String!,
     setsreps : String!,
+  }
+
+  input CreateUserInput{
+    username : String!, 
+    password : String!,
+    name : String!,
+    dob : String!, 
+    createdAt : String!,
+    updatedAt : String!, 
+    weight : Int!,
+    height : Int!,
   }
 `;

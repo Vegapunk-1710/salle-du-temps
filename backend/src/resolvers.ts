@@ -1,4 +1,8 @@
 import prisma from "./lib/prisma.js";
+import bcrypt from "bcrypt";
+
+const saltRounds = 10;
+const salt = bcrypt.genSaltSync(saltRounds);
 
 async function getEntitiesWithCreatedByName(entities : any) {
   for (let i = 0; i < entities.length; i++) {
@@ -21,6 +25,30 @@ async function getEntitiesWithCreatedByName(entities : any) {
 
 export const resolvers = {
     Query: {
+      login: async (_,args) => {
+        const user = await prisma.user.findUnique({
+          where:{
+            username: args.username,
+          },
+          include: {
+            workouts: {
+              include: {
+                workout: true,
+              },
+            },
+          },
+        });
+        if(bcrypt.compareSync(args.password, user.password)){
+          const workouts = user.workouts.map(relation => relation.workout);
+          return {
+            ...user,
+            workouts: getEntitiesWithCreatedByName(workouts),
+          };
+        }
+        else{
+          throw "Wrong Password !"
+        }
+      },
       exercises: async () => {
         const exercises = await prisma.exercise.findMany({
           orderBy : {
@@ -135,25 +163,6 @@ export const resolvers = {
         });
         return getEntitiesWithCreatedByName(workouts);
       },
-      user: async (_,args) => {
-        const user = await prisma.user.findUnique({
-          where:{
-            username: args.username
-          },
-          include: {
-            workouts: {
-              include: {
-                workout: true,
-              },
-            },
-          },
-        });
-        const workouts = user.workouts.map(relation => relation.workout);
-        return {
-          ...user,
-          workouts: getEntitiesWithCreatedByName(workouts),
-        };
-      },
       days : async (_,args) => {
         return await prisma.days.findFirstOrThrow({
           where : {
@@ -213,6 +222,38 @@ export const resolvers = {
       }
     },
     Mutation : {
+      signUp : async (_,args) => {
+        const sameUsername = await prisma.user.count({
+          where:{
+            username: args.user.username
+          }
+        });
+        const sameName = await prisma.user.count({
+          where:{
+            name: args.user.name
+          }
+        });
+        if(sameUsername > 0){
+          throw "Username already exists. Pick another one!";
+        }
+        else if(sameName > 0){
+          throw "Name already exists. Pick another one!";
+        }
+        else{
+          return await prisma.user.create({
+            data : {
+              username : args.user.username,
+              password : bcrypt.hashSync(args.user.password, salt),
+              name : args.user.name,
+              dob : args.user.dob,
+              createdAt : args.user.createdAt,
+              updatedAt : args.user.updatedAt,
+              startingWeight : args.user.weight,
+              height : args.user.height
+            }
+          });
+        }
+      },
       createWorkout : async (_,args) => {
         const user = await prisma.user.findUniqueOrThrow({
           where:{
