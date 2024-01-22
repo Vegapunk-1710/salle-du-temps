@@ -78,10 +78,7 @@ class AppState {
       todayWorkoutId = await result2['todayWorkout']['id'];
       return false;
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-      return true;
+      throw e;
     }
   }
 

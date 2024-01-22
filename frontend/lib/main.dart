@@ -138,6 +138,10 @@ class _LandingPageState extends State<LandingPage> {
         });
       } catch (e) {
         prefs.clear();
+        setState(() {
+          userCredFound = false;
+          loading = true;
+        });
         // ignore: use_build_context_synchronously
         Navigator.push(
             context,
