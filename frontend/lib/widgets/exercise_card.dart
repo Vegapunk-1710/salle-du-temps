@@ -6,8 +6,21 @@ import 'package:frontend/widgets/image_widget.dart';
 class ExerciseCard extends StatelessWidget {
   final Exercise exercise;
   final String? position;
+
   final Function(Exercise removedExercise) removedCallback;
-  const ExerciseCard({Key? key, this.position, required this.exercise, required this.removedCallback})
+  final Function(String exerciseId) getProgressionCallback;
+  final Function(String exerciseId, String date, int weight, int sets, int reps)
+      addProgressionCallback;
+  final Function(String exerciseId, String date) deleteProgressionCallback;
+
+  const ExerciseCard(
+      {Key? key,
+      this.position,
+      required this.exercise,
+      required this.removedCallback,
+      required this.getProgressionCallback,
+      required this.addProgressionCallback,
+      required this.deleteProgressionCallback})
       : super(key: key);
 
   @override
@@ -18,9 +31,11 @@ class ExerciseCard extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => ExercisePage(
-                      exercise: exercise,
-                      removedCallback: removedCallback,
-                    )));
+                    exercise: exercise,
+                    removedCallback: removedCallback,
+                    getProgressionCallback: getProgressionCallback,
+                    addProgressionCallback: addProgressionCallback,
+                    deleteProgressionCallback: deleteProgressionCallback)));
       },
       child: Card(
           elevation: 10,

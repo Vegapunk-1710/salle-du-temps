@@ -157,6 +157,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
     });
   }
 
+  Future<List<(DateTime, int, int, int)>> getProgressionCallback(
+      String exerciseId) async {
+    return await widget.appState.getExerciseProgression(exerciseId);
+  }
+
+  addProgressionCallback(
+      String exerciseId, String date, int weight, int sets, int reps) async {
+    await widget.appState
+        .addExerciseProgression(exerciseId, date, weight, sets, reps);
+  }
+
+  deleteProgressionCallback(String exerciseId, String date) async {
+    await widget.appState.deleteExerciseProgression(exerciseId, date);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -305,12 +320,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               padding: EdgeInsets.all(
                                   exerciseIndex == index ? 0.0 : 8.0),
                               child: ExerciseCard(
-                                exercise:
-                                    widget.workout.exercises[exerciseIndex],
-                                position:
-                                    "${exerciseIndex + 1}/${widget.workout.exercises.length}",
-                                removedCallback: removeCallback,
-                              ));
+                                  exercise:
+                                      widget.workout.exercises[exerciseIndex],
+                                  position:
+                                      "${exerciseIndex + 1}/${widget.workout.exercises.length}",
+                                  removedCallback: removeCallback,
+                                  getProgressionCallback:
+                                      getProgressionCallback,
+                                  addProgressionCallback:
+                                      addProgressionCallback,
+                                  deleteProgressionCallback:
+                                      deleteProgressionCallback));
                         },
                       ),
                     ),

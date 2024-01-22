@@ -75,6 +75,7 @@ export const typeDefs = `#graphql
     days(userId:String,workoutId:String) : Days!
     workoutExercises(workoutId:String): [Exercise]!
     workoutProgression(userId:String,workoutId:String) : [WorkoutProgrssion]!
+    exerciseProgression(userId:String,exerciseId:String) : [ExerciseProgression]!
   }
 
   type Mutation {
@@ -90,7 +91,9 @@ export const typeDefs = `#graphql
     deleteExercise(workoutId:String,exerciseId:String) : Boolean!
     deleteExerciseForAll(userId:String,workoutId:String,exerciseId:String) : Boolean!
     addWorkoutProgression(userId:String,workoutId:String,date:String,time:String): Boolean!
-    deleteWorkoutProgresssion(userId:String,workoutId:String,date:String,time:String): Boolean!
+    deleteWorkoutProgression(userId:String,workoutId:String,date:String,time:String): Boolean!
+    addExerciseProgression(userId:String,exerciseId:String,date:String,weight:Int,sets:Int,reps:Int): Boolean!
+    deleteExerciseProgression(userId:String,exerciseId:String,date:String): Boolean!
   }
 
   input CreateWorkoutInput{

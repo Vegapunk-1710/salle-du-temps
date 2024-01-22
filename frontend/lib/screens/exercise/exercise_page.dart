@@ -6,8 +6,18 @@ import 'package:frontend/widgets/image_widget.dart';
 class ExercisePage extends StatefulWidget {
   final Exercise exercise;
   final Function(Exercise removedExercise) removedCallback;
+  final Function(String exerciseId) getProgressionCallback;
+  final Function(String exerciseId, String date, int weight, int sets, int reps)
+      addProgressionCallback;
+  final Function(String exerciseId, String date) deleteProgressionCallback;
+
   ExercisePage(
-      {Key? key, required this.exercise, required this.removedCallback})
+      {Key? key,
+      required this.exercise,
+      required this.removedCallback,
+      required this.getProgressionCallback,
+      required this.addProgressionCallback,
+      required this.deleteProgressionCallback})
       : super(key: key);
 
   @override
@@ -18,10 +28,31 @@ class _ExercisePageState extends State<ExercisePage> {
   TextEditingController progressionWeightController = TextEditingController();
   TextEditingController progressionSetsController = TextEditingController();
   TextEditingController progressionRepsController = TextEditingController();
+  bool loading = true;
+
+  @override
+  void initState() {
+    initExercise();
+    super.initState();
+  }
+
+  initExercise() async {
+    var progression;
+    if (widget.exercise.progression.isEmpty) {
+      progression = await widget.getProgressionCallback(widget.exercise.id);
+    } else {
+      progression = widget.exercise.progression;
+    }
+    setState(() {
+      widget.exercise.progression = progression;
+      loading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: loading? const Center(child:RefreshProgressIndicator()) : SingleChildScrollView(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         CustomImageNetwork(
@@ -105,31 +136,7 @@ class _ExercisePageState extends State<ExercisePage> {
               children: [
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        if (widget.exercise.progression.isNotEmpty) {
-                          var removed = widget.exercise.progression.removeAt(0);
-                          var snackBar = SnackBar(
-                            content: Text(
-                                'Deleted Last Progression : ${removed.$1}'),
-                            action: SnackBarAction(
-                              label: 'Undo',
-                              onPressed: () {
-                                setState(() {
-                                  widget.exercise.progression.add(removed);
-                                  widget.exercise.progression
-                                      .sort((a, b) => a.$1.compareTo(b.$1));
-                                  var revList =
-                                      widget.exercise.progression.reversed;
-                                  widget.exercise.progression =
-                                      new List.from(revList);
-                                });
-                              },
-                            ),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-                      });
-                      FocusManager.instance.primaryFocus?.unfocus();
+                      handleDeleteProgression(context);
                     },
                     icon: const Icon(Icons.delete_forever)),
                 Padding(
@@ -153,20 +160,7 @@ class _ExercisePageState extends State<ExercisePage> {
                 ),
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        if (progressionWeightController.text.isNotEmpty &&
-                            progressionSetsController.text.isNotEmpty &&
-                            progressionRepsController.text.isNotEmpty) {
-                          final date = DateTime.now();
-                          int weight =
-                              int.parse(progressionWeightController.text);
-                          int sets = int.parse(progressionSetsController.text);
-                          int reps = int.parse(progressionRepsController.text);
-                          widget.exercise.progression
-                              .insert(0, (date, weight, sets, reps));
-                        }
-                      });
-                      FocusManager.instance.primaryFocus?.unfocus();
+                      handleAddProgression();
                     },
                     icon: const Icon(Icons.add))
               ],
@@ -174,9 +168,15 @@ class _ExercisePageState extends State<ExercisePage> {
           ),
         ),
         widget.exercise.progression.toString() == "null"
-            ? SizedBox.shrink()
+            ? const SizedBox.shrink()
             : widget.exercise.progression.isEmpty
-                ? const SizedBox.shrink()
+                ? const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(
+                              child: Text("No Exercise Progressions Yet",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                )
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListView.builder(
@@ -195,10 +195,7 @@ class _ExercisePageState extends State<ExercisePage> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text(
-                                        widget.exercise.progression[index].$1
-                                            .toIso8601String()
-                                            .split('T')
-                                            .first,
+                                        "${widget.exercise.progression[index].$1.toIso8601String().split("T").first} ${widget.exercise.progression[index].$1.toIso8601String().split('T')[1].split(".").first}",
                                         style: TextStyle(
                                             fontWeight: index == 0
                                                 ? FontWeight.bold
@@ -236,7 +233,7 @@ class _ExercisePageState extends State<ExercisePage> {
                     ),
                   ),
         const SizedBox(
-          height: 90,
+          height: 100,
         )
       ])),
       floatingActionButton: Row(
@@ -255,6 +252,53 @@ class _ExercisePageState extends State<ExercisePage> {
         ],
       ),
     );
+  }
+
+  void handleDeleteProgression(BuildContext context) {
+    if (widget.exercise.progression.isNotEmpty) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+          title: const Text("Delete the latest progression ?"),
+          content: Text(
+              "Are you sure you want to delete the progression made at ${widget.exercise.progression[0].$1.toIso8601String().split("T").first} ${widget.exercise.progression[0].$1.toIso8601String().split('T')[1].split(".").first} from this exercise ?"),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text("No")),
+            TextButton(
+                onPressed: () {
+                  widget.deleteProgressionCallback(widget.exercise.id,
+                      widget.exercise.progression[0].$1.toIso8601String());
+                  setState(() {
+                    widget.exercise.progression.removeAt(0);
+                  });
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text("Yes")),
+          ],
+        ),
+      );
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void handleAddProgression() {
+    if (progressionWeightController.text.isNotEmpty &&
+        progressionSetsController.text.isNotEmpty &&
+        progressionRepsController.text.isNotEmpty) {
+      final date = DateTime.now();
+      int weight = int.parse(progressionWeightController.text);
+      int sets = int.parse(progressionSetsController.text);
+      int reps = int.parse(progressionRepsController.text);
+      widget.addProgressionCallback(
+          widget.exercise.id, date.toIso8601String(), weight, sets, reps);
+      setState(() {
+        widget.exercise.progression.insert(0, (date, weight, sets, reps));
+      });
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   void handleDelete(BuildContext context) {

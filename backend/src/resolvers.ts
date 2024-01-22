@@ -195,6 +195,21 @@ export const resolvers = {
         }catch(e){
           return [];
         }
+      },
+      exerciseProgression : async (_,args) => {
+        try{
+          return await prisma.exerciseProgression.findMany({
+            where:{
+              createdBy: args.userId,
+              exerciseId: args.exerciseId,
+            },
+            orderBy : {
+              date : 'desc'
+            }
+          });
+        } catch(e){
+          return [];
+        }
       }
     },
     Mutation : {
@@ -416,14 +431,14 @@ export const resolvers = {
               exerciseId: args.exerciseId
             }
           });
-          await prisma.exercise.delete({
-            where : {
-              id: args.exerciseId
-            }
-          });
           await prisma.exerciseProgression.deleteMany({
             where : {
               exerciseId: args.exerciseId
+            }
+          });
+          await prisma.exercise.delete({
+            where : {
+              id: args.exerciseId
             }
           });
         } 
@@ -458,7 +473,7 @@ export const resolvers = {
           return false;
         } 
       },
-      deleteWorkoutProgresssion : async (_,args) => {
+      deleteWorkoutProgression : async (_,args) => {
         try {
           await prisma.workoutProgrssion.deleteMany({
             where : {
@@ -466,6 +481,37 @@ export const resolvers = {
               workoutId: args.workoutId,
               date : args.date,
               time : args.time
+            }
+          });
+          return true;
+        } catch(e){
+          return false;
+        }
+      },
+      addExerciseProgression : async (_,args) => {
+        try {
+          await prisma.exerciseProgression.create({
+            data : {
+              createdBy: args.userId,
+              exerciseId : args.exerciseId,
+              date: args.date,
+              weight : args.weight,
+              sets : args.sets,
+              reps : args.reps
+            }
+          });
+          return true;
+        } catch(e){
+          return false;
+        }
+      },
+      deleteExerciseProgression : async (_,args) => {
+        try{
+          await prisma.exerciseProgression.deleteMany({
+            where : {
+              createdBy: args.userId,
+              exerciseId : args.exerciseId,
+              date: args.date,
             }
           });
           return true;

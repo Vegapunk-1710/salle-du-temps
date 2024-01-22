@@ -6,7 +6,9 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 
 class AppState {
   final HttpLink _endpoint = HttpLink(
-     kDebugMode ? "http://192.168.2.159:4000/" : 'https://salle-du-temps.up.railway.app/',
+    kDebugMode
+        ? "http://192.168.2.159:4000/"
+        : 'https://salle-du-temps.up.railway.app/',
   );
 
   late final GraphQLClient _client;
@@ -506,13 +508,87 @@ class AppState {
     try {
       Map<String, dynamic> result = await query("""
        mutation Mutation(\$userId: String, \$workoutId: String, \$time: String, \$date: String) {
-          deleteWorkoutProgresssion(userId: \$userId, workoutId: \$workoutId, time: \$time, date: \$date)
+          deleteWorkoutProgression(userId: \$userId, workoutId: \$workoutId, time: \$time, date: \$date)
         }
         """, {
         "userId": user.id,
         "workoutId": workoutId,
         "date": date,
         "time": time,
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  Future<List<(DateTime, int, int, int)>> getExerciseProgression(
+      String exerciseId) async {
+    try {
+      Map<String, dynamic> result = await query("""
+        query ExerciseProgression(\$userId: String, \$exerciseId: String) {
+          exerciseProgression(userId: \$userId, exerciseId: \$exerciseId) {
+            date
+            weight
+            sets
+            reps
+          }
+        }
+        """, {
+        "userId": user.id,
+        "exerciseId": exerciseId,
+      });
+      List<(DateTime, int, int, int)> progression =
+          await result['exerciseProgression']
+              .map<(DateTime, int, int, int)>((e) => (
+                    DateTime.parse(e["date"]),
+                    int.parse(e["weight"].toString()),
+                    int.parse(e["sets"].toString()),
+                    int.parse(e["reps"].toString())
+                  ))
+              .toList();
+      return progression;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return [];
+    }
+  }
+
+  addExerciseProgression(
+      String exerciseId, String date, int weight, int sets, int reps) async {
+    try {
+      Map<String, dynamic> result = await query("""
+            mutation Mutation(\$userId: String, \$exerciseId: String, \$date: String, \$weight: Int, \$sets: Int, \$reps: Int) {
+              addExerciseProgression(userId: \$userId, exerciseId: \$exerciseId, date: \$date, weight: \$weight, sets: \$sets, reps: \$reps)
+            }
+            """, {
+        "userId": user.id,
+        "exerciseId": exerciseId,
+        "date": date,
+        "weight": weight,
+        "sets": sets,
+        "reps": reps
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  deleteExerciseProgression(String exerciseId, String date) async {
+    try {
+      Map<String, dynamic> result = await query("""
+      mutation DeleteExerciseProgression(\$userId: String, \$exerciseId: String, \$date: String) {
+        deleteExerciseProgression(userId: \$userId, exerciseId: \$exerciseId, date: \$date)
+      }
+        """, {
+        "userId": user.id,
+        "exerciseId": exerciseId,
+        "date": date,
       });
     } catch (e) {
       if (kDebugMode) {
