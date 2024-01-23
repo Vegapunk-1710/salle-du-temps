@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:frontend/models/state_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/material.dart';
@@ -9,7 +10,8 @@ import 'package:frontend/screens/body/body_hero_page.dart';
 import 'package:frontend/screens/body/create_body_prog_page.dart';
 
 class BodyProgPage extends StatefulWidget {
-  BodyProgPage({Key? key}) : super(key: key);
+  final AppState appState;
+  BodyProgPage(this.appState, {Key? key}) : super(key: key);
 
   @override
   State<BodyProgPage> createState() => _BodyProgPageState();
@@ -55,27 +57,28 @@ class _BodyProgPageState extends State<BodyProgPage> {
   }
 
   void deleteProgression() {
-    if(this.mounted){
+    if (this.mounted) {
       setState(() {
         BodyProgression deletedProg = progressions.removeLast();
         saveProgression();
         getProgressions();
         var snackBar = SnackBar(
-            content: Text('Deleted Body Progression : ${deletedProg.createdAt.toIso8601String().split("T").first}'),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {
-                if(this.mounted){
-                  setState(() {
+          content: Text(
+              'Deleted Body Progression : ${deletedProg.createdAt.toIso8601String().split("T").first}'),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {
+              if (this.mounted) {
+                setState(() {
                   progressions.add(deletedProg);
                   saveProgression();
                   getProgressions();
                 });
-                }
-              },
-            ),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            },
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       });
     }
   }
@@ -92,48 +95,55 @@ class _BodyProgPageState extends State<BodyProgPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: progressions.isEmpty? const Center(child: ListTile(title: Text('No Body Progressions Yet.'),subtitle: Text('(Click the "pen" button to create a body progression)'))) : Scrollbar(
-          child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3),
-            itemBuilder: (_, index) => index < progressions.length
-                ? GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  BodyProgHero(progressions[index])));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Hero(
-                          tag: 'bodyproghero${progressions[index].id}',
-                          child: Image.file(
-                              File(progressions[index].imagesPaths[0]),
-                              errorBuilder: (context, error, stackTrace) {
-                            return SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: const Card(
-                                    elevation: 10, child: Icon(Icons.image)));
-                          }, fit: BoxFit.cover),
-                        ),
-                      ),
-                    ),
-                  )
-                : progressions.isEmpty
-                    ? const SizedBox.shrink()
-                    : IconButton(
-                        onPressed: () {
-                          handleDelete(context);
-                        },
-                        icon: const Icon(Icons.delete_forever)),
-            itemCount: progressions.length + 1,
-          ),
-        ),
+        child: progressions.isEmpty
+            ? const Center(
+                child: ListTile(
+                    title: Text('No Body Progressions Yet.'),
+                    subtitle: Text(
+                        '(Click the "pen" button to create a body progression)')))
+            : Scrollbar(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (_, index) => index < progressions.length
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        BodyProgHero(progressions[index],widget.appState.user.startingWeight)));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Hero(
+                                tag: 'bodyproghero${progressions[index].id}',
+                                child: Image.file(
+                                    File(progressions[index].imagesPaths[0]),
+                                    errorBuilder: (context, error, stackTrace) {
+                                  return SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: const Card(
+                                          elevation: 10,
+                                          child: Icon(Icons.image)));
+                                }, fit: BoxFit.cover),
+                              ),
+                            ),
+                          ),
+                        )
+                      : progressions.isEmpty
+                          ? const SizedBox.shrink()
+                          : IconButton(
+                              onPressed: () {
+                                handleDelete(context);
+                              },
+                              icon: const Icon(Icons.delete_forever)),
+                  itemCount: progressions.length + 1,
+                ),
+              ),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,

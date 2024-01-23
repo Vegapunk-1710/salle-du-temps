@@ -100,7 +100,7 @@ class _LandingPageState extends State<LandingPage> {
       refreshCallback,
     ),
     WorkoutsPage(appState, refreshCallback),
-    BodyProgPage(),
+    BodyProgPage(appState),
   ];
 
   @override

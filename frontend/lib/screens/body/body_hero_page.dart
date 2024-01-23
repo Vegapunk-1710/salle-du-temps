@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:frontend/models/body_prog_model.dart';
 
 class BodyProgHero extends StatefulWidget {
   final BodyProgression progression;
-  BodyProgHero(this.progression, {Key? key}) : super(key: key);
+  final num startingWeight;
+  BodyProgHero(this.progression, this.startingWeight, {Key? key})
+      : super(key: key);
 
   @override
   State<BodyProgHero> createState() => _BodyProgHeroState();
@@ -44,7 +45,7 @@ class _BodyProgHeroState extends State<BodyProgHero> {
               children: [
                 HeroText(
                     "${page_index + 1}/${widget.progression.imagesPaths.length}",
-                    25)
+                    30)
               ],
             ),
           ),
@@ -56,29 +57,31 @@ class _BodyProgHeroState extends State<BodyProgHero> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                HeroText(
-                    widget.progression.createdAt
-                        .toIso8601String()
-                        .split("T")
-                        .first,
-                    25),
-                HeroText("${widget.progression.currentWeight} lbs", 25),
+                Flexible(
+                  child: HeroText(
+                      widget.progression.createdAt
+                          .toIso8601String()
+                          .split("T")
+                          .first,
+                      18),
+                ),
+                Flexible(child: HeroText("${widget.startingWeight} → ${widget.progression.currentWeight} lbs", 18)),
               ],
             ),
           ),
         )
       ]),
-  floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            FloatingActionButton(onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Icon(Icons.arrow_back),
-            
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Icon(Icons.arrow_back),
             ),
           ],
         ),

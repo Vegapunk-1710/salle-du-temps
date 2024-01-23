@@ -18,6 +18,7 @@ class AddExercise extends StatefulWidget {
 
 class _AddExerciseState extends State<AddExercise> {
   bool loading = true;
+  bool isSearching = false;
   late List<Exercise> newExercises;
   late List<Exercise> queriedExercises;
   late Map<String, Exercise> selected;
@@ -73,8 +74,14 @@ class _AddExerciseState extends State<AddExercise> {
                                     await widget.searchCallback(query);
                                 setState(() {
                                   if (query.isEmpty) {
+                                    setState(() {
+                                      isSearching = false;
+                                    });
                                     queriedExercises = newExercises;
                                   } else {
+                                    setState(() {
+                                      isSearching = true;
+                                    });
                                     queriedExercises = searchedExercises;
                                   }
                                 });
@@ -87,6 +94,12 @@ class _AddExerciseState extends State<AddExercise> {
                             SearchController controller) {
                           return <ListTile>[];
                         }),
+                      ),
+                      isSearching ? const SizedBox.shrink() : Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text("Latest Exercises (${queriedExercises.length})",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 22)),
                       ),
                       ListView.builder(
                           shrinkWrap: true,

@@ -20,6 +20,7 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
   late List<Workout> workouts;
   late List<Workout> queried;
   late Map<String, Workout> selected;
+  bool isSearching = false;
   Timer? _debounce = Timer(const Duration(milliseconds: 500), () {});
 
   @override
@@ -61,21 +62,23 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                             controller: controller,
                             padding: const MaterialStatePropertyAll<EdgeInsets>(
                                 EdgeInsets.symmetric(horizontal: 16.0)),
-                            onChanged: (query)  {
+                            onChanged: (query) {
                               if (_debounce?.isActive ?? false)
                                 _debounce?.cancel();
                               _debounce = Timer(
                                   const Duration(milliseconds: 500), () async {
-                              List<Workout> searchedWorkouts =
-                                  await widget.searchCallback(query);
-                              setState(() {
-                                if (query.isEmpty) {
-                                  queried = workouts;
-                                } else {
-                                  queried = searchedWorkouts;
-                                }
+                                List<Workout> searchedWorkouts =
+                                    await widget.searchCallback(query);
+                                setState(() {
+                                  if (query.isEmpty) {
+                                    isSearching = false;
+                                    queried = workouts;
+                                  } else {
+                                    isSearching = true;
+                                    queried = searchedWorkouts;
+                                  }
+                                });
                               });
-                            });
                             },
                             leading: const Icon(Icons.search),
                             trailing: const <Widget>[],
@@ -85,8 +88,15 @@ class _AddWorkoutPageState extends State<AddWorkoutPage> {
                           return <ListTile>[];
                         }),
                       ),
+                      isSearching ? SizedBox.shrink() : Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text("Latest Workouts (${queried.length})",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 22)),
+                      ),
                       ListView.builder(
                           shrinkWrap: true,
+                          physics : const NeverScrollableScrollPhysics(),
                           itemCount: queried.length,
                           itemBuilder: (context, index) {
                             return Card(
