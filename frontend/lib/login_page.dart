@@ -10,8 +10,7 @@ class LoadingPage extends StatefulWidget {
   bool loading = false;
 
   final Function loginCallback;
-  final Function signUpCallback;
-  LoadingPage(this.appState, this.loginCallback, this.signUpCallback,
+  LoadingPage(this.appState, this.loginCallback,
       {Key? key})
       : super(key: key);
 
@@ -73,7 +72,9 @@ class _LoadingPageState extends State<LoadingPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              child: const Text("Login"),
+                              child: widget.loading
+                                  ? const RefreshProgressIndicator()
+                                  : const Text("Login"),
                               onPressed: () {
                                 handleLogin(context);
                               },
@@ -178,7 +179,9 @@ class _LoadingPageState extends State<LoadingPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              child: widget.loading ? const RefreshProgressIndicator() : Text("Sign Up"),
+                              child: widget.loading
+                                  ? const RefreshProgressIndicator()
+                                  : Text("Sign Up"),
                               onPressed: () {
                                 handleSignUp(context);
                               },
@@ -201,8 +204,62 @@ class _LoadingPageState extends State<LoadingPage> {
     );
   }
 
-  void handleLogin(BuildContext context) {
-    Navigator.of(context).pop();
+  Future<void> handleLogin(BuildContext context) async {
+    String username = loginUsernameController.text;
+    String password = loginPasswordController.text;
+    if (username.isEmpty || password.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: const Text("One or multiple fields are empty."),
+            actions: [
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      setState(() {
+        widget.loading = true;
+      });
+      try {
+        await widget.appState.getUser(username, password);
+        widget.loginCallback(username, password);
+        setState(() {
+        widget.loading = false;
+      });
+        Navigator.of(context).pop();
+      } catch (e) {
+        setState(() {
+        widget.loading = false;
+      });
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Error"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  child: const Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   Future<void> handleSignUp(BuildContext context) async {
@@ -245,15 +302,15 @@ class _LoadingPageState extends State<LoadingPage> {
       try {
         User user = await widget.appState.signUp(username, password, name, dob,
             createdAt, updatedAt, weight, height);
-        widget.signUpCallback(username, password);
+        widget.loginCallback(username, password);
         setState(() {
-        widget.loading = false;
-      });
+          widget.loading = false;
+        });
         Navigator.of(context).pop();
       } catch (e) {
         setState(() {
-        widget.loading = false;
-      });
+          widget.loading = false;
+        });
         // ignore: use_build_context_synchronously
         showDialog(
           context: context,

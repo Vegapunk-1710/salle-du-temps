@@ -1,13 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/login_page.dart';
 import 'package:frontend/models/state_model.dart';
-import 'package:frontend/models/user_model.dart';
 import 'package:frontend/screens/body/body_prog_page.dart';
 import 'package:frontend/screens/main/home_page.dart';
-import 'package:frontend/screens/main/settings_page.dart';
 import 'package:frontend/screens/main/workouts_page.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -83,7 +84,7 @@ class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
   bool loading = true;
   bool userCredFound = false;
-  final AppState appState = AppState();
+  AppState appState = AppState();
   late ThemeMode themeMode;
   late SharedPreferences prefs;
 
@@ -126,12 +127,12 @@ class _LandingPageState extends State<LandingPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  LoadingPage(appState, loginCallback, signUpCallback)));
+              builder: (context) => LoadingPage(appState, loginCallback)));
     } else {
       bool isLoading = true;
       try {
-        isLoading = await appState.getUser(prefs.getString('username')!, prefs.getString('password')!);
+        isLoading = await appState.getUser(
+            prefs.getString('username')!, prefs.getString('password')!);
         setState(() {
           userCredFound = true;
           loading = isLoading;
@@ -146,16 +147,12 @@ class _LandingPageState extends State<LandingPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    LoadingPage(appState, loginCallback, signUpCallback)));
-        
+                builder: (context) => LoadingPage(appState, loginCallback)));
       }
     }
   }
 
-  loginCallback() {}
-
-  signUpCallback(String username, String password) async {
+  loginCallback(String username, String password) async {
     await prefs.setString('username', username);
     await prefs.setString('password', password);
     setState(() {
@@ -207,9 +204,45 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                 ),
                 FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Sign Out?"),
+                          content:
+                              const Text("Are you sure you want to sign out?"),
+                          actions: [
+                            TextButton(onPressed: (){Navigator.of(context).pop();}, child: const Text("No")),
+                            TextButton(
+                              child: const Text("Yes"),
+                              onPressed: () async {
+                                final directory =
+                                    await getApplicationCacheDirectory();
+                                final file =
+                                    File('${directory.path}/bodyProgData.json');
+                                if (await file.exists()) {
+                                  await file.delete();
+                                }
+                                setState(() {
+                                  prefs.clear();
+                                  appState = AppState();
+                                });
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoadingPage(
+                                            appState, loginCallback)));
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                   heroTag: "homesettingsbtn",
-                  child: const Icon(Icons.settings),
+                  child: const Icon(Icons.door_back_door),
                 ),
               ],
             )

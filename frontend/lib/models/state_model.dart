@@ -68,6 +68,7 @@ class AppState {
         }
         """, {"username": _username, "password": _password});
       user = User.fromJson(result['login']);
+      user.password = _password;
       Map<String, dynamic> result2 = await query("""
         query Query(\$userId: String, \$day: String) {
           todayWorkout(userId: \$userId, day: \$day) {
@@ -78,7 +79,7 @@ class AppState {
       todayWorkoutId = await result2['todayWorkout']['id'];
       return false;
     } catch (e) {
-      throw e;
+      throw ("Wrong Username/Password!");
     }
   }
 
