@@ -54,7 +54,7 @@ class _StartWorkoutPageState extends State<StartWorkoutPage> {
                   onPageChanged: (index) => setState(() {
                     page_index = index;
                   }),
-                  itemCount: widget.workout.exercises.length+1,
+                  itemCount: widget.workout.exercises.length,
                   itemBuilder: (context, index) {
                     return Card(
                       child: Scrollbar(
