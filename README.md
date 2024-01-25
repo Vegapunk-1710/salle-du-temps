@@ -1,5 +1,9 @@
 # salle-du-temps
 ----------
+- [What?]()
+- [Why?]()
+- [How?]()
+- [Demo]()
 
 ## What?
 ----------
@@ -25,7 +29,7 @@ Open up a terminal and go to the backend folder :
 cd backend/
 ```
 ### Step 2
-Initialize Node and Prisma :
+Initialize [Node](https://nodejs.org/en/download/current) and Prisma :
 ```
 npm install
 npx prisma init
@@ -50,7 +54,7 @@ Open up **another** terminal and go to the frontend folder :
 cd frontend/
 ```
 ### Step 6
-While having a phone simulator opened and Flutter installed, run the application:
+While having a phone simulator opened and [Flutter](https://docs.flutter.dev/get-started/install) installed, run the application:
 ```
 flutter run
 ```
