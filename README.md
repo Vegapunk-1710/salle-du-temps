@@ -75,4 +75,4 @@ https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/8b188918-4875-49
 ### Body Progression
 https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/7f4e2b7a-0333-4a50-8d8e-25144a4a848d
 
-
+⚠️ Replace these images with body progression images in your mind  ⚠️
