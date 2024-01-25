@@ -20,8 +20,41 @@ Technologies Used :
 - Railway (Deployment)
 
 ### Step 1
+Open up a terminal and go to the backend folder :
 ```
+cd backend/
 ```
+### Step 2
+Initialize Node and Prisma :
+```
+npm install
+npx prisma init
+```
+### Step 3
+Create a .env file if Prisma hasn't created it already, open it and paste the following variables:
+```
+DATABASE_URL="YOUR_DATABASE_URL"
+PORT=4000
+```
+⚠️ Assuming you already have a PostgreSQL database up and running, replace YOUR_DATABASE_URL with your actual database URL. ⚠️
+### Step 4
+Initialize Prisma Client and Start the server:
+```
+npx prisma migrate dev --name init
+npm install @prisma/client
+npm start
+```
+### Step 5
+Open up **another** terminal and go to the frontend folder :
+```
+cd frontend/
+```
+### Step 6
+While having a phone simulator opened and Flutter installed, run the application:
+```
+flutter run
+```
+⚠️ The app was built/tested on an iPhone 15 Pro Max and an iPhone SE. Android phones/simulations aren't guaranteed to work ⚠️
 
 ## Demo
 ----------
