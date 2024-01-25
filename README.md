@@ -66,3 +66,6 @@ flutter run
 ### Login/Sign Up
 https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/39f1d179-2225-4255-8a32-2868ccf844f1
 
+### Home
+https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/959b30d3-4978-4574-a922-9f0c057152d2
+
