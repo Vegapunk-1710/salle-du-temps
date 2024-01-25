@@ -13,6 +13,8 @@ A full-stack fitness mobile application designed to combine workout organization
 ----------
 A group of fitness enthusiasts, consisting of gym professionals and avid gym-goers who also happen to be my best friends, expressed the need for a specialized application to track their workouts, moving beyond the use of standard note-taking apps. They required a platform with social media elements to easily share and exchange their workout routines with one another. This need highlighted the demand for a dedicated, non-commercial app tailored to the specific needs of regular gym users for tracking and sharing their fitness journeys.
 
+More importantly, I desperately wanted to build a side project during the Christmas period. 🤓
+
 ## How? 
 ----------
 Technologies Used :
@@ -75,4 +77,4 @@ https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/8b188918-4875-49
 ### Body Progression
 https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/7f4e2b7a-0333-4a50-8d8e-25144a4a848d
 
-⚠️ Replace these images with body progression images in your mind  ⚠️
+Replace these images with body progression images in your mind 😅
