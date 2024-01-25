@@ -72,3 +72,7 @@ https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/959b30d3-4978-45
 ### Workouts
 https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/8b188918-4875-4900-9c49-49405da2db8e
 
+### Body Progression
+https://github.com/Vegapunk-1710/salle-du-temps/assets/44824530/7f4e2b7a-0333-4a50-8d8e-25144a4a848d
+
+
