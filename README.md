@@ -1,9 +1,9 @@
 # salle-du-temps
 ----------
-- [What?]()
-- [Why?]()
-- [How?]()
-- [Demo]()
+- [What?](https://github.com/Vegapunk-1710/salle-du-temps/blob/main/README.md#what)
+- [Why?](https://github.com/Vegapunk-1710/salle-du-temps/blob/main/README.md#why)
+- [How?](https://github.com/Vegapunk-1710/salle-du-temps/blob/main/README.md#how)
+- [Demo](https://github.com/Vegapunk-1710/salle-du-temps/blob/main/README.md#demo)
 
 ## What?
 ----------
